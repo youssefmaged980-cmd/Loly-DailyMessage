@@ -13,6 +13,43 @@ export const formatDateArabic = (dateString: string) => {
   return date.toLocaleDateString('ar-EG-u-nu-latn', options);
 };
 
+function splitTextIntoColumns(text: string, cols: number): string[] {
+  if (cols <= 1) return [text];
+
+  const lines = text.split('\n');
+  if (lines.length >= cols * 3) {
+    const perCol = Math.ceil(lines.length / cols);
+    const result: string[] = [];
+    for (let c = 0; c < cols; c++) {
+      const chunk = lines.slice(c * perCol, (c + 1) * perCol).join('\n');
+      if (chunk.trim()) result.push(chunk);
+    }
+    return result;
+  }
+
+  // If text doesn't have many newlines, split by sentence breaks
+  const sentences = text.split(/(?<=[.!?؟\n])\s+/);
+  if (sentences.length >= cols * 2) {
+    const perCol = Math.ceil(sentences.length / cols);
+    const result: string[] = [];
+    for (let c = 0; c < cols; c++) {
+      const chunk = sentences.slice(c * perCol, (c + 1) * perCol).join(' ');
+      if (chunk.trim()) result.push(chunk);
+    }
+    return result;
+  }
+
+  // Fallback: split evenly by words
+  const words = text.split(/\s+/);
+  const perCol = Math.ceil(words.length / cols);
+  const result: string[] = [];
+  for (let c = 0; c < cols; c++) {
+    const chunk = words.slice(c * perCol, (c + 1) * perCol).join(' ');
+    if (chunk.trim()) result.push(chunk);
+  }
+  return result;
+}
+
 export async function generateCardImage({ date, messageText, isDark }: CardExportOptions): Promise<string> {
   const isDarkMode = isDark !== undefined 
     ? isDark 
@@ -20,31 +57,51 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
       (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const text = messageText || '';
-  const textLen = text.length;
+  const lines = text.split('\n');
+  const lineCount = lines.length;
+  const msgLength = text.length;
 
-  // Responsive font size & line height based on message length
-  let fontSize = 26;
-  let lineHeight = 2.0;
-
-  if (textLen < 120) {
-    fontSize = 32;
-    lineHeight = 2.2;
-  } else if (textLen < 300) {
-    fontSize = 28;
-    lineHeight = 2.0;
-  } else if (textLen < 700) {
-    fontSize = 24;
-    lineHeight = 1.9;
-  } else if (textLen < 1200) {
-    fontSize = 21;
-    lineHeight = 1.8;
+  // Determine number of columns and width so tall messages become balanced landscape/square cards
+  let columns = 1;
+  if (lineCount > 45 || msgLength > 1600) {
+    columns = 3;
+  } else if (lineCount > 16 || msgLength > 600) {
+    columns = 2;
   } else {
-    fontSize = 19;
-    lineHeight = 1.75;
+    columns = 1;
   }
 
-  // Card dimensions: fixed comfortable width for social/mobile sharing
-  const cardWidth = 850;
+  let cardWidth = 850;
+  if (columns === 3) {
+    cardWidth = 1450;
+  } else if (columns === 2) {
+    cardWidth = 1150;
+  } else {
+    cardWidth = 850;
+  }
+
+  // Dynamic font sizing
+  let fontSize = 24;
+  let lineHeight = 1.9;
+
+  if (columns === 3) {
+    fontSize = lineCount > 90 ? 17 : 19;
+    lineHeight = 1.65;
+  } else if (columns === 2) {
+    fontSize = lineCount > 35 ? 20 : 22;
+    lineHeight = 1.75;
+  } else {
+    if (msgLength < 120) {
+      fontSize = 32;
+      lineHeight = 2.2;
+    } else if (msgLength < 300) {
+      fontSize = 28;
+      lineHeight = 2.0;
+    } else {
+      fontSize = 24;
+      lineHeight = 1.9;
+    }
+  }
 
   const bg = isDarkMode ? '#1F162B' : '#F3E8FF';
   const textColor = isDarkMode ? '#F8F5FF' : '#2D1B3A';
@@ -118,7 +175,7 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 160px;
+    width: 180px;
     height: 3px;
     background: linear-gradient(to right, transparent, ${roseColor}, transparent);
     opacity: 0.6;
@@ -131,7 +188,7 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 160px;
+    width: 180px;
     height: 3px;
     background: linear-gradient(to right, transparent, ${roseColor}, transparent);
     opacity: 0.6;
@@ -162,27 +219,47 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
   `;
   card.appendChild(dateHeader);
 
-  // Message Text
-  const msgEl = document.createElement('div');
-  msgEl.style.cssText = `
-    font-family: var(--font-markazi), Arial, sans-serif;
-    font-size: ${fontSize}px;
-    line-height: ${lineHeight};
-    font-weight: 600;
-    color: ${textColor};
-    text-align: center;
-    white-space: pre-wrap;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    padding: 0 40px;
+  // Columns Wrapper
+  const msgWrap = document.createElement('div');
+  msgWrap.style.cssText = `
+    display: flex;
+    flex-direction: row;
+    gap: ${columns > 1 ? '40px' : '0px'};
     width: 100%;
-    box-sizing: border-box;
     direction: rtl;
     position: relative;
     z-index: 2;
+    align-items: stretch;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0 20px;
   `;
-  msgEl.innerText = text;
-  card.appendChild(msgEl);
+
+  const columnChunks = splitTextIntoColumns(text, columns);
+
+  columnChunks.forEach((chunk, index) => {
+    const colDiv = document.createElement('div');
+    colDiv.style.cssText = `
+      font-family: var(--font-markazi), Arial, sans-serif;
+      font-size: ${fontSize}px;
+      line-height: ${lineHeight};
+      font-weight: 600;
+      color: ${textColor};
+      text-align: ${columns > 1 ? 'right' : 'center'};
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      flex: 1 1 0;
+      min-width: 0;
+      direction: rtl;
+      box-sizing: border-box;
+      ${index < columnChunks.length - 1 && columns > 1 ? `border-left: 1px solid ${borderColor}; padding-left: 40px;` : ''}
+    `;
+    colDiv.innerText = chunk;
+    msgWrap.appendChild(colDiv);
+  });
+
+  card.appendChild(msgWrap);
 
   // Decorative subtle footer
   const footer = document.createElement('div');
