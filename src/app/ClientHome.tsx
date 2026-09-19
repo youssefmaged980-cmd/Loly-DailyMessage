@@ -306,14 +306,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             <span className="text-2xl">📖</span> أرشيف الذكريات
           </h2>
 
-          <div className="flex justify-center mb-6 sm:mb-8 px-2">
-            <div className="inline-flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 rounded-2xl sm:rounded-full bg-cream/95 dark:bg-[#1E142B] border-2 border-wine/40 dark:border-rose/50 shadow-[0_4px_16px_rgba(90,39,128,0.15)] backdrop-blur-md transition-all max-w-full">
-              <span className="text-lg sm:text-xl shrink-0">🌸</span>
-              <span className="font-markazi text-lg sm:text-xl md:text-2xl text-[#280B3E] dark:text-[#F8F4FF] font-extrabold tracking-wide text-center leading-snug">
-                <span>دا المكان الهيكون فيه كل كلمة حلوة </span>
-                <span className="inline-block sm:inline">بكتبهالك يا قلب بابا</span>
+          <div className="flex justify-center mb-6 sm:mb-8 px-1">
+            <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-white/85 dark:bg-[#1E142B]/90 border-2 border-wine/35 dark:border-rose/60 shadow-[0_4px_20px_rgba(90,39,128,0.15)] dark:shadow-[0_0_25px_rgba(185,154,230,0.45),inset_0_0_15px_rgba(185,154,230,0.15)] backdrop-blur-md transition-all whitespace-nowrap max-w-full overflow-x-auto">
+              <span className="text-sm sm:text-lg shrink-0 animate-pulse drop-shadow-[0_0_6px_rgba(255,105,180,0.7)]">🌸</span>
+              <span className="font-markazi text-xs sm:text-base md:text-xl text-wine-deep dark:text-[#F8F4FF] font-extrabold tracking-wide text-center whitespace-nowrap dark:drop-shadow-[0_0_10px_rgba(185,154,230,0.7)]">
+                دا المكان الهيكون فيه كل كلمة حلوة بكتبهالك يا قلب بابا
               </span>
-              <span className="text-lg sm:text-xl shrink-0">🌸</span>
+              <span className="text-sm sm:text-lg shrink-0 animate-pulse drop-shadow-[0_0_6px_rgba(255,105,180,0.7)]">🌸</span>
             </div>
           </div>
 
@@ -324,10 +323,10 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 href={`/message/${msg.id}`}
                 className="w-full min-h-[64px] border px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex items-center justify-between gap-2.5 sm:gap-3 hover:-translate-y-0.5 hover:shadow-lg bg-card-bg/95 dark:bg-card-bg/80 border-border-color hover:bg-wine/10 dark:hover:bg-rose-pale/20 hover:border-wine/50 dark:hover:border-rose/60 backdrop-blur-md no-underline group shadow-sm"
               >
-                <span className="font-aref text-base sm:text-xl md:text-2xl text-[#2E0F45] dark:text-[#F3ECFB] font-bold drop-shadow-sm whitespace-nowrap shrink-0">
+                <span className="font-aref text-base sm:text-xl md:text-2xl text-wine-deep dark:text-white font-bold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.6)] whitespace-nowrap shrink-0">
                   {formatDateArabic(msg.date)}
                 </span>
-                <span className="font-markazi text-base sm:text-lg text-center bg-[#5A2780] hover:bg-[#481B69] text-white dark:bg-[#682D94] dark:text-white border border-[#481B69] dark:border-rose/40 px-4 py-1.5 rounded-full font-bold shadow-[0_2px_8px_rgba(90,39,128,0.25)] transition-all duration-300 group-hover:scale-105 whitespace-nowrap shrink-0">
+                <span className="font-markazi text-base sm:text-lg text-center bg-gradient-to-r from-wine to-wine-deep text-white border border-wine/30 dark:border-rose/40 px-4 py-1.5 rounded-full font-bold shadow-[0_2px_8px_rgba(90,39,128,0.25)] transition-all duration-300 group-hover:scale-105 whitespace-nowrap shrink-0">
                   افتكري ذكرياتنا يا روحي 💌
                 </span>
               </Link>

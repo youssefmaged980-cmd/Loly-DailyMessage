@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --cream: #EDE3F1; /* Soft warm mauve-cream card, clearly defined */
   --paper: #DDD0E3; /* Warm antique cashmere mauve background, rich mood, zero glare */
