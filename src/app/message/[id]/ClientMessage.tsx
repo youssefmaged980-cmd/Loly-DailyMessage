@@ -52,13 +52,39 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
   const downloadImage = async () => {
     if (!messageRef.current) return;
     try {
-      const dataUrl = await toPng(messageRef.current, {
+      const el = messageRef.current;
+      
+      // Save original styles
+      const originalWidth = el.style.width;
+      const originalMaxWidth = el.style.maxWidth;
+      
+      // Force desktop-like width for better aspect ratio on long messages
+      el.style.width = '800px';
+      el.style.maxWidth = '800px';
+      
+      // Wait a moment for the browser to recalculate the layout
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      const newHeight = el.offsetHeight;
+
+      const dataUrl = await toPng(el, {
         cacheBust: true,
         pixelRatio: 2,
+        width: 800,
+        height: newHeight,
+        style: {
+          width: '800px',
+          maxWidth: '800px'
+        },
         filter: (node) => {
           return !node.dataset || node.dataset.html2canvasIgnore !== 'true';
         }
       });
+      
+      // Revert styles
+      el.style.width = originalWidth;
+      el.style.maxWidth = originalMaxWidth;
+      el.style.maxWidth = originalMaxWidth;
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = `laila-message-${message?.date || "archive"}.png`;
