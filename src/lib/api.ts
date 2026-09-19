@@ -2,6 +2,7 @@ export interface Message {
   id: string;
   date: string;
   message: string;
+  createdAt?: string;
 }
 
 export async function getMessages(): Promise<Message[]> {
@@ -18,10 +19,15 @@ export async function getMessages(): Promise<Message[]> {
     const messages = data.documents.map((doc: any) => ({
       id: doc.name.split('/').pop(),
       date: doc.fields.date.stringValue,
-      message: doc.fields.message.stringValue
+      message: doc.fields.message.stringValue,
+      createdAt: doc.fields.createdAt?.stringValue || doc.createTime || ""
     }));
     
-    return messages.sort((a: Message, b: Message) => b.date.localeCompare(a.date));
+    return messages.sort((a: Message, b: Message) => {
+      const dateCmp = b.date.localeCompare(a.date);
+      if (dateCmp !== 0) return dateCmp;
+      return (b.createdAt || "").localeCompare(a.createdAt || "");
+    });
   } catch (error) {
     console.error("Failed to fetch messages:", error);
     return [];

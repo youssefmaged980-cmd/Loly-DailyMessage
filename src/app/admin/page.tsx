@@ -82,23 +82,13 @@ export default function AdminPage() {
     setStatus("جاري الحفظ...");
 
     try {
-      // Check if a message for this date already exists
-      const q = query(collection(db, "messages"), where("date", "==", date));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        // Update existing message
-        const docRef = doc(db, "messages", querySnapshot.docs[0].id);
-        await updateDoc(docRef, { message });
-        setStatus("تم تحديث رسالة هذا اليوم بنجاح! ✅");
-      } else {
-        // Create new message
-        await addDoc(collection(db, "messages"), {
-          date,
-          message
-        });
-        setStatus("تم إضافة رسالة اليوم بنجاح! ✅");
-      }
+      // Always add as a new message so previous messages go to archive rather than being overwritten
+      await addDoc(collection(db, "messages"), {
+        date,
+        message,
+        createdAt: new Date().toISOString()
+      });
+      setStatus("تم نشر الرسالة بنجاح وحفظها! ✅");
 
       setMessage(""); // Clear message field
       fetchAllMessages();
