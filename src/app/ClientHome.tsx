@@ -281,25 +281,31 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
         {/* Archive Section */}
         <section className="mt-8 mb-12 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-          <h2 className="font-aref text-3xl text-wine mb-3 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
+          <h2 className="font-aref text-3xl text-wine mb-5 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
             <span className="text-2xl">📖</span> أرشيف الذكريات
           </h2>
 
-          <div className="text-center font-markazi text-2xl text-text-muted mb-6 opacity-85">
-            🌸 دا المكان الهيكون فيه كل كلمة حلوة بكتبهالك يا قلب بابا
+          <div className="flex justify-center mb-8 px-2">
+            <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-card-bg/70 border border-rose/40 shadow-[0_4px_20px_rgba(108,63,160,0.18)] backdrop-blur-md transition-transform hover:scale-[1.02]">
+              <span className="text-xl">🌸</span>
+              <span className="font-markazi text-2xl text-wine dark:text-rose-pale font-medium tracking-wide">
+                دا المكان الهيكون فيه كل كلمة حلوة بكتبهالك يا قلب بابا
+              </span>
+              <span className="text-xl">🌸</span>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-4 max-h-[45vh] overflow-y-auto px-4 py-2 scrollbar-timeline">
+          <div className="flex flex-col gap-4 max-h-[45vh] overflow-y-auto px-2 py-1 scrollbar-timeline w-full">
             {messages.filter(msg => msg.id !== currentMessage?.id).map((msg) => (
               <Link
                 key={msg.id}
                 href={`/message/${msg.id}`}
-                className="border p-5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:-translate-y-1 hover:shadow-md bg-card-bg/60 border-border-color hover:bg-rose-pale/40 hover:border-rose/50 backdrop-blur-sm no-underline group"
+                className="w-full border p-5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:-translate-y-1 hover:shadow-lg bg-card-bg/70 border-border-color hover:bg-rose-pale/30 hover:border-rose/60 backdrop-blur-md no-underline group"
               >
-                <span className="font-aref text-2xl text-wine/80 drop-shadow-sm group-hover:text-wine transition-colors">
+                <span className="font-aref text-2xl text-wine/90 drop-shadow-sm group-hover:text-wine transition-colors">
                   {formatDateArabic(msg.date)}
                 </span>
-                <span className="font-markazi text-xl sm:max-w-[70%] text-right text-rose-pale drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(185,154,230,0.9)] group-hover:text-paper transition-all duration-300 bg-wine/20 px-4 py-1.5 rounded-full border border-rose/30">
+                <span className="font-markazi text-xl sm:max-w-[70%] text-right text-rose-pale drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(185,154,230,0.9)] group-hover:text-paper transition-all duration-300 bg-wine/25 px-4 py-1.5 rounded-full border border-rose/30">
                   اقري مسدج قديمة وافتكري ذكرياتنا يا روحي
                 </span>
               </Link>
