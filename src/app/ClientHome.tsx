@@ -296,8 +296,8 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 <span className="font-aref text-2xl text-wine/80 drop-shadow-sm group-hover:text-wine transition-colors">
                   {formatDateArabic(msg.date)}
                 </span>
-                <span className="font-markazi text-xl sm:max-w-[70%] text-right text-ellipsis overflow-hidden break-words line-clamp-2 text-text-muted opacity-80 group-hover:opacity-100 transition-opacity">
-                  {msg.message}
+                <span className="font-markazi text-xl sm:max-w-[70%] text-right text-text-muted opacity-80 group-hover:opacity-100 transition-opacity">
+                  اقري مسدج قديمة وافتكري ذكرياتنا يا روحي
                 </span>
               </Link>
             ))}
