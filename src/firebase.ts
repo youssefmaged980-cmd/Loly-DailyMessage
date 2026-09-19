@@ -3,12 +3,12 @@ import { getFirestore } from "firebase/firestore";
 
 // TODO: Replace with your actual Firebase config
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  apiKey: "AIzaSyA1oc53lGQDU7-D8sfDCgORzkFiP_Wbvyo",
+  authDomain: "lolo-daily-messa.firebaseapp.com",
+  projectId: "lolo-daily-messa",
+  storageBucket: "lolo-daily-messa.firebasestorage.app",
+  messagingSenderId: "878339416800",
+  appId: "1:878339416800:web:efa8c9594af1c015146685"
 };
 
 // Initialize Firebase only once

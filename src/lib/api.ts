@@ -6,7 +6,7 @@ export interface Message {
 
 export async function getMessages(): Promise<Message[]> {
   try {
-    const res = await fetch(`https://firestore.googleapis.com/v1/projects/${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}/databases/(default)/documents/messages`, {
+    const res = await fetch(`https://firestore.googleapis.com/v1/projects/lolo-daily-messa/databases/(default)/documents/messages`, {
       cache: 'no-store'
     });
     
@@ -30,7 +30,7 @@ export async function getMessages(): Promise<Message[]> {
 
 export async function getMessage(id: string): Promise<Message | null> {
   try {
-    const res = await fetch(`https://firestore.googleapis.com/v1/projects/${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}/databases/(default)/documents/messages/${id}`, {
+    const res = await fetch(`https://firestore.googleapis.com/v1/projects/lolo-daily-messa/databases/(default)/documents/messages/${id}`, {
       cache: 'no-store'
     });
     
