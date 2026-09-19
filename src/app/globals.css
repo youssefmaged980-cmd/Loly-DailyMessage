@@ -127,12 +127,32 @@ body {
 .floral-corner-bl { bottom: 15px; left: 15px; transform: rotate(-90deg); }
 .floral-corner-br { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
-/* Custom Scrollbar for Timeline */
+/* Universal Sleek Scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(185, 154, 230, 0.4) transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(185, 154, 230, 0.35);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(185, 154, 230, 0.65);
+}
+
+/* Custom Scrollbar for Timeline & Containers */
 .scrollbar-timeline::-webkit-scrollbar {
   width: 6px;
 }
 .scrollbar-timeline::-webkit-scrollbar-track {
-  background: rgba(220, 204, 245, 0.1);
+  background: rgba(220, 204, 245, 0.05);
   border-radius: 10px;
 }
 .scrollbar-timeline::-webkit-scrollbar-thumb {
