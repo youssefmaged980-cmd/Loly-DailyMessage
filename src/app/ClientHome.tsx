@@ -23,6 +23,14 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   const [timeTogether, setTimeTogether] = useState<TimeTogether | null>(null);
   const messageRef = useRef<HTMLElement>(null);
 
+  const getTodayString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   useEffect(() => {
     // Generate flying petals and hearts
     createEffects();
@@ -51,13 +59,10 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     calculateTime();
     const timer = setInterval(calculateTime, 1000);
 
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayString = `${yyyy}-${mm}-${dd}`;
-
+    const todayString = getTodayString();
     const validMessages = initialMessages.filter((m: Message) => m.date <= todayString);
+    setMessages(validMessages);
+
     if (validMessages.length > 0) {
       setCurrentMessage(validMessages[0]);
     } else {
@@ -296,7 +301,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
 
           <div className="flex flex-col gap-4 max-h-[45vh] overflow-y-auto px-2 py-1 scrollbar-timeline w-full">
-            {messages.filter(msg => msg.id !== currentMessage?.id).map((msg) => (
+            {messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= getTodayString()).map((msg) => (
               <Link
                 key={msg.id}
                 href={`/message/${msg.id}`}
