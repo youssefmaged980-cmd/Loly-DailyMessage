@@ -154,9 +154,21 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
       await new Promise(r => setTimeout(r, 200));
 
       const { toPng } = await import('html-to-image');
+      
+      // Force layout calculation
+      wrapper.getBoundingClientRect();
+      
       const dataUrl = await toPng(wrapper, {
         cacheBust: true,
         pixelRatio: 2,
+        width: width,
+        style: {
+          width: `${width}px`,
+          transform: 'none',
+          left: '0',
+          top: '0',
+          position: 'static'
+        }
       });
 
       document.body.removeChild(wrapper);
