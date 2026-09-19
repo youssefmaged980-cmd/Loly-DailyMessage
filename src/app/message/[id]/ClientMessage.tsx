@@ -107,7 +107,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
     <>
       <div id="effectsContainer" className="fixed top-0 left-0 w-screen h-screen overflow-hidden z-0 pointer-events-none"></div>
 
-      <div className="w-full max-w-[650px] mx-auto p-6 md:p-10 flex flex-col items-center justify-center relative z-10 min-h-screen">
+      <div className="w-full max-w-[680px] md:max-w-[780px] lg:max-w-[860px] mx-auto p-4 sm:p-6 md:p-10 flex flex-col items-center justify-center relative z-10 min-h-screen">
 
         <div className="w-full flex justify-between items-center mb-6">
           <Link
@@ -130,25 +130,25 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
         <main
           ref={messageRef}
           style={{ backgroundColor: 'var(--card-bg)' }}
-          className="w-full rounded-[32px] py-14 px-8 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[300px] flex flex-col justify-center items-center gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
+          className="w-full rounded-[32px] pt-12 sm:pt-14 pb-10 px-6 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
         >
-          <FloralCorner className="floral-corner-tl" />
-          <FloralCorner className="floral-corner-tr" />
-          <FloralCorner className="floral-corner-bl" />
-          <FloralCorner className="floral-corner-br" />
+          <FloralCorner className="floral-corner-tl opacity-50 group-hover:opacity-75 transition-opacity" />
+          <FloralCorner className="floral-corner-tr opacity-50 group-hover:opacity-75 transition-opacity" />
+          <FloralCorner className="floral-corner-bl opacity-50 group-hover:opacity-75 transition-opacity" />
+          <FloralCorner className="floral-corner-br opacity-50 group-hover:opacity-75 transition-opacity" />
 
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
 
-          <div className="relative z-10 w-full mb-2 flex flex-col items-center">
-            <h1 className="font-aref text-2xl md:text-4xl text-wine mb-2 drop-shadow-sm relative inline-block">
-              <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-rose text-xl opacity-70">❦</span>
+          <div className="relative z-10 w-full mb-1 sm:mb-2 flex flex-col items-center">
+            <h1 className="font-aref text-2xl sm:text-3xl md:text-4xl text-wine-deep dark:text-[#F3ECFB] dark:drop-shadow-[0_0_12px_rgba(185,154,230,0.55)] mb-2 drop-shadow-sm relative inline-block">
+              <span className="absolute -left-7 sm:-left-9 top-1/2 -translate-y-1/2 text-rose text-lg sm:text-xl opacity-75">❦</span>
               {message ? formatDateArabic(message.date) : ""}
-              <span className="absolute -right-8 top-1/2 -translate-y-1/2 text-rose text-xl opacity-70 flex scale-x-[-1]">❦</span>
+              <span className="absolute -right-7 sm:-right-9 top-1/2 -translate-y-1/2 text-rose text-lg sm:text-xl opacity-75 flex scale-x-[-1]">❦</span>
             </h1>
           </div>
 
-          <div className="text-2xl md:text-3xl leading-[2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-4 md:px-12 break-words w-full max-w-full whitespace-pre-wrap">
+          <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-2 sm:px-6 md:px-10 break-words w-full max-w-full whitespace-pre-wrap">
             {message?.message}
           </div>
 
