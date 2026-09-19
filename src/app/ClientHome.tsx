@@ -302,17 +302,17 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
         {/* Archive Section */}
         <section className="mt-8 mb-12 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-          <h2 className="font-aref text-3xl text-wine mb-5 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
+          <h2 className="font-aref text-3xl text-wine mb-7 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
             <span className="text-2xl">📖</span> أرشيف الذكريات
           </h2>
 
-          <div className="flex justify-center mb-6 sm:mb-8 px-1">
-            <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-white/85 dark:bg-[#1E142B]/90 border-2 border-wine/35 dark:border-rose/60 shadow-[0_4px_20px_rgba(90,39,128,0.15)] dark:shadow-[0_0_25px_rgba(185,154,230,0.45),inset_0_0_15px_rgba(185,154,230,0.15)] backdrop-blur-md transition-all whitespace-nowrap max-w-full overflow-x-auto">
-              <span className="text-sm sm:text-lg shrink-0 animate-pulse drop-shadow-[0_0_6px_rgba(255,105,180,0.7)]">🌸</span>
-              <span className="font-markazi text-xs sm:text-base md:text-xl text-wine-deep dark:text-[#F8F4FF] font-extrabold tracking-wide text-center whitespace-nowrap dark:drop-shadow-[0_0_10px_rgba(185,154,230,0.7)]">
+          <div className="flex justify-center mt-2 mb-7 sm:mb-8 px-1">
+            <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-white/90 dark:bg-[#1E142B]/90 border-2 border-rose/50 dark:border-rose/60 shadow-[0_0_22px_rgba(142,74,159,0.35),0_4px_15px_rgba(90,39,128,0.12),inset_0_0_12px_rgba(255,255,255,0.8)] dark:shadow-[0_0_25px_rgba(185,154,230,0.45),inset_0_0_15px_rgba(185,154,230,0.15)] backdrop-blur-md transition-all whitespace-nowrap max-w-full overflow-x-auto hover:scale-[1.02]">
+              <span className="text-sm sm:text-lg shrink-0 animate-pulse drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">🌸</span>
+              <span className="font-markazi text-xs sm:text-base md:text-xl text-wine-deep dark:text-[#F8F4FF] font-extrabold tracking-wide text-center whitespace-nowrap drop-shadow-[0_0_6px_rgba(142,74,159,0.2)] dark:drop-shadow-[0_0_10px_rgba(185,154,230,0.7)]">
                 دا المكان الهيكون فيه كل كلمة حلوة بكتبهالك يا قلب بابا
               </span>
-              <span className="text-sm sm:text-lg shrink-0 animate-pulse drop-shadow-[0_0_6px_rgba(255,105,180,0.7)]">🌸</span>
+              <span className="text-sm sm:text-lg shrink-0 animate-pulse drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">🌸</span>
             </div>
           </div>
 
