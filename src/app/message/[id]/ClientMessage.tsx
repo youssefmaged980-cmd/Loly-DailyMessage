@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
+import { generateCardImage } from "@/lib/exportCard";
 
 interface Message {
   id: string;
@@ -50,133 +51,16 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
   const downloadImage = async () => {
     if (!message) return;
     try {
-      const text = message.message || '';
-      const lines = text.split('\n');
-      const lineCount = lines.length;
-      const msgLength = text.length;
-
-      // رسائل فيها أسطر كتير (كل جملة في سطر) بنقسمها لعواميد يدويًا
-      // (CSS column-count مش بيتحترم صح جوه رندر html-to-image فاستخدمنا flexbox بدل منه)
-      let columns = 1;
-      if (lineCount > 55) columns = 3;
-      else if (lineCount > 24) columns = 2;
-
-      const fontSize = msgLength < 80 ? 30 : msgLength < 250 ? 24 : msgLength < 600 ? 20 : msgLength < 1200 ? 18 : 16;
-
-      const baseWidth = 1080;
-      const width = baseWidth + (columns - 1) * 480; // كل عمود إضافي بيوسع الكارت
-
-      // KEY FIX: position:absolute + visibility:hidden
-      // position:fixed on mobile is constrained to viewport width
-      // position:absolute renders at our explicit width regardless of viewport
-      const wrapper = document.createElement('div');
-      wrapper.style.cssText = `
-        position: absolute;
-        top: 0;
-        left: 0;
-        visibility: hidden;
-        width: ${width}px;
-        direction: rtl;
-        background-color: #1F162B;
-        border-radius: 32px;
-        padding: 48px 60px;
-        border: 1px solid rgba(185,154,230,0.3);
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-        box-sizing: border-box;
-      `;
-
-      const dateEl = document.createElement('div');
-      dateEl.style.cssText = `
-        color: #B99AE6;
-        font-size: 24px;
-        font-weight: bold;
-        line-height: 1.5;
-        width: 100%;
-        text-align: center;
-      `;
-      dateEl.innerText = formatDateArabic(message.date);
-
-      const dividerEl = document.createElement('div');
-      dividerEl.style.cssText = `
-        width: 60%;
-        height: 1px;
-        margin: 0 auto;
-        background: linear-gradient(to right, transparent, rgba(185,154,230,0.5), transparent);
-      `;
-
-      const msgWrap = document.createElement('div');
-      msgWrap.style.cssText = `
-        display: flex;
-        flex-direction: row;
-        gap: 48px;
-        width: 100%;
-        direction: rtl;
-      `;
-
-      const colStyle = `
-        color: #F8F5FF;
-        font-size: ${fontSize}px;
-        line-height: 1.6;
-        white-space: pre-wrap;
-        overflow-wrap: break-word;
-        word-break: normal;
-        text-align: right;
-        direction: rtl;
-        flex: 1 1 0;
-        min-width: 0;
-      `;
-
-      if (columns === 1) {
-        const colEl = document.createElement('div');
-        colEl.style.cssText = colStyle;
-        colEl.innerText = text;
-        msgWrap.appendChild(colEl);
-      } else {
-        const perCol = Math.ceil(lineCount / columns);
-        for (let c = 0; c < columns; c++) {
-          const chunk = lines.slice(c * perCol, (c + 1) * perCol).join('\n');
-          if (!chunk) continue;
-          const colEl = document.createElement('div');
-          colEl.style.cssText = colStyle;
-          colEl.innerText = chunk;
-          msgWrap.appendChild(colEl);
-        }
-      }
-
-      wrapper.appendChild(dateEl);
-      wrapper.appendChild(dividerEl);
-      wrapper.appendChild(msgWrap);
-      document.body.appendChild(wrapper);
-
-      await new Promise(r => setTimeout(r, 200));
-
-      const { toPng } = await import('html-to-image');
-      
-      // Force layout calculation
-      wrapper.getBoundingClientRect();
-      
-      const dataUrl = await toPng(wrapper, {
-        cacheBust: true,
-        pixelRatio: 2,
-        width: width,
-        style: {
-          width: `${width}px`,
-          transform: 'none',
-          left: '0',
-          top: '0',
-          position: 'static'
-        }
+      const dataUrl = await generateCardImage({
+        date: message.date,
+        messageText: message.message,
       });
-
-      document.body.removeChild(wrapper);
-
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `laila-message.png`;
+      link.download = `laila-message-${message.date || 'today'}.png`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (err) {
       console.error('Image error:', err);
       alert('حدث خطأ أثناء حفظ الصورة');
@@ -230,7 +114,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
             </h1>
           </div>
 
-          <div className="text-2xl md:text-3xl leading-[2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-4 md:px-12 break-words w-full max-w-full">
+          <div className="text-2xl md:text-3xl leading-[2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-4 md:px-12 break-words w-full max-w-full whitespace-pre-wrap">
             {message?.message}
           </div>
 

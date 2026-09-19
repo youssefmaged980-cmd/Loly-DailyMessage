@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { toPng } from "html-to-image";
+import { generateCardImage } from "@/lib/exportCard";
 
 interface Message {
   id: string;
@@ -103,19 +103,18 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   };
 
   const downloadImage = async () => {
-    if (!messageRef.current) return;
+    if (!currentMessage) return;
     try {
-      const dataUrl = await toPng(messageRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        filter: (node) => {
-          return !node.dataset || node.dataset.html2canvasIgnore !== 'true';
-        }
+      const dataUrl = await generateCardImage({
+        date: currentMessage.date,
+        messageText: currentMessage.message,
       });
       const link = document.createElement("a");
       link.href = dataUrl;
-      link.download = `laila-message-${currentMessage?.date || "today"}.png`;
+      link.download = `laila-message-${currentMessage.date || "today"}.png`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (error) {
       console.error("Error generating image:", error);
       alert("حدث خطأ أثناء حفظ الصورة");
@@ -263,7 +262,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             </h1>
           </div>
 
-          <div className="text-2xl md:text-3xl leading-[2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-4 md:px-12 break-words w-full max-w-full">
+          <div className="text-2xl md:text-3xl leading-[2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-4 md:px-12 break-words w-full max-w-full whitespace-pre-wrap">
             {currentMessage?.message}
           </div>
 
