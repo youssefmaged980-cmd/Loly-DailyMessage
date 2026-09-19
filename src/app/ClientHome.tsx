@@ -305,13 +305,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
               <Link
                 key={msg.id}
                 href={`/message/${msg.id}`}
-                className="w-full border p-5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:-translate-y-1 hover:shadow-lg bg-card-bg/70 border-border-color hover:bg-rose-pale/30 hover:border-rose/60 backdrop-blur-md no-underline group"
+                className="w-full min-h-[64px] border px-4 py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex items-center justify-between gap-3 hover:-translate-y-0.5 hover:shadow-lg bg-card-bg/70 border-border-color hover:bg-rose-pale/30 hover:border-rose/60 backdrop-blur-md no-underline group"
               >
-                <span className="font-aref text-2xl text-wine/90 drop-shadow-sm group-hover:text-wine transition-colors">
+                <span className="font-aref text-lg sm:text-xl md:text-2xl text-wine/90 drop-shadow-sm group-hover:text-wine transition-colors whitespace-nowrap shrink-0">
                   {formatDateArabic(msg.date)}
                 </span>
-                <span className="font-markazi text-xl sm:max-w-[70%] text-right text-rose-pale drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(185,154,230,0.9)] group-hover:text-paper transition-all duration-300 bg-wine/25 px-4 py-1.5 rounded-full border border-rose/30">
-                  اقري مسدج قديمة وافتكري ذكرياتنا يا روحي
+                <span className="font-markazi text-base sm:text-lg md:text-xl text-center text-rose-pale drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(185,154,230,0.9)] group-hover:text-paper transition-all duration-300 bg-wine/25 px-3.5 py-1.5 rounded-full border border-rose/30 whitespace-nowrap shrink-0">
+                  افتكري ذكرياتنا يا روحي 💌
                 </span>
               </Link>
             ))}
