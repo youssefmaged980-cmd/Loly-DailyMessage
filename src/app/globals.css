@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #FFE4E1; /* MistyRose - warmer, more vibrant */
+  --paper: #FFF0F5; /* LavenderBlush */
+  --wine: #C21E56; /* Vivid Rose-Red */
+  --wine-deep: #7A1736; /* Deep rich wine */
+  --rose: #F96E8F; /* Vivid pink */
+  --rose-pale: #FCE8EC; /* Soft glow */
+  --gold: #D4AF37; /* Classic bright gold */
+  --ink: #3A1B24; /* Deep burgundy */
+  --ink-soft: #8A5A6A; /* Soft mauve */
+  
+  --bg-color: var(--paper);
+  --card-bg: var(--cream);
+  --text-main: var(--ink);
+  --text-muted: var(--ink-soft);
+  --border-color: rgba(249, 110, 143, 0.4);
+  --shadow: 0 15px 35px rgba(194, 30, 86, 0.15);
+  --card-shadow: 0 10px 30px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(249, 110, 143, 0.2);
+}
+
+:root[data-theme="dark"] {
+  --bg-color: #1A1214; /* Deep elegant near-black rose */
+  --card-bg: #2C1D22; /* Rich dark card */
+  --text-main: #FFF7F9;
+  --text-muted: #E89EAE; /* Vivid muted rose instead of pale gray */
+  --border-color: rgba(249, 110, 143, 0.3);
+  --shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(249, 110, 143, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-color: #1A1214;
+    --card-bg: #2C1D22;
+    --text-main: #FFF7F9;
+    --text-muted: #E89EAE;
+    --border-color: rgba(249, 110, 143, 0.3);
+    --shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(249, 110, 143, 0.1);
+  }
+}
+
+@theme inline {
+  --color-bg-color: var(--bg-color);
+  --color-card-bg: var(--card-bg);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-border-color: var(--border-color);
+  --color-wine: var(--wine);
+  --color-wine-deep: var(--wine-deep);
+  --color-rose: var(--rose);
+  --color-rose-pale: var(--rose-pale);
+  --color-gold: var(--gold);
+  --color-ink: var(--ink);
+  
+  --font-aref: var(--font-aref);
+  --font-markazi: var(--font-markazi);
+  --font-cormorant: var(--font-cormorant);
+
+  --animate-float-up: float-up 15s linear infinite;
+  --animate-petal-fall: petal-fall 10s linear infinite;
+  --animate-pulse-slow: pulse-slow 4s ease-in-out infinite;
+  --animate-fade-in-up: fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-markazi), Arial, sans-serif;
+  overflow-x: hidden;
+  background-image: radial-gradient(circle at center, rgba(232, 158, 174, 0.1) 0%, transparent 70%);
+}
+
+/* Animations */
+@keyframes float-up {
+  0% { transform: translateY(110vh) scale(0.5) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-10vh) scale(1.2) rotate(45deg); opacity: 0; }
+}
+
+@keyframes petal-fall {
+  0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(110vh) rotate(360deg) scale(0.8); opacity: 0; }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232, 158, 174, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(232, 158, 174, 0); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Message Card Decorative Corners */
+.floral-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.floral-corner-tl { top: 15px; left: 15px; transform: rotate(0deg); }
+.floral-corner-tr { top: 15px; right: 15px; transform: rotate(90deg); }
+.floral-corner-bl { bottom: 15px; left: 15px; transform: rotate(-90deg); }
+.floral-corner-br { bottom: 15px; right: 15px; transform: rotate(180deg); }
+
+/* Custom Scrollbar for Timeline */
+.scrollbar-timeline::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-timeline::-webkit-scrollbar-track {
+  background: rgba(232, 158, 174, 0.1);
+  border-radius: 10px;
+}
+.scrollbar-timeline::-webkit-scrollbar-thumb {
+  background: var(--rose);
+  border-radius: 10px;
+}
