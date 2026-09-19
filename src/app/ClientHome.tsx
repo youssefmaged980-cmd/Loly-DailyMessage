@@ -304,12 +304,6 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 </span>
               </Link>
             ))}
-
-            {messages.filter(msg => msg.id !== currentMessage?.id).length === 0 && (
-              <div className="text-center font-markazi text-xl text-text-muted mt-4 opacity-60">
-                (أول ما يمر يوم جديد، الرسايل السابقة هتظهر هنا علطول يا روحي 💕)
-              </div>
-            )}
           </div>
         </section>
       </div>
