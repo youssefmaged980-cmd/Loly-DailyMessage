@@ -1,0 +1,51 @@
+export interface Message {
+  id: string;
+  date: string;
+  message: string;
+}
+
+export async function getMessages(): Promise<Message[]> {
+  try {
+    const res = await fetch(`https://firestore.googleapis.com/v1/projects/${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}/databases/(default)/documents/messages`, {
+      cache: 'no-store'
+    });
+    
+    if (!res.ok) return [];
+    
+    const data = await res.json();
+    if (!data.documents) return [];
+    
+    const messages = data.documents.map((doc: any) => ({
+      id: doc.name.split('/').pop(),
+      date: doc.fields.date.stringValue,
+      message: doc.fields.message.stringValue
+    }));
+    
+    return messages.sort((a: Message, b: Message) => b.date.localeCompare(a.date));
+  } catch (error) {
+    console.error("Failed to fetch messages:", error);
+    return [];
+  }
+}
+
+export async function getMessage(id: string): Promise<Message | null> {
+  try {
+    const res = await fetch(`https://firestore.googleapis.com/v1/projects/${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}/databases/(default)/documents/messages/${id}`, {
+      cache: 'no-store'
+    });
+    
+    if (!res.ok) return null;
+    
+    const data = await res.json();
+    if (!data.fields) return null;
+    
+    return {
+      id: data.name.split('/').pop(),
+      date: data.fields.date.stringValue,
+      message: data.fields.message.stringValue
+    };
+  } catch (error) {
+    console.error("Failed to fetch message:", error);
+    return null;
+  }
+}

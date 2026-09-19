@@ -63,7 +63,7 @@ export default function AdminPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // A simple password for now. The user can change this in the code.
-    if (password === "Laila2026") {
+    if (password === "laila") {
       setIsAuthenticated(true);
     } else {
       setStatus("كلمة المرور خاطئة!");
@@ -184,7 +184,7 @@ export default function AdminPage() {
           </a>
         </div>
       </div>
-      
+
       {/* إدارة الرسائل السابقة */}
       <div className="bg-card-bg p-6 rounded-2xl shadow-[var(--shadow)] border border-border-color w-full max-w-md mt-8">
         <h2 className="font-aref text-2xl text-wine mb-4 text-center">إدارة الرسائل 🗂️</h2>
@@ -193,7 +193,7 @@ export default function AdminPage() {
             <div key={msg.id} className="border border-border-color p-3 rounded-xl flex flex-col gap-2 bg-bg-color/50">
               <div className="flex justify-between items-center border-b border-border-color pb-2">
                 <span className="font-markazi text-lg text-wine font-bold">{msg.date}</span>
-                <button 
+                <button
                   onClick={() => handleDelete(msg.id)}
                   className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1 rounded-lg transition-colors font-markazi text-lg border border-red-500/30"
                 >
