@@ -50,19 +50,31 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
   const downloadImage = async () => {
     if (!message) return;
     try {
-      const msgLength = message.message?.length || 0;
-      const fontSize = msgLength < 80 ? 30 : msgLength < 250 ? 24 : msgLength < 600 ? 19 : msgLength < 1200 ? 16 : 14;
+      const text = message.message || '';
+      const lineCount = text.split('\n').length;
+      const msgLength = text.length;
+
+      // رسائل فيها أسطر كتير (كل جملة في سطر) بناخدها لعواميد جنب بعض
+      // بدل ما تطول الصورة للأبد لأن pre-wrap بيحافظ على كل Enter كسطر مستقل
+      let columns = 1;
+      if (lineCount > 55) columns = 3;
+      else if (lineCount > 24) columns = 2;
+
+      const fontSize = msgLength < 80 ? 30 : msgLength < 250 ? 24 : msgLength < 600 ? 20 : msgLength < 1200 ? 18 : 16;
+
+      const baseWidth = 1080;
+      const width = baseWidth + (columns - 1) * 480; // كل عمود إضافي بيوسع الكارت
 
       // KEY FIX: position:absolute + visibility:hidden
       // position:fixed on mobile is constrained to viewport width
-      // position:absolute renders at our explicit 1080px width regardless of viewport
+      // position:absolute renders at our explicit width regardless of viewport
       const wrapper = document.createElement('div');
       wrapper.style.cssText = `
         position: absolute;
         top: 0;
         left: 0;
         visibility: hidden;
-        width: 1080px;
+        width: ${width}px;
         direction: rtl;
         background-color: #1F162B;
         border-radius: 32px;
@@ -70,7 +82,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
         border: 1px solid rgba(185,154,230,0.3);
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         gap: 16px;
         box-sizing: border-box;
       `;
@@ -98,15 +110,16 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
       msgEl.style.cssText = `
         color: #F8F5FF;
         font-size: ${fontSize}px;
-        line-height: 1.7;
+        line-height: 1.6;
         white-space: pre-wrap;
         overflow-wrap: break-word;
         word-break: normal;
         width: 100%;
         text-align: right;
         direction: rtl;
+        ${columns > 1 ? `column-count: ${columns}; column-gap: 48px;` : ''}
       `;
-      msgEl.innerText = message.message || '';
+      msgEl.innerText = text;
 
       wrapper.appendChild(dateEl);
       wrapper.appendChild(dividerEl);
