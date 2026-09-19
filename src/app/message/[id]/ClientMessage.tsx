@@ -54,117 +54,140 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
     try {
       const canvas = document.createElement('canvas');
       const cardWidth = 900;
-      const padding = 64;
+      const padding = 72;
       const textWidth = cardWidth - padding * 2;
       const ctx = canvas.getContext('2d')!;
+      ctx.direction = 'rtl'; // Set RTL BEFORE any text ops
 
       const dateText = formatDateArabic(message.date);
       const msgText = message.message || '';
 
-      // Determine font size based on message length
+      // Font size based on message length
       const msgLength = msgText.length;
-      const fontSize = msgLength < 100 ? 36 : msgLength < 300 ? 28 : msgLength < 700 ? 22 : 18;
+      const fontSize = msgLength < 100 ? 34 : msgLength < 300 ? 26 : msgLength < 700 ? 20 : 16;
 
-      // Helper: wrap text into lines
-      const getLines = (text: string, font: string, maxWidth: number) => {
+      const arabicFont = `"Segoe UI", "Arial", "Tahoma", serif`;
+      const dateFont = `bold 28px ${arabicFont}`;
+      const msgFont = `${fontSize}px ${arabicFont}`;
+
+      // Wrap text into lines (handles both LTR and RTL, splits by \n too)
+      const getLines = (text: string, font: string, maxWidth: number): string[] => {
         ctx.font = font;
-        const wordArr = text.split(' ');
-        const lines: string[] = [];
-        let current = '';
-        for (const word of wordArr) {
-          const test = current ? current + ' ' + word : word;
-          if (ctx.measureText(test).width > maxWidth && current) {
-            lines.push(current);
-            current = word;
-          } else {
-            current = test;
+        ctx.direction = 'rtl';
+        const paragraphs = text.split('\n');
+        const allLines: string[] = [];
+        for (const para of paragraphs) {
+          if (para.trim() === '') { allLines.push(''); continue; }
+          const words = para.split(' ');
+          let current = '';
+          for (const word of words) {
+            const test = current ? current + ' ' + word : word;
+            const width = ctx.measureText(test).width;
+            if (width > maxWidth && current) {
+              allLines.push(current);
+              current = word;
+            } else if (ctx.measureText(word).width > maxWidth) {
+              // Single word wider than line — force push it
+              if (current) { allLines.push(current); current = ''; }
+              allLines.push(word);
+            } else {
+              current = test;
+            }
           }
+          if (current) allLines.push(current);
         }
-        if (current) lines.push(current);
-        return lines;
+        return allLines;
       };
 
-      const dateFont = `bold 32px serif`;
-      const msgFont = `${fontSize}px serif`;
-
       const dateLines = getLines(dateText, dateFont, textWidth);
-      const msgLines = getLines(msgText, msgFont, textWidth);
+      const msgLines  = getLines(msgText,  msgFont,  textWidth);
 
-      const lineHeightDate = 48;
-      const lineHeightMsg = fontSize * 1.9;
-      const topPad = 80;
-      const bottomPad = 80;
-      const dateSection = dateLines.length * lineHeightDate + 32;
-      const msgSection = msgLines.length * lineHeightMsg;
-      const cardHeight = topPad + dateSection + msgSection + bottomPad;
+      const lineHDate = 44;
+      const lineHMsg  = fontSize * 1.85;
+      const topPad    = 70;
+      const botPad    = 70;
+      const dateSec   = dateLines.length * lineHDate + 20;
+      const msgSec    = msgLines.length  * lineHMsg;
 
-      canvas.width = cardWidth;
-      canvas.height = Math.max(cardHeight, 500);
+      canvas.width  = cardWidth;
+      canvas.height = Math.max(topPad + dateSec + msgSec + botPad, 500);
 
-      // Background
+      // Re-set direction after resize (canvas resets on resize)
+      ctx.direction = 'rtl';
+
+      // ── Background ──────────────────────────────────────────
       ctx.fillStyle = '#1F162B';
       ctx.beginPath();
-      ctx.roundRect(0, 0, cardWidth, canvas.height, 40);
+      (ctx as any).roundRect(0, 0, cardWidth, canvas.height, 40);
       ctx.fill();
 
-      // Top gradient line
-      const topGrad = ctx.createLinearGradient(cardWidth * 0.2, 0, cardWidth * 0.8, 0);
-      topGrad.addColorStop(0, 'transparent');
-      topGrad.addColorStop(0.5, 'rgba(185,154,230,0.6)');
-      topGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = topGrad;
-      ctx.fillRect(cardWidth * 0.2, 12, cardWidth * 0.6, 2);
+      // Subtle inner glow
+      const glow = ctx.createRadialGradient(cardWidth/2, 0, 0, cardWidth/2, 0, cardWidth * 0.8);
+      glow.addColorStop(0,   'rgba(185,154,230,0.08)');
+      glow.addColorStop(1,   'transparent');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, cardWidth, canvas.height);
 
-      // Bottom gradient line
-      const botGrad = ctx.createLinearGradient(cardWidth * 0.2, 0, cardWidth * 0.8, 0);
-      botGrad.addColorStop(0, 'transparent');
-      botGrad.addColorStop(0.5, 'rgba(185,154,230,0.6)');
-      botGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = botGrad;
-      ctx.fillRect(cardWidth * 0.2, canvas.height - 14, cardWidth * 0.6, 2);
+      // ── Top/Bottom gradient lines ────────────────────────────
+      const makeLine = (yPos: number) => {
+        const g = ctx.createLinearGradient(cardWidth*0.2, 0, cardWidth*0.8, 0);
+        g.addColorStop(0,   'transparent');
+        g.addColorStop(0.5, 'rgba(185,154,230,0.7)');
+        g.addColorStop(1,   'transparent');
+        ctx.fillStyle = g;
+        ctx.fillRect(cardWidth*0.2, yPos, cardWidth*0.6, 2);
+      };
+      makeLine(14);
+      makeLine(canvas.height - 16);
 
-      // Date text
+      // ── Date ────────────────────────────────────────────────
       ctx.textAlign = 'center';
-      ctx.direction = 'rtl';
       ctx.fillStyle = '#B99AE6';
       ctx.font = dateFont;
       let y = topPad;
       for (const line of dateLines) {
         ctx.fillText(line, cardWidth / 2, y);
-        y += lineHeightDate;
+        y += lineHDate;
       }
 
-      // Divider
-      y += 8;
-      ctx.fillStyle = 'rgba(185,154,230,0.3)';
-      ctx.fillRect(cardWidth * 0.3, y, cardWidth * 0.4, 1);
-      y += 32;
+      // ── Thin divider ─────────────────────────────────────────
+      y += 10;
+      const div = ctx.createLinearGradient(cardWidth*0.25, 0, cardWidth*0.75, 0);
+      div.addColorStop(0,   'transparent');
+      div.addColorStop(0.5, 'rgba(185,154,230,0.5)');
+      div.addColorStop(1,   'transparent');
+      ctx.fillStyle = div;
+      ctx.fillRect(cardWidth*0.25, y, cardWidth*0.5, 1);
+      y += 28;
 
-      // Message text
+      // ── Message ──────────────────────────────────────────────
       ctx.fillStyle = '#F8F5FF';
       ctx.font = msgFont;
       for (const line of msgLines) {
+        if (line === '') { y += lineHMsg * 0.5; continue; }
         ctx.fillText(line, cardWidth / 2, y);
-        y += lineHeightMsg;
+        y += lineHMsg;
       }
 
-      // Border
-      ctx.strokeStyle = 'rgba(185,154,230,0.3)';
+      // ── Border ───────────────────────────────────────────────
+      ctx.strokeStyle = 'rgba(185,154,230,0.35)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.roundRect(2, 2, cardWidth - 4, canvas.height - 4, 40);
+      (ctx as any).roundRect(2, 2, cardWidth-4, canvas.height-4, 40);
       ctx.stroke();
 
+      // ── Download ──────────────────────────────────────────────
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `laila-message-${message.date || 'archive'}.png`;
+      link.download = `laila-message.png`;
       link.click();
-    } catch (error) {
-      console.error('Error generating image:', error);
+    } catch (err) {
+      console.error('Image error:', err);
       alert('حدث خطأ أثناء حفظ الصورة');
     }
   };
+
 
 
   const formatDateArabic = (dateString: string) => {
