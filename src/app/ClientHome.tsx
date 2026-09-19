@@ -182,7 +182,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
       <div id="effectsContainer" className="fixed top-0 left-0 w-screen h-screen overflow-hidden z-0 pointer-events-none"></div>
 
-      <div className="w-full max-w-[650px] mx-auto p-6 md:p-10 flex flex-col gap-10 relative z-10 min-h-screen">
+      <div className="w-full max-w-[650px] mx-auto p-4 sm:p-6 md:p-10 flex flex-col gap-8 md:gap-10 relative z-10 min-h-screen">
 
         {/* Header Section */}
         <header className="flex flex-col items-center text-center gap-5 mt-4">
@@ -290,12 +290,12 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
             <button
               onClick={downloadImage}
-              className="bg-gradient-to-r from-wine to-wine-deep text-paper border-none py-3 px-8 rounded-full font-markazi text-2xl cursor-pointer inline-flex items-center gap-3 transition-all duration-300 shadow-[0_8px_20px_rgba(108,63,160,0.3)] hover:shadow-[0_10px_25px_rgba(108,63,160,0.5)] hover:-translate-y-1 group-hover:scale-105"
+              className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_8px_20px_rgba(90,39,128,0.3)] hover:shadow-[0_10px_25px_rgba(90,39,128,0.5)] hover:-translate-y-1 active:scale-95 group-hover:scale-105"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-5 h-5 fill-current">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-5 h-5 fill-white shrink-0">
                 <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
               </svg>
-              نزلي الرسالة عندك يا عيوني لو حابة
+              <span>نزلي الرسالة عندك يا عيوني لو حابة</span>
             </button>
           </div>
         </main>
@@ -306,27 +306,28 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             <span className="text-2xl">📖</span> أرشيف الذكريات
           </h2>
 
-          <div className="flex justify-center mb-8 px-2">
-            <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-card-bg/70 border border-rose/40 shadow-[0_4px_20px_rgba(108,63,160,0.18)] backdrop-blur-md transition-transform hover:scale-[1.02]">
-              <span className="text-xl">🌸</span>
-              <span className="font-markazi text-2xl text-wine dark:text-rose-pale font-medium tracking-wide">
-                دا المكان الهيكون فيه كل كلمة حلوة بكتبهالك يا قلب بابا
+          <div className="flex justify-center mb-6 sm:mb-8 px-2">
+            <div className="inline-flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 rounded-2xl sm:rounded-full bg-cream/95 dark:bg-[#1E142B] border-2 border-wine/40 dark:border-rose/50 shadow-[0_4px_16px_rgba(90,39,128,0.15)] backdrop-blur-md transition-all max-w-full">
+              <span className="text-lg sm:text-xl shrink-0">🌸</span>
+              <span className="font-markazi text-lg sm:text-xl md:text-2xl text-[#280B3E] dark:text-[#F8F4FF] font-extrabold tracking-wide text-center leading-snug">
+                <span>دا المكان الهيكون فيه كل كلمة حلوة </span>
+                <span className="inline-block sm:inline">بكتبهالك يا قلب بابا</span>
               </span>
-              <span className="text-xl">🌸</span>
+              <span className="text-lg sm:text-xl shrink-0">🌸</span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 max-h-[45vh] overflow-y-auto px-2 py-1 scrollbar-timeline w-full">
+          <div className="flex flex-col gap-3.5 sm:gap-4 max-h-[45vh] overflow-y-auto px-1 sm:px-2 py-1 scrollbar-timeline w-full">
             {messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= getTodayString()).map((msg) => (
               <Link
                 key={msg.id}
                 href={`/message/${msg.id}`}
-                className="w-full min-h-[64px] border px-4 py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex items-center justify-between gap-3 hover:-translate-y-0.5 hover:shadow-lg bg-card-bg/70 border-border-color hover:bg-rose-pale/30 hover:border-rose/60 backdrop-blur-md no-underline group"
+                className="w-full min-h-[64px] border px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex items-center justify-between gap-2.5 sm:gap-3 hover:-translate-y-0.5 hover:shadow-lg bg-card-bg/95 dark:bg-card-bg/80 border-border-color hover:bg-wine/10 dark:hover:bg-rose-pale/20 hover:border-wine/50 dark:hover:border-rose/60 backdrop-blur-md no-underline group shadow-sm"
               >
-                <span className="font-aref text-lg sm:text-xl md:text-2xl text-wine/90 drop-shadow-sm group-hover:text-wine transition-colors whitespace-nowrap shrink-0">
+                <span className="font-aref text-base sm:text-xl md:text-2xl text-[#2E0F45] dark:text-[#F3ECFB] font-bold drop-shadow-sm whitespace-nowrap shrink-0">
                   {formatDateArabic(msg.date)}
                 </span>
-                <span className="font-markazi text-base sm:text-lg md:text-xl text-center text-rose-pale drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(185,154,230,0.9)] group-hover:text-paper transition-all duration-300 bg-wine/25 px-3.5 py-1.5 rounded-full border border-rose/30 whitespace-nowrap shrink-0">
+                <span className="font-markazi text-base sm:text-lg text-center bg-[#5A2780] hover:bg-[#481B69] text-white dark:bg-[#682D94] dark:text-white border border-[#481B69] dark:border-rose/40 px-4 py-1.5 rounded-full font-bold shadow-[0_2px_8px_rgba(90,39,128,0.25)] transition-all duration-300 group-hover:scale-105 whitespace-nowrap shrink-0">
                   افتكري ذكرياتنا يا روحي 💌
                 </span>
               </Link>
