@@ -1,59 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --cream: #FFE4E1; /* MistyRose - warmer, more vibrant */
-  --paper: #FFF0F5; /* LavenderBlush */
-  --wine: #C21E56; /* Vivid Rose-Red */
-  --wine-deep: #7A1736; /* Deep rich wine */
-  --rose: #F96E8F; /* Vivid pink */
-  --rose-pale: #FCE8EC; /* Soft glow */
-  --gold: #D4AF37; /* Classic bright gold */
-  --ink: #3A1B24; /* Deep burgundy */
-  --ink-soft: #8A5A6A; /* Soft mauve */
+  --cream: #F3E8FF;
+  --paper: #FAF5FF;
+  --wine: #6C3FA0; /* Deep Purple */
+  --wine-deep: #4A2A70; /* Darker Deep Purple */
+  --rose: #B99AE6; /* Soft Lavender */
+  --rose-pale: #DCCCF5; /* Light Lavender */
+  --gold: #D4AF37; /* Keep gold */
+  --ink: #2D1B3A; /* Deep purple-black */
+  --ink-soft: #7A5A8A; /* Soft purple */
   
   --bg-color: var(--paper);
   --card-bg: var(--cream);
   --text-main: var(--ink);
   --text-muted: var(--ink-soft);
-  --border-color: rgba(249, 110, 143, 0.4);
-  --shadow: 0 15px 35px rgba(194, 30, 86, 0.15);
-  --card-shadow: 0 10px 30px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(249, 110, 143, 0.2);
+  --border-color: rgba(185, 154, 230, 0.4);
+  --shadow: 0 15px 35px rgba(108, 63, 160, 0.15);
+  --card-shadow: 0 10px 30px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(185, 154, 230, 0.2);
   
-  --bg-gradient: radial-gradient(at 0% 0%, rgba(249, 110, 143, 0.12) 0px, transparent 50%),
+  --bg-gradient: radial-gradient(at 0% 0%, rgba(185, 154, 230, 0.12) 0px, transparent 50%),
                  radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.08) 0px, transparent 50%),
-                 radial-gradient(at 100% 100%, rgba(194, 30, 86, 0.12) 0px, transparent 50%),
-                 radial-gradient(at 0% 100%, rgba(252, 232, 236, 0.8) 0px, transparent 50%);
+                 radial-gradient(at 100% 100%, rgba(108, 63, 160, 0.12) 0px, transparent 50%),
+                 radial-gradient(at 0% 100%, rgba(220, 204, 245, 0.8) 0px, transparent 50%);
 }
 
 :root[data-theme="dark"] {
-  --bg-color: #1A1214; /* Deep elegant near-black rose */
-  --card-bg: #2C1D22; /* Rich dark card */
-  --text-main: #FFF7F9;
-  --text-muted: #E89EAE; /* Vivid muted rose instead of pale gray */
-  --border-color: rgba(249, 110, 143, 0.3);
+  --bg-color: #120E1A; /* Deep dark purple-black */
+  --card-bg: #1F162B; /* Rich dark purple card */
+  --text-main: #F8F5FF;
+  --text-muted: #DCCCF5; /* Light Lavender */
+  --border-color: rgba(185, 154, 230, 0.3);
   --shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(249, 110, 143, 0.1);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(185, 154, 230, 0.1);
   
-  --bg-gradient: radial-gradient(at 0% 0%, rgba(249, 110, 143, 0.15) 0px, transparent 50%),
+  --bg-gradient: radial-gradient(at 0% 0%, rgba(185, 154, 230, 0.15) 0px, transparent 50%),
                  radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
-                 radial-gradient(at 100% 100%, rgba(194, 30, 86, 0.15) 0px, transparent 50%),
-                 radial-gradient(at 0% 100%, rgba(44, 29, 34, 0.5) 0px, transparent 50%);
+                 radial-gradient(at 100% 100%, rgba(108, 63, 160, 0.15) 0px, transparent 50%),
+                 radial-gradient(at 0% 100%, rgba(31, 22, 43, 0.5) 0px, transparent 50%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-color: #1A1214;
-    --card-bg: #2C1D22;
-    --text-main: #FFF7F9;
-    --text-muted: #E89EAE;
-    --border-color: rgba(249, 110, 143, 0.3);
+    --bg-color: #120E1A;
+    --card-bg: #1F162B;
+    --text-main: #F8F5FF;
+    --text-muted: #DCCCF5;
+    --border-color: rgba(185, 154, 230, 0.3);
     --shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(249, 110, 143, 0.1);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(185, 154, 230, 0.1);
     
-    --bg-gradient: radial-gradient(at 0% 0%, rgba(249, 110, 143, 0.15) 0px, transparent 50%),
+    --bg-gradient: radial-gradient(at 0% 0%, rgba(185, 154, 230, 0.15) 0px, transparent 50%),
                    radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
-                   radial-gradient(at 100% 100%, rgba(194, 30, 86, 0.15) 0px, transparent 50%),
-                   radial-gradient(at 0% 100%, rgba(44, 29, 34, 0.5) 0px, transparent 50%);
+                   radial-gradient(at 100% 100%, rgba(108, 63, 160, 0.15) 0px, transparent 50%),
+                   radial-gradient(at 0% 100%, rgba(31, 22, 43, 0.5) 0px, transparent 50%);
   }
 }
 
@@ -105,8 +105,8 @@ body {
 }
 
 @keyframes pulse-slow {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232, 158, 174, 0.4); }
-  50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(232, 158, 174, 0); }
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 204, 245, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(220, 204, 245, 0); }
 }
 
 @keyframes fade-in-up {
@@ -132,7 +132,7 @@ body {
   width: 6px;
 }
 .scrollbar-timeline::-webkit-scrollbar-track {
-  background: rgba(232, 158, 174, 0.1);
+  background: rgba(220, 204, 245, 0.1);
   border-radius: 10px;
 }
 .scrollbar-timeline::-webkit-scrollbar-thumb {

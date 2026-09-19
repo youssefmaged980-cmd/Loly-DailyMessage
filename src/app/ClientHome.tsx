@@ -171,10 +171,10 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             <div className="absolute -inset-4 border-2 border-rose/30 rounded-full"></div>
             <div className="absolute -inset-2 border border-gold/40 rounded-full rotate-45"></div>
 
-            <div className="w-[160px] h-[160px] md:w-[180px] md:h-[180px] rounded-full p-2 bg-gradient-to-tr from-wine via-rose to-gold shadow-[0_10px_25px_rgba(140,43,70,0.3)] relative z-10 overflow-hidden group-hover:scale-105 transition-transform duration-500">
+            <div className="w-[160px] h-[160px] md:w-[180px] md:h-[180px] rounded-full p-2 bg-gradient-to-tr from-wine via-rose to-gold shadow-[0_10px_25px_rgba(74,42,112,0.3)] relative z-10 overflow-hidden group-hover:scale-105 transition-transform duration-500">
               <div className="w-full h-full rounded-full border-4 border-bg-color overflow-hidden bg-rose-pale relative flex items-center justify-center">
                 {/* Fallback pattern just in case image doesn't load */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(232,158,174,0.4)_0%,transparent_100%)] flex items-center justify-center">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,204,245,0.4)_0%,transparent_100%)] flex items-center justify-center">
                   <span className="font-aref text-6xl text-wine opacity-40">L</span>
                 </div>
                 <img
@@ -210,27 +210,27 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
               <div className="flex flex-row gap-2 md:gap-4 mt-2 dir-ltr items-center justify-center relative z-0">
                 {timeTogether && (
                   <>
-                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(140,43,70,0.15)] backdrop-blur-md relative overflow-hidden group">
+                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep relative z-10">{timeTogether.days}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.days}</span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">يوم</span>
                     </div>
                     <span className="text-rose text-2xl font-bold animate-pulse mb-4">:</span>
-                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(140,43,70,0.15)] backdrop-blur-md relative overflow-hidden group">
+                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep relative z-10">{timeTogether.hours}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.hours}</span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">ساعة</span>
                     </div>
                     <span className="text-rose text-2xl font-bold animate-pulse mb-4">:</span>
-                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(140,43,70,0.15)] backdrop-blur-md relative overflow-hidden group">
+                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep relative z-10">{timeTogether.minutes}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.minutes}</span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">دقيقة</span>
                     </div>
                     <span className="text-rose text-2xl font-bold animate-pulse mb-4">:</span>
-                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(140,43,70,0.15)] backdrop-blur-md relative overflow-hidden group">
+                    <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep relative z-10">{timeTogether.seconds}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.seconds}</span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">ثانية</span>
                     </div>
                   </>
@@ -270,7 +270,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
             <button
               onClick={downloadImage}
-              className="bg-gradient-to-r from-wine to-wine-deep text-paper border-none py-3 px-8 rounded-full font-markazi text-2xl cursor-pointer inline-flex items-center gap-3 transition-all duration-300 shadow-[0_8px_20px_rgba(194,30,86,0.3)] hover:shadow-[0_10px_25px_rgba(194,30,86,0.5)] hover:-translate-y-1 group-hover:scale-105"
+              className="bg-gradient-to-r from-wine to-wine-deep text-paper border-none py-3 px-8 rounded-full font-markazi text-2xl cursor-pointer inline-flex items-center gap-3 transition-all duration-300 shadow-[0_8px_20px_rgba(108,63,160,0.3)] hover:shadow-[0_10px_25px_rgba(108,63,160,0.5)] hover:-translate-y-1 group-hover:scale-105"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-5 h-5 fill-current">
                 <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
@@ -296,7 +296,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 <span className="font-aref text-2xl text-wine/80 drop-shadow-sm group-hover:text-wine transition-colors">
                   {formatDateArabic(msg.date)}
                 </span>
-                <span className="font-markazi text-xl sm:max-w-[70%] text-right text-text-muted opacity-80 group-hover:opacity-100 transition-opacity">
+                <span className="font-markazi text-xl sm:max-w-[70%] text-right text-rose-pale drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(185,154,230,0.9)] group-hover:text-paper transition-all duration-300 bg-wine/20 px-4 py-1.5 rounded-full border border-rose/30">
                   اقري مسدج قديمة وافتكري ذكرياتنا يا روحي
                 </span>
               </Link>
