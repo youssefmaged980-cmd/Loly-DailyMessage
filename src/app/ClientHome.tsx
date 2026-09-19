@@ -321,14 +321,33 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
               <Link
                 key={msg.id}
                 href={`/message/${msg.id}`}
-                className="w-full min-h-[64px] border px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex items-center justify-between gap-2.5 sm:gap-3 hover:-translate-y-0.5 hover:shadow-lg bg-card-bg/95 dark:bg-card-bg/80 border-border-color hover:bg-wine/10 dark:hover:bg-rose-pale/20 hover:border-wine/50 dark:hover:border-rose/60 backdrop-blur-md no-underline group shadow-sm"
+                className="w-full min-h-[64px] border px-3.5 sm:px-5 py-3 sm:py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex items-center justify-between gap-3 hover:-translate-y-1 hover:shadow-lg bg-gradient-to-r from-white/95 via-cream/90 to-white/95 dark:from-[#1E142B]/95 dark:via-[#261738]/90 dark:to-[#1E142B]/95 border-wine/20 dark:border-rose/30 hover:border-rose/60 dark:hover:border-rose/70 backdrop-blur-md no-underline group shadow-[0_4px_16px_rgba(90,39,128,0.08)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_0_25px_rgba(185,154,230,0.25)] relative overflow-hidden"
               >
-                <span className="font-aref text-base sm:text-xl md:text-2xl text-wine-deep dark:text-white font-bold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.6)] whitespace-nowrap shrink-0">
-                  {formatDateArabic(msg.date)}
-                </span>
-                <span className="font-markazi text-base sm:text-lg text-center bg-gradient-to-r from-wine to-wine-deep text-white border border-wine/30 dark:border-rose/40 px-4 py-1.5 rounded-full font-bold shadow-[0_2px_8px_rgba(90,39,128,0.25)] transition-all duration-300 group-hover:scale-105 whitespace-nowrap shrink-0">
-                  افتكري ذكرياتنا يا روحي 💌
-                </span>
+                {/* Subtle top shimmer bar on hover */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                {/* Right side: Date with icon */}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="w-8 h-8 rounded-xl bg-wine/10 dark:bg-rose/15 flex items-center justify-center text-sm text-wine dark:text-rose-pale border border-wine/20 dark:border-rose/30 shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-sm">
+                    📅
+                  </span>
+                  <span className="font-aref text-base sm:text-xl md:text-2xl text-wine-deep dark:text-[#F8F4FF] font-bold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] whitespace-nowrap group-hover:text-wine dark:group-hover:text-rose-pale transition-colors">
+                    {formatDateArabic(msg.date)}
+                  </span>
+                </div>
+
+                {/* Center flourish connector line (desktop/tablet) */}
+                <div className="hidden sm:flex flex-1 items-center justify-center mx-4 opacity-30 group-hover:opacity-80 transition-opacity duration-300">
+                  <div className="w-full border-b border-dashed border-rose/50"></div>
+                  <span className="text-xs text-rose mx-2.5 select-none shrink-0">❦</span>
+                  <div className="w-full border-b border-dashed border-rose/50"></div>
+                </div>
+
+                {/* Left side: Luxury CTA Button */}
+                <div className="shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3.5 sm:px-4 py-2 rounded-full font-markazi text-sm sm:text-base md:text-lg font-bold shadow-[0_3px_12px_rgba(90,39,128,0.25)] hover:shadow-[0_5px_18px_rgba(116,53,157,0.45)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 whitespace-nowrap">
+                  <span>افتكري ذكرياتنا يا روحي</span>
+                  <span className="text-base group-hover:translate-x-0.5 transition-transform">💌</span>
+                </div>
               </Link>
             ))}
           </div>
