@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
-import { toPng } from "html-to-image";
 
 interface Message {
   id: string;
@@ -15,7 +14,6 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
   const messageRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    // Generate flying petals and hearts
     createEffects();
   }, [initialMessage]);
 
@@ -53,16 +51,18 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
     if (!message) return;
     try {
       const msgLength = message.message?.length || 0;
-      // Aggressive font scaling for long messages
       const fontSize = msgLength < 80 ? 30 : msgLength < 250 ? 24 : msgLength < 600 ? 19 : msgLength < 1200 ? 16 : 14;
 
+      // KEY FIX: position:absolute + visibility:hidden
+      // position:fixed on mobile is constrained to viewport width
+      // position:absolute renders at our explicit 1080px width regardless of viewport
       const wrapper = document.createElement('div');
       wrapper.style.cssText = `
-        position: fixed;
-        top: -9999px;
-        left: -9999px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        visibility: hidden;
         width: 1080px;
-        z-index: -1;
         direction: rtl;
         background-color: #1F162B;
         border-radius: 32px;
@@ -113,13 +113,12 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
       wrapper.appendChild(msgEl);
       document.body.appendChild(wrapper);
 
-      await new Promise(r => setTimeout(r, 150));
+      await new Promise(r => setTimeout(r, 200));
 
       const { toPng } = await import('html-to-image');
       const dataUrl = await toPng(wrapper, {
         cacheBust: true,
         pixelRatio: 2,
-        width: 1080,
       });
 
       document.body.removeChild(wrapper);
@@ -133,10 +132,6 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
       alert('حدث خطأ أثناء حفظ الصورة');
     }
   };
-
-
-
-
 
   const formatDateArabic = (dateString: string) => {
     if (!dateString) return "";
@@ -164,13 +159,11 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
           &rarr; عودة للصفحة الرئيسية
         </Link>
 
-        {/* Message Card */}
         <main
           ref={messageRef}
           style={{ backgroundColor: 'var(--card-bg)' }}
           className="w-full rounded-[32px] py-14 px-8 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[300px] flex flex-col justify-center items-center gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
         >
-          {/* Decorative Corners */}
           <FloralCorner className="floral-corner-tl" />
           <FloralCorner className="floral-corner-tr" />
           <FloralCorner className="floral-corner-bl" />
