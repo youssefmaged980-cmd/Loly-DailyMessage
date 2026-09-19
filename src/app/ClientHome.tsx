@@ -21,6 +21,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
   const [timeTogether, setTimeTogether] = useState<TimeTogether | null>(null);
+  const [isDark, setIsDark] = useState<boolean>(true);
   const messageRef = useRef<HTMLElement>(null);
 
   const getTodayString = () => {
@@ -32,6 +33,17 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   };
 
   useEffect(() => {
+    // Determine active theme
+    const themeAttr = document.documentElement.getAttribute('data-theme');
+    if (themeAttr === 'light') {
+      setIsDark(false);
+    } else if (themeAttr === 'dark') {
+      setIsDark(true);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDark(prefersDark);
+    }
+
     // Generate flying petals and hearts
     createEffects();
 
@@ -141,10 +153,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   };
 
   const toggleTheme = () => {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    html.setAttribute('data-theme', newTheme);
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    const themeName = nextDark ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', themeName);
+    try {
+      localStorage.setItem('theme', themeName);
+    } catch (e) {}
   };
 
   // Floral SVG corner component
@@ -158,10 +173,11 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     <>
       <button
         onClick={toggleTheme}
-        className="absolute top-5 left-5 bg-transparent border-none text-wine text-2xl cursor-pointer z-50 hover:scale-110 transition-transform"
-        aria-label="تبديل المظهر"
+        className="absolute top-5 left-5 bg-card-bg/70 hover:bg-card-bg border border-border-color p-2 rounded-full text-wine text-2xl cursor-pointer z-50 hover:scale-110 active:scale-95 transition-all shadow-sm flex items-center justify-center w-11 h-11 backdrop-blur-sm"
+        aria-label={isDark ? "التبديل إلى الوضع الصباحي" : "التبديل إلى الوضع الليلي"}
+        title={isDark ? "التبديل إلى الوضع الصباحي (Light Mode) ☀️" : "التبديل إلى الوضع الليلي (Dark Mode) 🌙"}
       >
-        🌙
+        {isDark ? "☀️" : "🌙"}
       </button>
 
       <div id="effectsContainer" className="fixed top-0 left-0 w-screen h-screen overflow-hidden z-0 pointer-events-none"></div>

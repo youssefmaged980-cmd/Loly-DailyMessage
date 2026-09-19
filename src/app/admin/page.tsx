@@ -19,6 +19,7 @@ export default function AdminPage() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [allMessages, setAllMessages] = useState<Message[]>([]);
+  const [isDark, setIsDark] = useState<boolean>(true);
 
   useEffect(() => {
     // Set today's date as default
@@ -27,6 +28,16 @@ export default function AdminPage() {
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     setDate(`${yyyy}-${mm}-${dd}`);
+
+    const themeAttr = document.documentElement.getAttribute('data-theme');
+    if (themeAttr === 'light') {
+      setIsDark(false);
+    } else if (themeAttr === 'dark') {
+      setIsDark(true);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDark(prefersDark);
+    }
   }, []);
 
   useEffect(() => {
@@ -109,10 +120,13 @@ export default function AdminPage() {
   };
 
   const toggleTheme = () => {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    html.setAttribute('data-theme', newTheme);
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    const themeName = nextDark ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', themeName);
+    try {
+      localStorage.setItem('theme', themeName);
+    } catch (e) {}
   };
 
   if (!isAuthenticated) {
@@ -161,11 +175,11 @@ export default function AdminPage() {
 
         <button
           onClick={toggleTheme}
-          className="bg-card-bg/70 border border-border-color p-2.5 rounded-full text-wine hover:scale-110 transition-all cursor-pointer shadow-sm"
-          title="تبديل المظهر"
+          className="bg-card-bg/70 border border-border-color p-2.5 rounded-full text-wine hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-sm flex items-center justify-center w-10 h-10 text-xl"
+          title={isDark ? "التبديل إلى الوضع الصباحي (Light Mode) ☀️" : "التبديل إلى الوضع الليلي (Dark Mode) 🌙"}
           aria-label="تبديل المظهر"
         >
-          🌙
+          {isDark ? "☀️" : "🌙"}
         </button>
       </div>
 

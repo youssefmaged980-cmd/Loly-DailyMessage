@@ -121,11 +121,11 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
     }
   }
 
-  const bg = isDarkMode ? '#1F162B' : '#F3E8FF';
-  const textColor = isDarkMode ? '#F8F5FF' : '#2D1B3A';
-  const wineColor = isDarkMode ? '#B99AE6' : '#6C3FA0';
-  const roseColor = '#B99AE6';
-  const borderColor = isDarkMode ? 'rgba(185, 154, 230, 0.3)' : 'rgba(185, 154, 230, 0.4)';
+  const bg = isDarkMode ? '#1F162B' : '#E5D8EB';
+  const textColor = isDarkMode ? '#F8F5FF' : '#261436';
+  const wineColor = isDarkMode ? '#B99AE6' : '#633694';
+  const roseColor = isDarkMode ? '#B99AE6' : '#9067C6';
+  const borderColor = isDarkMode ? 'rgba(185, 154, 230, 0.3)' : 'rgba(99, 54, 148, 0.2)';
 
   // Hidden container out of screen view
   const container = document.createElement('div');

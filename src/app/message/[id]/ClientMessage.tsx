@@ -12,11 +12,34 @@ interface Message {
 
 export default function ClientMessage({ initialMessage }: { initialMessage: Message | null }) {
   const [message, setMessage] = useState<Message | null>(initialMessage);
+  const [isDark, setIsDark] = useState<boolean>(true);
   const messageRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const themeAttr = document.documentElement.getAttribute('data-theme');
+    if (themeAttr === 'light') {
+      setIsDark(false);
+    } else if (themeAttr === 'dark') {
+      setIsDark(true);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDark(prefersDark);
+    }
+  }, []);
 
   useEffect(() => {
     createEffects();
   }, [initialMessage]);
+
+  const toggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    const themeName = nextDark ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', themeName);
+    try {
+      localStorage.setItem('theme', themeName);
+    } catch (e) {}
+  };
 
   const createEffects = () => {
     const container = document.getElementById('effectsContainer');
@@ -86,12 +109,23 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
 
       <div className="w-full max-w-[650px] mx-auto p-6 md:p-10 flex flex-col items-center justify-center relative z-10 min-h-screen">
 
-        <Link
-          href="/"
-          className="self-start mb-6 font-markazi text-2xl text-wine hover:text-rose transition-colors flex items-center gap-2 drop-shadow-sm no-underline bg-card-bg/50 px-4 py-2 rounded-full border border-border-color backdrop-blur-sm"
-        >
-          &rarr; عودة للصفحة الرئيسية
-        </Link>
+        <div className="w-full flex justify-between items-center mb-6">
+          <Link
+            href="/"
+            className="font-markazi text-2xl text-wine hover:text-rose transition-colors flex items-center gap-2 drop-shadow-sm no-underline bg-card-bg/70 px-4 py-2 rounded-full border border-border-color backdrop-blur-sm shadow-sm"
+          >
+            &rarr; عودة للصفحة الرئيسية
+          </Link>
+
+          <button
+            onClick={toggleTheme}
+            className="bg-card-bg/70 border border-border-color p-2 rounded-full text-wine text-2xl cursor-pointer hover:scale-110 active:scale-95 transition-all shadow-sm flex items-center justify-center w-11 h-11 backdrop-blur-sm"
+            aria-label={isDark ? "التبديل إلى الوضع الصباحي" : "التبديل إلى الوضع الليلي"}
+            title={isDark ? "التبديل إلى الوضع الصباحي (Light Mode) ☀️" : "التبديل إلى الوضع الليلي (Dark Mode) 🌙"}
+          >
+            {isDark ? "☀️" : "🌙"}
+          </button>
+        </div>
 
         <main
           ref={messageRef}

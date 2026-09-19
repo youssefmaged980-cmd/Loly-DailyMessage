@@ -1,28 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --cream: #F3E8FF;
-  --paper: #FAF5FF;
-  --wine: #6C3FA0; /* Deep Purple */
-  --wine-deep: #4A2A70; /* Darker Deep Purple */
-  --rose: #B99AE6; /* Soft Lavender */
-  --rose-pale: #DCCCF5; /* Light Lavender */
-  --gold: #D4AF37; /* Keep gold */
-  --ink: #2D1B3A; /* Deep purple-black */
-  --ink-soft: #7A5A8A; /* Soft purple */
+  --cream: #E5D8EB; /* Gentle warm lavender-cream card */
+  --paper: #EFE7F4; /* Soothing warm cashmere lavender background, zero glare */
+  --wine: #633694; /* Deep, elegant Purple */
+  --wine-deep: #432267; /* Darker Deep Purple */
+  --rose: #9067C6; /* Soft balanced violet */
+  --rose-pale: #C5AEE6; /* Warm pastel lavender */
+  --gold: #BF9723; /* Warm antique gold */
+  --ink: #261436; /* Deep comforting plum charcoal */
+  --ink-soft: #5C436D; /* Muted comforting lavender charcoal */
   
   --bg-color: var(--paper);
   --card-bg: var(--cream);
   --text-main: var(--ink);
   --text-muted: var(--ink-soft);
-  --border-color: rgba(185, 154, 230, 0.4);
-  --shadow: 0 15px 35px rgba(108, 63, 160, 0.15);
-  --card-shadow: 0 10px 30px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(185, 154, 230, 0.2);
+  --border-color: rgba(99, 54, 148, 0.18);
+  --shadow: 0 10px 25px rgba(67, 34, 103, 0.07);
+  --card-shadow: 0 10px 25px rgba(67, 34, 103, 0.07), inset 0 0 15px rgba(255, 255, 255, 0.12);
   
   --bg-gradient: radial-gradient(at 0% 0%, rgba(185, 154, 230, 0.12) 0px, transparent 50%),
-                 radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.08) 0px, transparent 50%),
-                 radial-gradient(at 100% 100%, rgba(108, 63, 160, 0.12) 0px, transparent 50%),
-                 radial-gradient(at 0% 100%, rgba(220, 204, 245, 0.8) 0px, transparent 50%);
+                 radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
+                 radial-gradient(at 100% 100%, rgba(108, 63, 160, 0.08) 0px, transparent 50%),
+                 radial-gradient(at 0% 100%, rgba(215, 195, 235, 0.3) 0px, transparent 50%);
+}
+
+:root[data-theme="light"] {
+  --bg-color: var(--paper);
+  --card-bg: var(--cream);
+  --text-main: var(--ink);
+  --text-muted: var(--ink-soft);
+  --border-color: rgba(99, 54, 148, 0.18);
+  --shadow: 0 10px 25px rgba(67, 34, 103, 0.07);
+  --card-shadow: 0 10px 25px rgba(67, 34, 103, 0.07), inset 0 0 15px rgba(255, 255, 255, 0.12);
 }
 
 :root[data-theme="dark"] {
