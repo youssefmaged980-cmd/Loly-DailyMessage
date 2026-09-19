@@ -69,10 +69,10 @@ function splitTextIntoBalancedColumns(text: string, cols: number): string[] {
 }
 
 export async function generateCardImage({ date, messageText, isDark }: CardExportOptions): Promise<string> {
-  const isDarkMode = isDark !== undefined 
-    ? isDark 
-    : document.documentElement.getAttribute('data-theme') === 'dark' || 
-      (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDarkMode = isDark !== undefined
+    ? isDark
+    : document.documentElement.getAttribute('data-theme') === 'dark' ||
+    (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const text = messageText || '';
   const lines = text.split('\n');
@@ -291,7 +291,7 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
     position: relative;
     z-index: 2;
   `;
-  footer.innerText = '❤ رسائل ليلى';
+  footer.innerText = '❤ رسايل لولو حبيبتي ';
   card.appendChild(footer);
 
   container.appendChild(card);

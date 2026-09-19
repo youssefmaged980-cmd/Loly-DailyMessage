@@ -195,7 +195,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
           <div className="mt-6 animate-fade-in-up flex flex-col items-center">
             <h2 className="font-aref text-2xl md:text-3xl text-wine mb-2 drop-shadow-sm opacity-90">
-              رسالتك الحلوة زيك يا حبيبتي
+              رسايلك الجميلة الذيك يا حبيبي هنا
             </h2>
             <div className="font-cormorant italic text-gold text-xl md:text-2xl tracking-widest mt-1">For my one and only Laila</div>
 
@@ -240,7 +240,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
         </header>
 
         {/* Message Card */}
-        <main 
+        <main
           ref={messageRef}
           style={{ backgroundColor: 'var(--card-bg)' }}
           className="rounded-[32px] py-10 px-8 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[250px] flex flex-col justify-center items-center gap-6 animate-fade-in-up transition-all duration-500 overflow-hidden group"
@@ -281,9 +281,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
         {/* Archive Section */}
         <section className="mt-8 mb-12 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-          <h2 className="font-aref text-3xl text-wine mb-8 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
+          <h2 className="font-aref text-3xl text-wine mb-3 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
             <span className="text-2xl">📖</span> أرشيف الذكريات
           </h2>
+
+          <div className="text-center font-markazi text-2xl text-text-muted mb-6 opacity-85">
+            🌸 دا المكان الهيكون فيه كل كلمة حلوة بكتبهالك يا قلب بابا
+          </div>
 
           <div className="flex flex-col gap-4 max-h-[45vh] overflow-y-auto px-4 py-2 scrollbar-timeline">
             {messages.filter(msg => msg.id !== currentMessage?.id).map((msg) => (
@@ -302,8 +306,8 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             ))}
 
             {messages.filter(msg => msg.id !== currentMessage?.id).length === 0 && (
-              <div className="text-center font-markazi text-2xl text-text-muted mt-8 opacity-70">
-                دا المكان الهيكون فيه كل كلمة حلوة بكتبهالك يا قلب بابا 🌸
+              <div className="text-center font-markazi text-xl text-text-muted mt-4 opacity-60">
+                (أول ما يمر يوم جديد، الرسايل السابقة هتظهر هنا علطول يا روحي 💕)
               </div>
             )}
           </div>
