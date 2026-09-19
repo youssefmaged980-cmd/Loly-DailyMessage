@@ -52,132 +52,77 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
   const downloadImage = async () => {
     if (!message) return;
     try {
-      const canvas = document.createElement('canvas');
-      const cardWidth = 900;
-      const padding = 72;
-      const textWidth = cardWidth - padding * 2;
-      const ctx = canvas.getContext('2d')!;
-      ctx.direction = 'rtl'; // Set RTL BEFORE any text ops
+      // Create a hidden, wide clone of the card for capture
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = `
+        position: fixed;
+        top: -9999px;
+        left: -9999px;
+        width: 900px;
+        z-index: -1;
+        direction: rtl;
+        font-family: var(--font-markazi, serif);
+        background-color: #1F162B;
+        border-radius: 32px;
+        padding: 60px 80px;
+        border: 1px solid rgba(185,154,230,0.3);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      `;
 
-      const dateText = formatDateArabic(message.date);
-      const msgText = message.message || '';
+      const dateEl = document.createElement('div');
+      dateEl.style.cssText = `
+        color: #B99AE6;
+        font-size: 28px;
+        font-weight: bold;
+        font-family: var(--font-aref, serif);
+        line-height: 1.8;
+        width: 100%;
+      `;
+      dateEl.innerText = formatDateArabic(message.date);
 
-      // Font size based on message length
-      const msgLength = msgText.length;
-      const fontSize = msgLength < 100 ? 34 : msgLength < 300 ? 26 : msgLength < 700 ? 20 : 16;
+      const dividerEl = document.createElement('div');
+      dividerEl.style.cssText = `
+        width: 50%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(185,154,230,0.5), transparent);
+      `;
 
-      const arabicFont = `"Segoe UI", "Arial", "Tahoma", serif`;
-      const dateFont = `bold 28px ${arabicFont}`;
-      const msgFont = `${fontSize}px ${arabicFont}`;
+      const msgEl = document.createElement('div');
+      const msgLength = message.message?.length || 0;
+      const fontSize = msgLength < 100 ? 32 : msgLength < 300 ? 26 : msgLength < 700 ? 22 : 18;
+      msgEl.style.cssText = `
+        color: #F8F5FF;
+        font-size: ${fontSize}px;
+        line-height: 2;
+        font-family: var(--font-markazi, serif);
+        white-space: pre-wrap;
+        word-break: break-word;
+        width: 100%;
+        text-align: center;
+      `;
+      msgEl.innerText = message.message || '';
 
-      // Wrap text into lines (handles both LTR and RTL, splits by \n too)
-      const getLines = (text: string, font: string, maxWidth: number): string[] => {
-        ctx.font = font;
-        ctx.direction = 'rtl';
-        const paragraphs = text.split('\n');
-        const allLines: string[] = [];
-        for (const para of paragraphs) {
-          if (para.trim() === '') { allLines.push(''); continue; }
-          const words = para.split(' ');
-          let current = '';
-          for (const word of words) {
-            const test = current ? current + ' ' + word : word;
-            const width = ctx.measureText(test).width;
-            if (width > maxWidth && current) {
-              allLines.push(current);
-              current = word;
-            } else if (ctx.measureText(word).width > maxWidth) {
-              // Single word wider than line — force push it
-              if (current) { allLines.push(current); current = ''; }
-              allLines.push(word);
-            } else {
-              current = test;
-            }
-          }
-          if (current) allLines.push(current);
-        }
-        return allLines;
-      };
+      wrapper.appendChild(dateEl);
+      wrapper.appendChild(dividerEl);
+      wrapper.appendChild(msgEl);
+      document.body.appendChild(wrapper);
 
-      const dateLines = getLines(dateText, dateFont, textWidth);
-      const msgLines  = getLines(msgText,  msgFont,  textWidth);
+      // Small delay to ensure render
+      await new Promise(r => setTimeout(r, 100));
 
-      const lineHDate = 44;
-      const lineHMsg  = fontSize * 1.85;
-      const topPad    = 70;
-      const botPad    = 70;
-      const dateSec   = dateLines.length * lineHDate + 20;
-      const msgSec    = msgLines.length  * lineHMsg;
+      const { toPng } = await import('html-to-image');
+      const dataUrl = await toPng(wrapper, {
+        cacheBust: true,
+        pixelRatio: 2,
+        width: 900,
+      });
 
-      canvas.width  = cardWidth;
-      canvas.height = Math.max(topPad + dateSec + msgSec + botPad, 500);
+      document.body.removeChild(wrapper);
 
-      // Re-set direction after resize (canvas resets on resize)
-      ctx.direction = 'rtl';
-
-      // ── Background ──────────────────────────────────────────
-      ctx.fillStyle = '#1F162B';
-      ctx.beginPath();
-      (ctx as any).roundRect(0, 0, cardWidth, canvas.height, 40);
-      ctx.fill();
-
-      // Subtle inner glow
-      const glow = ctx.createRadialGradient(cardWidth/2, 0, 0, cardWidth/2, 0, cardWidth * 0.8);
-      glow.addColorStop(0,   'rgba(185,154,230,0.08)');
-      glow.addColorStop(1,   'transparent');
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, cardWidth, canvas.height);
-
-      // ── Top/Bottom gradient lines ────────────────────────────
-      const makeLine = (yPos: number) => {
-        const g = ctx.createLinearGradient(cardWidth*0.2, 0, cardWidth*0.8, 0);
-        g.addColorStop(0,   'transparent');
-        g.addColorStop(0.5, 'rgba(185,154,230,0.7)');
-        g.addColorStop(1,   'transparent');
-        ctx.fillStyle = g;
-        ctx.fillRect(cardWidth*0.2, yPos, cardWidth*0.6, 2);
-      };
-      makeLine(14);
-      makeLine(canvas.height - 16);
-
-      // ── Date ────────────────────────────────────────────────
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#B99AE6';
-      ctx.font = dateFont;
-      let y = topPad;
-      for (const line of dateLines) {
-        ctx.fillText(line, cardWidth / 2, y);
-        y += lineHDate;
-      }
-
-      // ── Thin divider ─────────────────────────────────────────
-      y += 10;
-      const div = ctx.createLinearGradient(cardWidth*0.25, 0, cardWidth*0.75, 0);
-      div.addColorStop(0,   'transparent');
-      div.addColorStop(0.5, 'rgba(185,154,230,0.5)');
-      div.addColorStop(1,   'transparent');
-      ctx.fillStyle = div;
-      ctx.fillRect(cardWidth*0.25, y, cardWidth*0.5, 1);
-      y += 28;
-
-      // ── Message ──────────────────────────────────────────────
-      ctx.fillStyle = '#F8F5FF';
-      ctx.font = msgFont;
-      for (const line of msgLines) {
-        if (line === '') { y += lineHMsg * 0.5; continue; }
-        ctx.fillText(line, cardWidth / 2, y);
-        y += lineHMsg;
-      }
-
-      // ── Border ───────────────────────────────────────────────
-      ctx.strokeStyle = 'rgba(185,154,230,0.35)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      (ctx as any).roundRect(2, 2, cardWidth-4, canvas.height-4, 40);
-      ctx.stroke();
-
-      // ── Download ──────────────────────────────────────────────
-      const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
       link.download = `laila-message.png`;
@@ -187,6 +132,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
       alert('حدث خطأ أثناء حفظ الصورة');
     }
   };
+
 
 
 
