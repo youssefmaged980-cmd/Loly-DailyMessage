@@ -13,40 +13,58 @@ export const formatDateArabic = (dateString: string) => {
   return date.toLocaleDateString('ar-EG-u-nu-latn', options);
 };
 
-function splitTextIntoColumns(text: string, cols: number): string[] {
+function splitTextIntoBalancedColumns(text: string, cols: number): string[] {
   if (cols <= 1) return [text];
+  const trimmed = text.trim();
+  if (!trimmed) return [text];
 
-  const lines = text.split('\n');
-  if (lines.length >= cols * 3) {
-    const perCol = Math.ceil(lines.length / cols);
+  const lines = trimmed.split('\n');
+  if (lines.length >= cols * 4) {
+    const lineWeights = lines.map(l => Math.max(1, Math.ceil(l.length / 35)));
+    const totalWeight = lineWeights.reduce((a, b) => a + b, 0);
+    const targetWeight = totalWeight / cols;
+
     const result: string[] = [];
-    for (let c = 0; c < cols; c++) {
-      const chunk = lines.slice(c * perCol, (c + 1) * perCol).join('\n');
-      if (chunk.trim()) result.push(chunk);
+    let currentChunk: string[] = [];
+    let currentWeight = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const w = lineWeights[i];
+      if (result.length < cols - 1 && currentWeight + w >= targetWeight && currentChunk.length > 0) {
+        result.push(currentChunk.join('\n'));
+        currentChunk = [lines[i]];
+        currentWeight = w;
+      } else {
+        currentChunk.push(lines[i]);
+        currentWeight += w;
+      }
     }
+    if (currentChunk.length > 0) result.push(currentChunk.join('\n'));
     return result;
   }
 
-  // If text doesn't have many newlines, split by sentence breaks
-  const sentences = text.split(/(?<=[.!?؟\n])\s+/);
-  if (sentences.length >= cols * 2) {
-    const perCol = Math.ceil(sentences.length / cols);
-    const result: string[] = [];
-    for (let c = 0; c < cols; c++) {
-      const chunk = sentences.slice(c * perCol, (c + 1) * perCol).join(' ');
-      if (chunk.trim()) result.push(chunk);
-    }
-    return result;
-  }
+  // Split continuous text evenly by word boundaries so columns have identical character counts
+  const words = trimmed.split(/(\s+)/);
+  const totalChars = trimmed.length;
+  const targetCharsPerCol = totalChars / cols;
 
-  // Fallback: split evenly by words
-  const words = text.split(/\s+/);
-  const perCol = Math.ceil(words.length / cols);
   const result: string[] = [];
-  for (let c = 0; c < cols; c++) {
-    const chunk = words.slice(c * perCol, (c + 1) * perCol).join(' ');
-    if (chunk.trim()) result.push(chunk);
+  let currentWords: string[] = [];
+  let currentChars = 0;
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    const nextChars = currentChars + word.length;
+    if (result.length < cols - 1 && nextChars >= targetCharsPerCol && currentWords.length > 0) {
+      result.push(currentWords.join('').trim());
+      currentWords = [word.trimStart()];
+      currentChars = word.length;
+    } else {
+      currentWords.push(word);
+      currentChars = nextChars;
+    }
   }
+  if (currentWords.length > 0) result.push(currentWords.join('').trim());
   return result;
 }
 
@@ -61,11 +79,11 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
   const lineCount = lines.length;
   const msgLength = text.length;
 
-  // Determine number of columns and width so tall messages become balanced landscape/square cards
+  // Decide columns: 2 columns is ideal for long love letters, 3 only for massive texts/code
   let columns = 1;
-  if (lineCount > 45 || msgLength > 1600) {
+  if (lineCount > 60 || msgLength > 3200) {
     columns = 3;
-  } else if (lineCount > 16 || msgLength > 600) {
+  } else if (lineCount > 15 || msgLength > 600) {
     columns = 2;
   } else {
     columns = 1;
@@ -73,7 +91,7 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
 
   let cardWidth = 850;
   if (columns === 3) {
-    cardWidth = 1450;
+    cardWidth = 1400;
   } else if (columns === 2) {
     cardWidth = 1150;
   } else {
@@ -89,7 +107,7 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
     lineHeight = 1.65;
   } else if (columns === 2) {
     fontSize = lineCount > 35 ? 20 : 22;
-    lineHeight = 1.75;
+    lineHeight = 1.8;
   } else {
     if (msgLength < 120) {
       fontSize = 32;
@@ -224,7 +242,6 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
   msgWrap.style.cssText = `
     display: flex;
     flex-direction: row;
-    gap: ${columns > 1 ? '40px' : '0px'};
     width: 100%;
     direction: rtl;
     position: relative;
@@ -232,10 +249,10 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
     align-items: stretch;
     justify-content: center;
     box-sizing: border-box;
-    padding: 0 20px;
+    padding: 0 10px;
   `;
 
-  const columnChunks = splitTextIntoColumns(text, columns);
+  const columnChunks = splitTextIntoBalancedColumns(text, columns);
 
   columnChunks.forEach((chunk, index) => {
     const colDiv = document.createElement('div');
@@ -253,7 +270,8 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
       min-width: 0;
       direction: rtl;
       box-sizing: border-box;
-      ${index < columnChunks.length - 1 && columns > 1 ? `border-left: 1px solid ${borderColor}; padding-left: 40px;` : ''}
+      padding: ${columns > 1 ? '0 24px' : '0 40px'};
+      ${index < columnChunks.length - 1 && columns > 1 ? `border-left: 1px solid ${borderColor};` : ''}
     `;
     colDiv.innerText = chunk;
     msgWrap.appendChild(colDiv);
