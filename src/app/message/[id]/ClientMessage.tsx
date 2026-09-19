@@ -52,57 +52,59 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
   const downloadImage = async () => {
     if (!message) return;
     try {
-      // Create a hidden, wide clone of the card for capture
+      const msgLength = message.message?.length || 0;
+      // Aggressive font scaling for long messages
+      const fontSize = msgLength < 80 ? 30 : msgLength < 250 ? 24 : msgLength < 600 ? 19 : msgLength < 1200 ? 16 : 14;
+
       const wrapper = document.createElement('div');
       wrapper.style.cssText = `
         position: fixed;
         top: -9999px;
         left: -9999px;
-        width: 900px;
+        width: 1080px;
         z-index: -1;
         direction: rtl;
-        font-family: var(--font-markazi, serif);
         background-color: #1F162B;
         border-radius: 32px;
-        padding: 60px 80px;
+        padding: 48px 60px;
         border: 1px solid rgba(185,154,230,0.3);
-        text-align: center;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 24px;
+        align-items: flex-start;
+        gap: 16px;
+        box-sizing: border-box;
       `;
 
       const dateEl = document.createElement('div');
       dateEl.style.cssText = `
         color: #B99AE6;
-        font-size: 28px;
+        font-size: 24px;
         font-weight: bold;
-        font-family: var(--font-aref, serif);
-        line-height: 1.8;
+        line-height: 1.5;
         width: 100%;
+        text-align: center;
       `;
       dateEl.innerText = formatDateArabic(message.date);
 
       const dividerEl = document.createElement('div');
       dividerEl.style.cssText = `
-        width: 50%;
+        width: 60%;
         height: 1px;
+        margin: 0 auto;
         background: linear-gradient(to right, transparent, rgba(185,154,230,0.5), transparent);
       `;
 
       const msgEl = document.createElement('div');
-      const msgLength = message.message?.length || 0;
-      const fontSize = msgLength < 100 ? 32 : msgLength < 300 ? 26 : msgLength < 700 ? 22 : 18;
       msgEl.style.cssText = `
         color: #F8F5FF;
         font-size: ${fontSize}px;
-        line-height: 2;
-        font-family: var(--font-markazi, serif);
+        line-height: 1.7;
         white-space: pre-wrap;
-        word-break: break-word;
+        overflow-wrap: break-word;
+        word-break: normal;
         width: 100%;
-        text-align: center;
+        text-align: right;
+        direction: rtl;
       `;
       msgEl.innerText = message.message || '';
 
@@ -111,14 +113,13 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
       wrapper.appendChild(msgEl);
       document.body.appendChild(wrapper);
 
-      // Small delay to ensure render
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise(r => setTimeout(r, 150));
 
       const { toPng } = await import('html-to-image');
       const dataUrl = await toPng(wrapper, {
         cacheBust: true,
         pixelRatio: 2,
-        width: 900,
+        width: 1080,
       });
 
       document.body.removeChild(wrapper);
@@ -132,6 +133,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
       alert('حدث خطأ أثناء حفظ الصورة');
     }
   };
+
 
 
 
