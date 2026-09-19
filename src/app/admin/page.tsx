@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { collection, addDoc, getDocs, query, doc, deleteDoc, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
-
-interface Message {
-  id: string;
-  date: string;
-  message: string;
-  createdAt?: string;
-}
+import { Message } from "@/types";
+import { formatDateArabic, getEgyptTodayString } from "@/lib/date";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,25 +16,10 @@ export default function AdminPage() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [allMessages, setAllMessages] = useState<Message[]>([]);
-  const [isDark, setIsDark] = useState<boolean>(true);
 
   useEffect(() => {
-    // Set today's date as default
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    setDate(`${yyyy}-${mm}-${dd}`);
-
-    const themeAttr = document.documentElement.getAttribute('data-theme');
-    if (themeAttr === 'light') {
-      setIsDark(false);
-    } else if (themeAttr === 'dark') {
-      setIsDark(true);
-    } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDark(prefersDark);
-    }
+    // Set Cairo today's date as default
+    setDate(getEgyptTodayString());
   }, []);
 
   useEffect(() => {
@@ -51,8 +33,8 @@ export default function AdminPage() {
       const q = query(collection(db, "messages"), orderBy("date", "desc"));
       const querySnapshot = await getDocs(q);
       const fetched: Message[] = [];
-      querySnapshot.forEach((doc) => {
-        fetched.push({ id: doc.id, ...doc.data() } as Message);
+      querySnapshot.forEach((docSnap) => {
+        fetched.push({ id: docSnap.id, ...docSnap.data() } as Message);
       });
       setAllMessages(fetched);
     } catch (error) {
@@ -60,16 +42,31 @@ export default function AdminPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("هل أنت متأكد من حذف هذه الرسالة نهائياً؟")) {
+  const handleDelete = async (msg: Message) => {
+    const confirmation = confirm(`هل أنت متأكد من رغبتك في حذف رسالة تاريخ (${formatDateArabic(msg.date)}) نهائياً من قاعدة البيانات السحابية؟`);
+    if (confirmation) {
       try {
-        await deleteDoc(doc(db, "messages", id));
+        await deleteDoc(doc(db, "messages", msg.id));
         fetchAllMessages();
       } catch (error) {
         console.error("Error deleting message:", error);
         alert("حدث خطأ أثناء الحذف");
       }
     }
+  };
+
+  const handleExportBackup = () => {
+    if (allMessages.length === 0) {
+      alert("لا توجد رسائل لتنزيلها حالياً");
+      return;
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allMessages, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `lolo-messages-backup-${getEgyptTodayString()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -90,7 +87,7 @@ export default function AdminPage() {
     }
 
     setLoading(true);
-    setStatus("جاري الحفظ...");
+    setStatus("جاري الحفظ في السحابة...");
 
     try {
       // Always add as a new message so previous messages go to archive rather than being overwritten
@@ -99,7 +96,7 @@ export default function AdminPage() {
         message: message.trim(),
         createdAt: new Date().toISOString()
       });
-      setStatus("تم نشر الرسالة بنجاح وحفظها! ✅");
+      setStatus("تم نشر الرسالة بنجاح وحفظها في السحابة للأبد! ✅");
 
       setMessage(""); // Clear message field
       fetchAllMessages();
@@ -110,23 +107,6 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatDateArabic = (dateString: string) => {
-    if (!dateString) return "";
-    const dateObj = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return dateObj.toLocaleDateString('ar-EG-u-nu-latn', options);
-  };
-
-  const toggleTheme = () => {
-    const nextDark = !isDark;
-    setIsDark(nextDark);
-    const themeName = nextDark ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', themeName);
-    try {
-      localStorage.setItem('theme', themeName);
-    } catch (e) {}
   };
 
   if (!isAuthenticated) {
@@ -162,26 +142,21 @@ export default function AdminPage() {
     );
   }
 
+  const todayString = getEgyptTodayString();
+
   return (
     <div className="flex flex-col items-center min-h-screen p-3 sm:p-6 md:p-8 bg-bg-color transition-colors duration-300">
       {/* Top Bar */}
       <div className="w-full max-w-2xl flex justify-between items-center bg-card-bg/80 border border-border-color px-4 py-2.5 rounded-2xl backdrop-blur-md shadow-sm mb-5">
-        <a
+        <Link
           href="/"
           className="font-markazi text-xl text-wine hover:text-rose transition-colors flex items-center gap-2 no-underline"
         >
           <span className="text-base">&rarr;</span>
           <span>عودة للموقع الرئيسي</span>
-        </a>
+        </Link>
 
-        <button
-          onClick={toggleTheme}
-          className="bg-card-bg/90 border border-border-color p-2 rounded-full text-wine hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-sm flex items-center justify-center w-9 h-9 text-lg"
-          title={isDark ? "التبديل إلى الوضع الصباحي (Light Mode) ☀️" : "التبديل إلى الوضع الليلي (Dark Mode) 🌙"}
-          aria-label="تبديل المظهر"
-        >
-          {isDark ? "☀️" : "🌙"}
-        </button>
+        <ThemeToggle className="w-9 h-9 text-lg" />
       </div>
 
       {/* Main Form Box */}
@@ -227,7 +202,7 @@ export default function AdminPage() {
             className="bg-gradient-to-r from-wine to-wine-deep text-paper border-none py-3 px-6 rounded-xl font-markazi text-2xl font-bold cursor-pointer hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99] transition-all disabled:opacity-50 mt-1 shadow-[0_4px_15px_rgba(108,63,160,0.25)] flex items-center justify-center gap-2"
           >
             <span>✨</span>
-            <span>{loading ? "جاري الحفظ والنشر..." : "نشر الرسالة الآن"}</span>
+            <span>{loading ? "جاري الحفظ والنشر..." : "نشر الرسالة الآن في السحابة"}</span>
           </button>
 
           {status && (
@@ -244,23 +219,23 @@ export default function AdminPage() {
 
       {/* إدارة الرسائل السابقة */}
       <div className="bg-card-bg/90 p-4 sm:p-7 md:p-8 rounded-2xl sm:rounded-3xl shadow-[var(--shadow)] border border-border-color w-full max-w-2xl mt-5 sm:mt-6 backdrop-blur-md">
-        <div className="border-b border-border-color/60 pb-3 mb-4 sm:mb-5 flex items-center justify-between gap-2">
+        <div className="border-b border-border-color/60 pb-3 mb-4 sm:mb-5 flex items-center justify-between gap-2 flex-wrap">
           <h2 className="font-aref text-xl sm:text-2xl text-wine font-bold flex items-center gap-2.5">
             <span className="w-8 h-8 rounded-lg bg-wine/10 dark:bg-wine/25 border border-wine/20 flex items-center justify-center text-base">🗂️</span>
-            <span>إدارة الرسائل</span>
+            <span>إدارة الرسائل المحفوظة ({allMessages.length})</span>
           </h2>
-          <span className="font-markazi text-base text-rose bg-wine/10 px-3 py-0.5 rounded-full border border-rose/30 whitespace-nowrap">
-            {allMessages.length} رسائل مسجلة
-          </span>
+          <button
+            onClick={handleExportBackup}
+            className="font-markazi text-base text-wine dark:text-rose-pale bg-wine/10 dark:bg-rose/15 hover:bg-wine/20 px-3 py-1 rounded-xl border border-wine/20 dark:border-rose/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+            title="تنزيل نسخة احتياطية من كل الرسائل لحفظها على جهازك أيضاً"
+          >
+            <span>💾</span>
+            <span>نسخة احتياطية (Backup)</span>
+          </button>
         </div>
 
         <div className="flex flex-col gap-3 max-h-[55vh] overflow-y-auto pl-1 pr-1 scrollbar-timeline">
           {allMessages.map(msg => {
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            const todayString = `${yyyy}-${mm}-${dd}`;
             const isFuture = msg.date > todayString;
 
             return (
@@ -280,7 +255,7 @@ export default function AdminPage() {
                     )}
                   </div>
                   <button
-                    onClick={() => handleDelete(msg.id)}
+                    onClick={() => handleDelete(msg)}
                     className="shrink-0 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-2.5 py-1 rounded-xl transition-all font-markazi text-base border border-red-500/30 flex items-center gap-1 cursor-pointer active:scale-95"
                     title="حذف هذه الرسالة"
                   >

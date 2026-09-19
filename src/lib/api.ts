@@ -1,57 +1,85 @@
-export interface Message {
-  id: string;
-  date: string;
-  message: string;
-  createdAt?: string;
-}
+import { Message } from "@/types";
 
+const FIRESTORE_PROJECT_ID = "lolo-daily-messa";
+const BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIRESTORE_PROJECT_ID}/databases/(default)/documents/messages`;
+
+/**
+ * Fetches ALL messages from Firestore cloud database without any limitation.
+ * Uses pagination loop (nextPageToken) to guarantee 100% of historical messages are retrieved for life.
+ */
 export async function getMessages(): Promise<Message[]> {
+  const allMessages: Message[] = [];
+  let pageToken: string | undefined = undefined;
+
   try {
-    const res = await fetch(`https://firestore.googleapis.com/v1/projects/lolo-daily-messa/databases/(default)/documents/messages`, {
-      cache: 'no-store'
-    });
-    
-    if (!res.ok) return [];
-    
-    const data = await res.json();
-    if (!data.documents) return [];
-    
-    const messages = data.documents.map((doc: any) => ({
-      id: doc.name.split('/').pop(),
-      date: doc.fields.date.stringValue,
-      message: doc.fields.message.stringValue,
-      createdAt: doc.fields.createdAt?.stringValue || doc.createTime || ""
-    }));
-    
-    return messages.sort((a: Message, b: Message) => {
+    do {
+      const url: string = pageToken 
+        ? `${BASE_URL}?pageSize=300&pageToken=${encodeURIComponent(pageToken)}` 
+        : `${BASE_URL}?pageSize=300`;
+
+      const res = await fetch(url, {
+        cache: 'no-store'
+      });
+
+      if (!res.ok) {
+        console.error(`Firestore fetch failed with status: ${res.status}`);
+        break;
+      }
+
+      const data = await res.json();
+      if (Array.isArray(data.documents)) {
+        for (const doc of data.documents) {
+          if (doc.fields?.date?.stringValue && doc.fields?.message?.stringValue) {
+            allMessages.push({
+              id: doc.name.split('/').pop() || "",
+              date: doc.fields.date.stringValue,
+              message: doc.fields.message.stringValue,
+              createdAt: doc.fields.createdAt?.stringValue || doc.createTime || ""
+            });
+          }
+        }
+      }
+
+      pageToken = data.nextPageToken;
+    } while (pageToken);
+
+    // Sort descending: newest dates first, and if multiple messages on the same date, latest created first
+    return allMessages.sort((a, b) => {
       const dateCmp = b.date.localeCompare(a.date);
       if (dateCmp !== 0) return dateCmp;
       return (b.createdAt || "").localeCompare(a.createdAt || "");
     });
   } catch (error) {
-    console.error("Failed to fetch messages:", error);
-    return [];
+    console.error("Failed to fetch messages from Firestore:", error);
+    return allMessages;
   }
 }
 
+/**
+ * Fetches a specific single message by its Firestore document ID.
+ */
 export async function getMessage(id: string): Promise<Message | null> {
+  if (!id) return null;
   try {
-    const res = await fetch(`https://firestore.googleapis.com/v1/projects/lolo-daily-messa/databases/(default)/documents/messages/${id}`, {
+    const res = await fetch(`${BASE_URL}/${encodeURIComponent(id)}`, {
       cache: 'no-store'
     });
-    
+
     if (!res.ok) return null;
-    
+
     const data = await res.json();
-    if (!data.fields) return null;
-    
+    if (!data.fields?.date?.stringValue || !data.fields?.message?.stringValue) {
+      return null;
+    }
+
     return {
-      id: data.name.split('/').pop(),
+      id: data.name.split('/').pop() || id,
       date: data.fields.date.stringValue,
-      message: data.fields.message.stringValue
+      message: data.fields.message.stringValue,
+      createdAt: data.fields.createdAt?.stringValue || data.createTime || ""
     };
   } catch (error) {
-    console.error("Failed to fetch message:", error);
+    console.error(`Failed to fetch message ${id}:`, error);
     return null;
   }
 }

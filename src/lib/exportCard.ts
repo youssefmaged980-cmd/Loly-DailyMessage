@@ -6,12 +6,7 @@ export interface CardExportOptions {
   isDark?: boolean;
 }
 
-export const formatDateArabic = (dateString: string) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  return date.toLocaleDateString('ar-EG-u-nu-latn', options);
-};
+import { formatDateArabic } from './date';
 
 function splitTextIntoBalancedColumns(text: string, cols: number): string[] {
   if (cols <= 1) return [text];

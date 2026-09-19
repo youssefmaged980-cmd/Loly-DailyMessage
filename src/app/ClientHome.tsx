@@ -2,76 +2,30 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { Message, TimeTogether } from "@/types";
+import { getEgyptTodayString, formatDateArabic, calculateTimeTogether } from "@/lib/date";
 import { generateCardImage } from "@/lib/exportCard";
-
-interface Message {
-  id: string;
-  date: string;
-  message: string;
-}
-
-interface TimeTogether {
-  days: string;
-  hours: string;
-  minutes: string;
-  seconds: string;
-}
+import FloralCorner from "@/components/FloralCorner";
+import ThemeToggle from "@/components/ThemeToggle";
+import FloatingEffects from "@/components/FloatingEffects";
 
 export default function ClientHome({ initialMessages }: { initialMessages: Message[] }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
   const [timeTogether, setTimeTogether] = useState<TimeTogether | null>(null);
-  const [isDark, setIsDark] = useState<boolean>(true);
+  const [isDownloading, setIsDownloading] = useState(false);
   const messageRef = useRef<HTMLElement>(null);
 
-  const getTodayString = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  };
-
   useEffect(() => {
-    // Determine active theme
-    const themeAttr = document.documentElement.getAttribute('data-theme');
-    if (themeAttr === 'light') {
-      setIsDark(false);
-    } else if (themeAttr === 'dark') {
-      setIsDark(true);
-    } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDark(prefersDark);
-    }
-
-    // Generate flying petals and hearts
-    createEffects();
-
-    // Calculate time together dynamically
-    const calculateTime = () => {
-      const now = new Date();
-      const startDate = new Date("2024-02-25T00:00:00");
-      const diffTime = Math.abs(now.getTime() - startDate.getTime());
-
-      const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diffTime / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diffTime / 1000 / 60) % 60);
-      const seconds = Math.floor((diffTime / 1000) % 60);
-
-      const formatNumber = (num: number) => num.toString().padStart(2, '0');
-
-      setTimeTogether({
-        days: formatNumber(days),
-        hours: formatNumber(hours),
-        minutes: formatNumber(minutes),
-        seconds: formatNumber(seconds)
-      });
+    // Initial and periodic time counter calculation
+    const updateTimer = () => {
+      setTimeTogether(calculateTimeTogether("2024-02-25T00:00:00"));
     };
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
 
-    calculateTime();
-    const timer = setInterval(calculateTime, 1000);
-
-    const todayString = getTodayString();
+    // Filter messages up to Cairo today so future scheduled messages don't leak
+    const todayString = getEgyptTodayString();
     const validMessages = initialMessages.filter((m: Message) => m.date <= todayString);
     setMessages(validMessages);
 
@@ -88,39 +42,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     return () => clearInterval(timer);
   }, [initialMessages]);
 
-  const createEffects = () => {
-    const container = document.getElementById('effectsContainer');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const elementsCount = 12;
-    const symbols = ['🌸', '💮', '🌺', '✨', '💕', '🌹'];
-
-    for (let i = 0; i < elementsCount; i++) {
-      const el = document.createElement('div');
-      // Randomly choose float up or fall down
-      const isFalling = Math.random() > 0.5;
-      const animationClass = isFalling ? 'animate-petal-fall' : 'animate-float-up';
-
-      el.className = `absolute text-2xl opacity-50 ${animationClass} text-rose-pale select-none pointer-events-none`;
-      el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-
-      const leftPos = Math.random() * 100;
-      const animDuration = 10 + Math.random() * 20;
-      const delay = Math.random() * 15;
-      const size = 0.5 + Math.random() * 1.5;
-
-      el.style.left = `${leftPos}vw`;
-      el.style.animationDuration = `${animDuration}s`;
-      el.style.animationDelay = `-${delay}s`;
-      el.style.transform = `scale(${size})`;
-
-      container.appendChild(el);
-    }
-  };
-
   const downloadImage = async () => {
-    if (!currentMessage) return;
+    if (!currentMessage || isDownloading) return;
+    setIsDownloading(true);
     try {
       const dataUrl = await generateCardImage({
         date: currentMessage.date,
@@ -135,52 +59,17 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     } catch (error) {
       console.error("Error generating image:", error);
       alert("حدث خطأ أثناء حفظ الصورة");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
-  const formatDateArabic = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('ar-EG-u-nu-latn', options);
-  };
-
-  const shareToWhatsApp = () => {
-    if (!currentMessage) return;
-    const shareText = `رسالة اليوم (${formatDateArabic(currentMessage.date)}):\n\n"${currentMessage.message}"\n\n❤️💌`;
-    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  const toggleTheme = () => {
-    const nextDark = !isDark;
-    setIsDark(nextDark);
-    const themeName = nextDark ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', themeName);
-    try {
-      localStorage.setItem('theme', themeName);
-    } catch (e) {}
-  };
-
-  // Floral SVG corner component
-  const FloralCorner = ({ className }: { className: string }) => (
-    <svg viewBox="0 0 100 100" className={`floral-corner fill-rose ${className}`}>
-      <path d="M 0,0 C 20,0 40,10 50,30 C 60,10 80,0 100,0 C 80,20 70,40 50,50 C 70,60 80,80 100,100 C 80,100 60,90 50,70 C 40,90 20,100 0,100 C 20,80 30,60 50,50 C 30,40 20,20 0,0 Z" />
-    </svg>
-  );
+  const todayStr = getEgyptTodayString();
 
   return (
     <>
-      <button
-        onClick={toggleTheme}
-        className="absolute top-5 left-5 bg-card-bg/70 hover:bg-card-bg border border-border-color p-2 rounded-full text-wine text-2xl cursor-pointer z-50 hover:scale-110 active:scale-95 transition-all shadow-sm flex items-center justify-center w-11 h-11 backdrop-blur-sm"
-        aria-label={isDark ? "التبديل إلى الوضع الصباحي" : "التبديل إلى الوضع الليلي"}
-        title={isDark ? "التبديل إلى الوضع الصباحي (Light Mode) ☀️" : "التبديل إلى الوضع الليلي (Dark Mode) 🌙"}
-      >
-        {isDark ? "☀️" : "🌙"}
-      </button>
-
-      <div id="effectsContainer" className="fixed top-0 left-0 w-screen h-screen overflow-hidden z-0 pointer-events-none"></div>
+      <ThemeToggle className="absolute top-5 left-5 z-50" />
+      <FloatingEffects count={12} />
 
       <div className="w-full max-w-[680px] md:max-w-[780px] lg:max-w-[860px] mx-auto p-4 sm:p-6 md:p-10 flex flex-col gap-8 md:gap-10 relative z-10 min-h-screen">
 
@@ -199,7 +88,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 </div>
                 <img
                   src="/laila.jpg"
-                  alt=""
+                  alt="ليلى"
                   className="w-full h-full object-cover rounded-full relative z-10 transition-transform duration-700 hover:scale-110"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
@@ -215,16 +104,20 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
 
           <div className="mt-6 animate-fade-in-up flex flex-col items-center">
-            <h2 className="font-aref text-2xl md:text-3xl text-wine mb-2 drop-shadow-sm opacity-90">
+            <h2 className="font-aref text-2xl md:text-3xl text-wine dark:text-[#F6A5D6] dark:drop-shadow-[0_0_16px_rgba(246,165,214,0.9)] mb-2 drop-shadow-sm font-bold">
               رسايلك الجميلة الذيك يا حبيبي هنا
             </h2>
-            <div className="font-cormorant italic text-gold text-xl md:text-2xl tracking-widest mt-1">For my one and only Laila</div>
+            <div className="font-cormorant italic text-gold text-xl md:text-2xl tracking-widest mt-1 drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">
+              For my one and only Laila
+            </div>
 
             <div className="mt-6 w-full border border-rose/30 rounded-3xl p-6 relative shadow-[var(--shadow)] transition-all duration-500 bg-card-bg/10 backdrop-blur-sm">
               {/* Title INSIDE the frame */}
               <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-                <span className="font-aref text-2xl md:text-3xl text-wine drop-shadow-sm text-center">ايامنا الحلوة اللي عشناها سوا يا قلبي</span>
-                <span className="text-rose text-2xl md:text-3xl animate-pulse">🌸</span>
+                <span className="font-aref text-2xl md:text-3xl text-wine dark:text-[#F9C88A] dark:drop-shadow-[0_0_14px_rgba(249,200,138,0.85)] drop-shadow-sm text-center font-bold">
+                  ايامنا الحلوة اللي عشناها سوا يا قلبي
+                </span>
+                <span className="text-rose text-2xl md:text-3xl animate-pulse drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">🌸</span>
               </div>
 
               <div className="flex flex-row gap-2 md:gap-4 mt-2 dir-ltr items-center justify-center relative z-0">
@@ -232,25 +125,33 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                   <>
                     <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.days}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep dark:text-[#F6A5D6] font-bold counter-glow relative z-10">
+                        {timeTogether.days}
+                      </span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">يوم</span>
                     </div>
                     <span className="text-rose text-2xl font-bold animate-pulse mb-4">:</span>
                     <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.hours}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep dark:text-[#F6A5D6] font-bold counter-glow relative z-10">
+                        {timeTogether.hours}
+                      </span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">ساعة</span>
                     </div>
                     <span className="text-rose text-2xl font-bold animate-pulse mb-4">:</span>
                     <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.minutes}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep dark:text-[#F6A5D6] font-bold counter-glow relative z-10">
+                        {timeTogether.minutes}
+                      </span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">دقيقة</span>
                     </div>
                     <span className="text-rose text-2xl font-bold animate-pulse mb-4">:</span>
                     <div className="flex flex-col items-center justify-center bg-card-bg/90 border border-rose/30 rounded-2xl w-[65px] h-[80px] md:w-20 md:h-24 shadow-[0_5px_15px_rgba(74,42,112,0.15)] backdrop-blur-md relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-rose-pale/50 to-transparent"></div>
-                      <span className="font-aref text-3xl md:text-4xl text-wine-deep font-bold drop-shadow-[0_2px_4px_rgba(185,154,230,0.8)] relative z-10">{timeTogether.seconds}</span>
+                      <span className="font-aref text-3xl md:text-4xl text-wine-deep dark:text-[#F6A5D6] font-bold counter-glow relative z-10">
+                        {timeTogether.seconds}
+                      </span>
                       <span className="font-markazi text-sm text-text-muted mt-1 relative z-10">ثانية</span>
                     </div>
                   </>
@@ -276,9 +177,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
 
           <div className="relative z-10 w-full mb-1 sm:mb-2 flex flex-col items-center">
-            <h1 className="font-aref text-2xl sm:text-3xl md:text-4xl text-wine-deep dark:text-[#F3ECFB] dark:drop-shadow-[0_0_12px_rgba(185,154,230,0.55)] mb-2 drop-shadow-sm relative inline-block">
+            <h1 className="font-aref text-2xl sm:text-3xl md:text-4xl text-wine-deep dark:text-[#E0AAEF] dark:drop-shadow-[0_0_14px_rgba(224,170,239,0.85)] mb-2 drop-shadow-sm relative inline-block font-bold">
               <span className="absolute -left-7 sm:-left-9 top-1/2 -translate-y-1/2 text-rose text-lg sm:text-xl opacity-75">❦</span>
-              {currentMessage ? formatDateArabic(currentMessage.date) : formatDateArabic(new Date().toISOString())}
+              {currentMessage ? formatDateArabic(currentMessage.date) : formatDateArabic(todayStr)}
               <span className="absolute -right-7 sm:-right-9 top-1/2 -translate-y-1/2 text-rose text-lg sm:text-xl opacity-75 flex scale-x-[-1]">❦</span>
             </h1>
           </div>
@@ -290,19 +191,20 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
             <button
               onClick={downloadImage}
-              className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_8px_20px_rgba(90,39,128,0.3)] hover:shadow-[0_10px_25px_rgba(90,39,128,0.5)] hover:-translate-y-1 active:scale-95 group-hover:scale-105"
+              disabled={isDownloading}
+              className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_8px_20px_rgba(90,39,128,0.3)] hover:shadow-[0_10px_25px_rgba(90,39,128,0.5)] hover:-translate-y-1 active:scale-95 group-hover:scale-105 disabled:opacity-50"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-5 h-5 fill-white shrink-0">
                 <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
               </svg>
-              <span>نزلي الرسالة عندك يا عيوني لو حابة</span>
+              <span>{isDownloading ? "جاري تحضير الرسالة..." : "نزلي الرسالة عندك يا عيوني لو حابة"}</span>
             </button>
           </div>
         </main>
 
         {/* Archive Section */}
         <section className="mt-8 mb-12 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-          <h2 className="font-aref text-3xl text-wine mb-7 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
+          <h2 className="font-aref text-3xl text-wine dark:text-[#F8F4FF] dark:drop-shadow-[0_0_12px_rgba(255,182,217,0.7)] mb-7 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
             <span className="text-2xl">📖</span> أرشيف الذكريات
           </h2>
 
@@ -317,7 +219,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
 
           <div className="flex flex-col gap-3.5 sm:gap-4 max-h-[45vh] overflow-y-auto px-1 sm:px-2 py-1 scrollbar-timeline w-full">
-            {messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= getTodayString()).map((msg) => (
+            {messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= todayStr).map((msg) => (
               <Link
                 key={msg.id}
                 href={`/message/${msg.id}`}

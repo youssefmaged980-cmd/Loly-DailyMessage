@@ -1,18 +1,15 @@
 import ClientMessage from "./ClientMessage";
-import { getMessage } from "../../../lib/api";
+import { getMessage } from "@/lib/api";
+import { getEgyptTodayString } from "@/lib/date";
 
 export const dynamic = 'force-dynamic';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = await params;
   const message = await getMessage(unwrappedParams.id);
-  
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  const todayString = `${yyyy}-${mm}-${dd}`;
+  const todayString = getEgyptTodayString();
 
+  // If message is scheduled for future (greater than Cairo today), don't reveal it yet
   if (message && message.date > todayString) {
     return <ClientMessage initialMessage={null} />;
   }
