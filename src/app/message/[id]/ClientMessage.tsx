@@ -50,26 +50,122 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
   };
 
   const downloadImage = async () => {
-    if (!messageRef.current) return;
+    if (!message) return;
     try {
-      const el = messageRef.current;
+      const canvas = document.createElement('canvas');
+      const cardWidth = 900;
+      const padding = 64;
+      const textWidth = cardWidth - padding * 2;
+      const ctx = canvas.getContext('2d')!;
 
-      const dataUrl = await toPng(el, {
-        cacheBust: true,
-        pixelRatio: 2,
-        filter: (node) => {
-          return !node.dataset || node.dataset.html2canvasIgnore !== 'true';
+      const dateText = formatDateArabic(message.date);
+      const msgText = message.message || '';
+
+      // Determine font size based on message length
+      const msgLength = msgText.length;
+      const fontSize = msgLength < 100 ? 36 : msgLength < 300 ? 28 : msgLength < 700 ? 22 : 18;
+
+      // Helper: wrap text into lines
+      const getLines = (text: string, font: string, maxWidth: number) => {
+        ctx.font = font;
+        const wordArr = text.split(' ');
+        const lines: string[] = [];
+        let current = '';
+        for (const word of wordArr) {
+          const test = current ? current + ' ' + word : word;
+          if (ctx.measureText(test).width > maxWidth && current) {
+            lines.push(current);
+            current = word;
+          } else {
+            current = test;
+          }
         }
-      });
-      const link = document.createElement("a");
+        if (current) lines.push(current);
+        return lines;
+      };
+
+      const dateFont = `bold 32px serif`;
+      const msgFont = `${fontSize}px serif`;
+
+      const dateLines = getLines(dateText, dateFont, textWidth);
+      const msgLines = getLines(msgText, msgFont, textWidth);
+
+      const lineHeightDate = 48;
+      const lineHeightMsg = fontSize * 1.9;
+      const topPad = 80;
+      const bottomPad = 80;
+      const dateSection = dateLines.length * lineHeightDate + 32;
+      const msgSection = msgLines.length * lineHeightMsg;
+      const cardHeight = topPad + dateSection + msgSection + bottomPad;
+
+      canvas.width = cardWidth;
+      canvas.height = Math.max(cardHeight, 500);
+
+      // Background
+      ctx.fillStyle = '#1F162B';
+      ctx.beginPath();
+      ctx.roundRect(0, 0, cardWidth, canvas.height, 40);
+      ctx.fill();
+
+      // Top gradient line
+      const topGrad = ctx.createLinearGradient(cardWidth * 0.2, 0, cardWidth * 0.8, 0);
+      topGrad.addColorStop(0, 'transparent');
+      topGrad.addColorStop(0.5, 'rgba(185,154,230,0.6)');
+      topGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(cardWidth * 0.2, 12, cardWidth * 0.6, 2);
+
+      // Bottom gradient line
+      const botGrad = ctx.createLinearGradient(cardWidth * 0.2, 0, cardWidth * 0.8, 0);
+      botGrad.addColorStop(0, 'transparent');
+      botGrad.addColorStop(0.5, 'rgba(185,154,230,0.6)');
+      botGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = botGrad;
+      ctx.fillRect(cardWidth * 0.2, canvas.height - 14, cardWidth * 0.6, 2);
+
+      // Date text
+      ctx.textAlign = 'center';
+      ctx.direction = 'rtl';
+      ctx.fillStyle = '#B99AE6';
+      ctx.font = dateFont;
+      let y = topPad;
+      for (const line of dateLines) {
+        ctx.fillText(line, cardWidth / 2, y);
+        y += lineHeightDate;
+      }
+
+      // Divider
+      y += 8;
+      ctx.fillStyle = 'rgba(185,154,230,0.3)';
+      ctx.fillRect(cardWidth * 0.3, y, cardWidth * 0.4, 1);
+      y += 32;
+
+      // Message text
+      ctx.fillStyle = '#F8F5FF';
+      ctx.font = msgFont;
+      for (const line of msgLines) {
+        ctx.fillText(line, cardWidth / 2, y);
+        y += lineHeightMsg;
+      }
+
+      // Border
+      ctx.strokeStyle = 'rgba(185,154,230,0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(2, 2, cardWidth - 4, canvas.height - 4, 40);
+      ctx.stroke();
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `laila-message-${message?.date || "archive"}.png`;
+      link.download = `laila-message-${message.date || 'archive'}.png`;
       link.click();
     } catch (error) {
-      console.error("Error generating image:", error);
-      alert("حدث خطأ أثناء حفظ الصورة");
+      console.error('Error generating image:', error);
+      alert('حدث خطأ أثناء حفظ الصورة');
     }
   };
+
 
   const formatDateArabic = (dateString: string) => {
     if (!dateString) return "";
