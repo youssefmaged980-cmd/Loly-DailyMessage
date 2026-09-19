@@ -51,11 +51,12 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
     if (!message) return;
     try {
       const text = message.message || '';
-      const lineCount = text.split('\n').length;
+      const lines = text.split('\n');
+      const lineCount = lines.length;
       const msgLength = text.length;
 
-      // رسائل فيها أسطر كتير (كل جملة في سطر) بناخدها لعواميد جنب بعض
-      // بدل ما تطول الصورة للأبد لأن pre-wrap بيحافظ على كل Enter كسطر مستقل
+      // رسائل فيها أسطر كتير (كل جملة في سطر) بنقسمها لعواميد يدويًا
+      // (CSS column-count مش بيتحترم صح جوه رندر html-to-image فاستخدمنا flexbox بدل منه)
       let columns = 1;
       if (lineCount > 55) columns = 3;
       else if (lineCount > 24) columns = 2;
@@ -106,24 +107,48 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
         background: linear-gradient(to right, transparent, rgba(185,154,230,0.5), transparent);
       `;
 
-      const msgEl = document.createElement('div');
-      msgEl.style.cssText = `
+      const msgWrap = document.createElement('div');
+      msgWrap.style.cssText = `
+        display: flex;
+        flex-direction: row;
+        gap: 48px;
+        width: 100%;
+        direction: rtl;
+      `;
+
+      const colStyle = `
         color: #F8F5FF;
         font-size: ${fontSize}px;
         line-height: 1.6;
         white-space: pre-wrap;
         overflow-wrap: break-word;
         word-break: normal;
-        width: 100%;
         text-align: right;
         direction: rtl;
-        ${columns > 1 ? `column-count: ${columns}; column-gap: 48px;` : ''}
+        flex: 1 1 0;
+        min-width: 0;
       `;
-      msgEl.innerText = text;
+
+      if (columns === 1) {
+        const colEl = document.createElement('div');
+        colEl.style.cssText = colStyle;
+        colEl.innerText = text;
+        msgWrap.appendChild(colEl);
+      } else {
+        const perCol = Math.ceil(lineCount / columns);
+        for (let c = 0; c < columns; c++) {
+          const chunk = lines.slice(c * perCol, (c + 1) * perCol).join('\n');
+          if (!chunk) continue;
+          const colEl = document.createElement('div');
+          colEl.style.cssText = colStyle;
+          colEl.innerText = chunk;
+          msgWrap.appendChild(colEl);
+        }
+      }
 
       wrapper.appendChild(dateEl);
       wrapper.appendChild(dividerEl);
-      wrapper.appendChild(msgEl);
+      wrapper.appendChild(msgWrap);
       document.body.appendChild(wrapper);
 
       await new Promise(r => setTimeout(r, 200));
