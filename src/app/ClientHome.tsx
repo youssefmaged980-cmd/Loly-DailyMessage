@@ -3,17 +3,19 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Message, TimeTogether } from "@/types";
-import { getEgyptTodayString, formatDateArabic, calculateTimeTogether } from "@/lib/date";
+import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, SpecialOccasion } from "@/lib/date";
 import { generateCardImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
 import ThemeToggle from "@/components/ThemeToggle";
 import FloatingEffects from "@/components/FloatingEffects";
+import CelebrationOverlay from "@/components/CelebrationOverlay";
 
 export default function ClientHome({ initialMessages }: { initialMessages: Message[] }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
   const [timeTogether, setTimeTogether] = useState<TimeTogether | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [occasion, setOccasion] = useState<SpecialOccasion | null>(null);
   const messageRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -23,6 +25,8 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     };
     updateTimer();
     const timer = setInterval(updateTimer, 1000);
+
+    setOccasion(getSpecialOccasion(new Date()));
 
     // Filter messages up to Cairo today so future scheduled messages don't leak
     const todayString = getEgyptTodayString();
@@ -72,6 +76,8 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
       <FloatingEffects count={12} />
 
       <div className="w-full max-w-[680px] md:max-w-[780px] lg:max-w-[860px] mx-auto p-4 sm:p-6 md:p-10 flex flex-col gap-8 md:gap-10 relative z-10 min-h-screen">
+        
+        <CelebrationOverlay occasion={occasion} />
 
         {/* Header Section */}
         <header className="flex flex-col items-center text-center gap-5 mt-4">

@@ -61,3 +61,47 @@ export function calculateTimeTogether(startDateStr: string = "2024-02-25T00:00:0
     seconds: formatNumber(seconds)
   };
 }
+
+export interface SpecialOccasion {
+  id: string;
+  message: string;
+}
+
+/**
+ * Checks if the given date matches any special milestones and returns the corresponding celebration.
+ * @param date The date to check
+ */
+export function getSpecialOccasion(date: Date = new Date()): SpecialOccasion | null {
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // 1-indexed (1-12)
+
+  if (month === 1 && day === 1) {
+    return {
+      id: "NEW_YEAR",
+      message: "كل سنة وانتي عامي الجميل والوحيد والاول والاخير بحبك"
+    };
+  }
+
+  if (month === 7 && day === 8) {
+    return {
+      id: "BIRTHDAY",
+      message: "كل سنة وبنتي اجمل وحدة فالدنيا دي كلها بحبك"
+    };
+  }
+
+  if (month === 2 && day === 14) {
+    return {
+      id: "VALENTINE_GLOBAL",
+      message: "كل عيد حب وانتي حبيبتي ونور عيني"
+    };
+  }
+
+  if (month === 11 && day === 4) {
+    return {
+      id: "VALENTINE_EGYPT",
+      message: "كل عيد حب وحنااا سوا يا روح قلبي"
+    };
+  }
+
+  return null;
+}
