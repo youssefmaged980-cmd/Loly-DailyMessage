@@ -100,36 +100,52 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
       {/* Random Message Modal */}
       {randomMsg && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-0 sm:p-4"
           onClick={closeRandom}
         >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" />
+          {/* Sheet on mobile, centered card on desktop */}
           <div
-            className="relative z-10 w-full max-w-lg bg-card-bg rounded-[28px] border border-rose/40 shadow-[0_0_60px_rgba(246,165,214,0.4)] p-6 sm:p-8 text-center animate-fade-in-up"
+            className="relative z-10 w-full sm:max-w-lg bg-card-bg sm:rounded-[28px] rounded-t-[28px] border border-rose/40 shadow-[0_0_60px_rgba(246,165,214,0.4)] animate-fade-in-up flex flex-col"
+            style={{ maxHeight: '85dvh' }}
             onClick={e => e.stopPropagation()}
           >
-            <button
-              onClick={closeRandom}
-              className="absolute top-4 left-4 text-text-muted hover:text-rose transition-colors text-2xl leading-none"
-            >
-              ✕
-            </button>
-            <div className="text-3xl mb-3">💌</div>
-            <p className="font-aref text-lg sm:text-xl text-wine dark:text-[#E0AAEF] font-bold mb-1">
-              {formatDateArabic(randomMsg.date)}
-            </p>
-            {randomMsg.title && (
-              <p className="font-markazi text-base text-wine dark:text-[#F9C88A] font-semibold mb-3">✨ {randomMsg.title}</p>
-            )}
-            <p className="font-markazi text-xl sm:text-2xl text-text-main leading-relaxed whitespace-pre-wrap mt-3">
-              {randomMsg.message}
-            </p>
-            <button
-              onClick={pickRandomMessage}
-              className="mt-6 bg-gradient-to-r from-wine to-wine-deep text-white px-6 py-2.5 rounded-full font-markazi text-xl font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition-all active:scale-95 cursor-pointer"
-            >
-              🎲 ذكرى تانية
-            </button>
+            {/* Header - sticky */}
+            <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-border-color/40 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">💌</span>
+                <p className="font-aref text-lg text-wine dark:text-[#E0AAEF] font-bold">
+                  {formatDateArabic(randomMsg.date)}
+                </p>
+              </div>
+              <button
+                onClick={closeRandom}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-border-color/30 hover:bg-rose/20 text-text-muted hover:text-rose transition-all text-lg font-bold shrink-0"
+                aria-label="إغلاق"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Scrollable body */}
+            <div className="overflow-y-auto flex-1 px-5 py-4 text-center">
+              {randomMsg.title && (
+                <p className="font-markazi text-base text-wine dark:text-[#F9C88A] font-semibold mb-3">✨ {randomMsg.title}</p>
+              )}
+              <p className="font-markazi text-xl sm:text-2xl text-text-main leading-relaxed whitespace-pre-wrap">
+                {randomMsg.message}
+              </p>
+            </div>
+
+            {/* Footer - sticky */}
+            <div className="px-5 pb-6 pt-3 border-t border-border-color/40 shrink-0 flex justify-center">
+              <button
+                onClick={pickRandomMessage}
+                className="bg-gradient-to-r from-wine to-wine-deep text-white px-7 py-2.5 rounded-full font-markazi text-xl font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition-all active:scale-95 cursor-pointer"
+              >
+                🎲 ذكرى تانية
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -350,10 +366,10 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                   <div className="w-full border-b border-dashed border-rose/50"></div>
                 </div>
 
-                {/* Left side: Luxury CTA Button */}
-                <div className="shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3.5 sm:px-4 py-2 rounded-full font-markazi text-sm sm:text-base md:text-lg font-bold shadow-[0_3px_12px_rgba(90,39,128,0.25)] hover:shadow-[0_5px_18px_rgba(116,53,157,0.45)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 whitespace-nowrap">
-                  <span>افتكري ذكرياتنا يا روحي</span>
-                  <span className="text-base group-hover:translate-x-0.5 transition-transform">💌</span>
+                {/* Left side: CTA Button - shows title if exists */}
+                <div className="shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3.5 sm:px-4 py-2 rounded-full font-markazi text-sm sm:text-base md:text-lg font-bold shadow-[0_3px_12px_rgba(90,39,128,0.25)] hover:shadow-[0_5px_18px_rgba(116,53,157,0.45)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 max-w-[140px] sm:max-w-[180px] overflow-hidden">
+                  <span className="truncate">{msg.title || 'افتكري ذكرياتنا يا روحي'}</span>
+                  <span className="text-base group-hover:translate-x-0.5 transition-transform shrink-0">💌</span>
                 </div>
               </Link>
             ))}
