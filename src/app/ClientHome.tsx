@@ -3,12 +3,14 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Message, TimeTogether } from "@/types";
-import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, SpecialOccasion } from "@/lib/date";
+import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, getTimeGreeting, getMilestoneMessage, SpecialOccasion } from "@/lib/date";
 import { generateCardImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
 import ThemeToggle from "@/components/ThemeToggle";
 import FloatingEffects from "@/components/FloatingEffects";
 import CelebrationOverlay from "@/components/CelebrationOverlay";
+import MilestoneOverlay from "@/components/MilestoneOverlay";
+import InteractiveHearts from "@/components/InteractiveHearts";
 
 export default function ClientHome({ initialMessages }: { initialMessages: Message[] }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -16,6 +18,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   const [timeTogether, setTimeTogether] = useState<TimeTogether | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [occasion, setOccasion] = useState<SpecialOccasion | null>(null);
+  const [greeting, setGreeting] = useState<{ emoji: string; text: string } | null>(null);
+  const [milestoneMsg, setMilestoneMsg] = useState<string | null>(null);
+  const [randomMsg, setRandomMsg] = useState<Message | null>(null);
   const messageRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -27,6 +32,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     const timer = setInterval(updateTimer, 1000);
 
     setOccasion(getSpecialOccasion(new Date()));
+    setGreeting(getTimeGreeting());
 
     // Filter messages up to Cairo today so future scheduled messages don't leak
     const todayString = getEgyptTodayString();
@@ -45,6 +51,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
     return () => clearInterval(timer);
   }, [initialMessages]);
+
+  // Compute milestone after timeTogether is known
+  useEffect(() => {
+    if (!timeTogether) return;
+    const days = parseInt(timeTogether.days, 10);
+    setMilestoneMsg(getMilestoneMessage(days));
+  }, [timeTogether]);
 
   const downloadImage = async () => {
     if (!currentMessage || isDownloading) return;
@@ -68,16 +81,75 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     }
   };
 
+  const pickRandomMessage = () => {
+    const pool = messages.filter(m => m.id !== currentMessage?.id);
+    if (pool.length === 0) return;
+    setRandomMsg(pool[Math.floor(Math.random() * pool.length)]);
+  };
+
+  const closeRandom = () => setRandomMsg(null);
+
   const todayStr = getEgyptTodayString();
 
   return (
     <>
       <ThemeToggle className="absolute top-5 left-5 z-50" />
       <FloatingEffects count={12} />
+      <InteractiveHearts />
+
+      {/* Random Message Modal */}
+      {randomMsg && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+          onClick={closeRandom}
+        >
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div
+            className="relative z-10 w-full max-w-lg bg-card-bg rounded-[28px] border border-rose/40 shadow-[0_0_60px_rgba(246,165,214,0.4)] p-6 sm:p-8 text-center animate-fade-in-up"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={closeRandom}
+              className="absolute top-4 left-4 text-text-muted hover:text-rose transition-colors text-2xl leading-none"
+            >
+              ✕
+            </button>
+            <div className="text-3xl mb-3">💌</div>
+            <p className="font-aref text-lg sm:text-xl text-wine dark:text-[#E0AAEF] font-bold mb-1">
+              {formatDateArabic(randomMsg.date)}
+            </p>
+            {randomMsg.title && (
+              <p className="font-markazi text-base text-wine dark:text-[#F9C88A] font-semibold mb-3">✨ {randomMsg.title}</p>
+            )}
+            <p className="font-markazi text-xl sm:text-2xl text-text-main leading-relaxed whitespace-pre-wrap mt-3">
+              {randomMsg.message}
+            </p>
+            <button
+              onClick={pickRandomMessage}
+              className="mt-6 bg-gradient-to-r from-wine to-wine-deep text-white px-6 py-2.5 rounded-full font-markazi text-xl font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg transition-all active:scale-95 cursor-pointer"
+            >
+              🎲 ذكرى تانية
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="w-full max-w-[680px] md:max-w-[780px] lg:max-w-[860px] mx-auto p-4 sm:p-6 md:p-10 flex flex-col gap-8 md:gap-10 relative z-10 min-h-screen">
         
         <CelebrationOverlay occasion={occasion} />
+        <MilestoneOverlay message={milestoneMsg} />
+
+        {/* Smart time greeting banner */}
+        {greeting && (
+          <div className="w-full flex justify-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/80 dark:bg-[#1E142B]/80 border border-rose/40 dark:border-rose/50 shadow-[0_4px_20px_rgba(142,74,159,0.2)] dark:shadow-[0_4px_20px_rgba(185,154,230,0.3)] backdrop-blur-md">
+              <span className="text-xl">{greeting.emoji}</span>
+              <span className="font-aref text-base sm:text-lg text-wine dark:text-[#F6A5D6] font-bold dark:drop-shadow-[0_0_10px_rgba(246,165,214,0.7)]">
+                {greeting.text}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Header Section */}
         <header className="flex flex-col items-center text-center gap-5 mt-4">
@@ -219,9 +291,20 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
         {/* Archive Section */}
         <section className="mt-8 mb-12 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-          <h2 className="font-aref text-3xl text-wine dark:text-[#F8F4FF] dark:drop-shadow-[0_0_12px_rgba(255,182,217,0.7)] mb-7 text-center flex items-center justify-center gap-4 before:content-[''] before:flex-1 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:to-rose/50 after:content-[''] after:flex-1 after:h-[2px] after:bg-gradient-to-l after:from-transparent after:to-rose/50">
-            <span className="text-2xl">📖</span> أرشيف الذكريات
-          </h2>
+          <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
+            <h2 className="font-aref text-2xl sm:text-3xl text-wine dark:text-[#F8F4FF] dark:drop-shadow-[0_0_12px_rgba(255,182,217,0.7)] flex items-center gap-3">
+              <span className="text-xl sm:text-2xl">📖</span> أرشيف الذكريات
+            </h2>
+            {messages.length > 1 && (
+              <button
+                onClick={pickRandomMessage}
+                className="flex items-center gap-2 bg-gradient-to-r from-[#8B4D9E] to-[#5A2780] dark:from-[#F6A5D6]/20 dark:to-[#E0AAEF]/20 dark:border dark:border-rose/40 text-white dark:text-[#F6A5D6] px-4 py-2 rounded-full font-markazi text-lg font-bold shadow-[0_4px_15px_rgba(90,39,128,0.35)] dark:shadow-[0_4px_15px_rgba(246,165,214,0.25)] hover:shadow-[0_6px_20px_rgba(90,39,128,0.5)] hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer shrink-0"
+              >
+                <span className="text-base">💌</span>
+                <span>وحشني كلامنا</span>
+              </button>
+            )}
+          </div>
 
           <div className="flex justify-center mt-2 mb-7 sm:mb-8 px-1">
             <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-white/90 dark:bg-[#1E142B]/90 border-2 border-rose/50 dark:border-rose/60 shadow-[0_0_22px_rgba(142,74,159,0.35),0_4px_15px_rgba(90,39,128,0.12),inset_0_0_12px_rgba(255,255,255,0.8)] dark:shadow-[0_0_25px_rgba(185,154,230,0.45),inset_0_0_15px_rgba(185,154,230,0.15)] backdrop-blur-md transition-all whitespace-nowrap max-w-full overflow-x-auto hover:scale-[1.02]">

@@ -105,3 +105,49 @@ export function getSpecialOccasion(date: Date = new Date()): SpecialOccasion | n
 
   return null;
 }
+
+/**
+ * Returns a romantic greeting based on the current Cairo time of day.
+ */
+export function getTimeGreeting(): { emoji: string; text: string } {
+  const cairoHour = parseInt(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Africa/Cairo',
+      hour: 'numeric',
+      hour12: false,
+    }).format(new Date()),
+    10
+  );
+
+  if (cairoHour >= 6 && cairoHour < 12) {
+    return { emoji: '🌸', text: 'صباح الورد يا عيوني انتي' };
+  }
+  if (cairoHour >= 12 && cairoHour < 17) {
+    return { emoji: '☀️', text: 'مساء الجمال والحلاوة علي اجمل لولو' };
+  }
+  if (cairoHour >= 17 && cairoHour < 21) {
+    return { emoji: '🌆', text: 'ليلك جميل يا ليلتي زيك' };
+  }
+  // 9pm – 6am
+  return { emoji: '🌙', text: 'ليلك جميل يا روحي زيك' };
+}
+
+/**
+ * Returns a milestone message if the number of days is a multiple of 100 and >= 1000.
+ * These messages are NOT admin messages — they're special auto-generated milestones.
+ */
+export function getMilestoneMessage(days: number): string | null {
+  if (days < 1000 || days % 100 !== 0) return null;
+
+  const milestones: Record<number, string> = {
+    1000: '🏆 ألف يوم وانتي حياتي! مش هينسى يوم ما بحسش إن ألف يوم عدوا وانتي جنبي يا ليلى 💖',
+    1100: '✨ ألف ومية يوم سوا! كل يوم بيعدي وأنا شاكر ربنا عليكي أكتر وأكتر 🌹',
+    1200: '💕 ألف ومتين يوم! حبيبتي أنتي اللي بتخلي الأيام تعدي بسرعة وبجمال 🌸',
+    1300: '🌺 ألف وتلاتمية يوم وما زلت مش قادر أصدق إن في حاجة اسمها انتي في حياتي ❤️',
+    1400: '💝 ألف وأربعمية يوم من أجمل أيام عمري 🌹',
+    1500: '🎊 ألف وخمسمية يوم! بحبك يا روحي من كل قلبي دايماً 💖',
+    2000: '🥂 ألفين يوم وانتي نور عيني! هنعيش مع بعض آلاف التانية 🌸',
+  };
+
+  return milestones[days] ?? `🎉 ${days} يوم سوا يا حبيبتي ليلى! كل يوم بيزيدني حب وفخر بيكي 💖`;
+}
