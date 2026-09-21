@@ -12,15 +12,9 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
 
   useEffect(() => {
     setMounted(true);
-    const themeAttr = document.documentElement.getAttribute("data-theme");
-    if (themeAttr === "light") {
-      setIsDark(false);
-    } else if (themeAttr === "dark") {
-      setIsDark(true);
-    } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setIsDark(prefersDark);
-    }
+    // Read the actual applied theme from the html element (set by the inline script in layout.tsx)
+    const appliedTheme = document.documentElement.getAttribute("data-theme");
+    setIsDark(appliedTheme !== "light");
   }, []);
 
   const toggleTheme = () => {
@@ -34,10 +28,12 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
   };
 
   if (!mounted) {
+    // Render invisible placeholder to avoid layout shift
     return (
       <button
         className={`bg-card-bg/70 border border-border-color p-2 rounded-full text-wine text-2xl flex items-center justify-center w-11 h-11 backdrop-blur-sm opacity-0 ${className}`}
         aria-hidden="true"
+        tabIndex={-1}
       >
         🌙
       </button>
