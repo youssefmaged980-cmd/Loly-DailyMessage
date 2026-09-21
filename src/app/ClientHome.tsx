@@ -190,6 +190,15 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             </h1>
           </div>
 
+          {/* Title inside card - shown only if exists */}
+          {currentMessage?.title && (
+            <div className="relative z-10 w-full flex justify-center -mb-2">
+              <span className="font-markazi text-xl sm:text-2xl text-wine dark:text-[#F9C88A] font-bold tracking-wide drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(249,200,138,0.7)]">
+                ✨ {currentMessage.title}
+              </span>
+            </div>
+          )}
+
           <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-2 sm:px-6 md:px-10 break-words w-full max-w-full whitespace-pre-wrap">
             {currentMessage?.message}
           </div>
@@ -234,14 +243,21 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 {/* Subtle top shimmer bar on hover */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                {/* Right side: Date with icon */}
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-8 h-8 rounded-xl bg-wine/10 dark:bg-rose/15 flex items-center justify-center text-sm text-wine dark:text-rose-pale border border-wine/20 dark:border-rose/30 shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-sm">
-                    📅
-                  </span>
-                  <span className="font-aref text-base sm:text-xl md:text-2xl text-wine-deep dark:text-[#F8F4FF] font-bold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] whitespace-nowrap group-hover:text-wine dark:group-hover:text-rose-pale transition-colors">
-                    {formatDateArabic(msg.date)}
-                  </span>
+                {/* Right side: Date + Title */}
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-8 h-8 rounded-xl bg-wine/10 dark:bg-rose/15 flex items-center justify-center text-sm text-wine dark:text-rose-pale border border-wine/20 dark:border-rose/30 shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-sm">
+                      📅
+                    </span>
+                    <span className="font-aref text-base sm:text-xl md:text-2xl text-wine-deep dark:text-[#F8F4FF] font-bold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] whitespace-nowrap group-hover:text-wine dark:group-hover:text-rose-pale transition-colors">
+                      {formatDateArabic(msg.date)}
+                    </span>
+                  </div>
+                  {msg.title && (
+                    <span className="font-markazi text-sm sm:text-base text-wine dark:text-[#F9C88A] font-semibold pr-10 truncate">
+                      ✨ {msg.title}
+                    </span>
+                  )}
                 </div>
 
                 {/* Center flourish connector line (desktop/tablet) */}

@@ -75,6 +75,14 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
           </div>
 
           <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-2 sm:px-6 md:px-10 break-words w-full max-w-full whitespace-pre-wrap">
+            {/* Show title if exists */}
+            {message?.title && (
+              <div className="w-full text-center mb-4">
+                <span className="font-markazi text-xl sm:text-2xl text-wine dark:text-[#F9C88A] font-bold tracking-wide drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(249,200,138,0.7)]">
+                  ✨ {message.title}
+                </span>
+              </div>
+            )}
             {message ? message.message : "لم يتم العثور على هذه الرسالة أو أنها لم تُنشر بعد."}
           </div>
 
