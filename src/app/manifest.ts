@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Loly Daily Message',
-    short_name: 'LOLY Happy Message',
+    short_name: 'LOLO Message',
     description: 'رسائل يومية لليلى',
     start_url: '/',
     display: 'standalone',
