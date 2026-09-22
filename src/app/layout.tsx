@@ -28,11 +28,20 @@ export const viewport = {
 export const metadata: Metadata = {
   title: "رسائل ليلى 💌",
   description: "رسائل يومية لليلى",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Loly",
+    startupImage: ["/icon.png"],
+  },
+  icons: {
+    apple: [
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+    ],
+    icon: [
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+    ],
   },
 };
 

@@ -130,24 +130,40 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-0 sm:p-4"
           onClick={closeRandom}
         >
-          <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" />
-          {/* Sheet on mobile, centered card on desktop */}
+          {/* Blurred overlay */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
+
+          {/* Modal card */}
           <div
-            className="relative z-10 w-full sm:max-w-lg bg-card-bg sm:rounded-[28px] rounded-t-[28px] border border-rose/40 shadow-[0_0_60px_rgba(246,165,214,0.4)] animate-fade-in-up flex flex-col"
-            style={{ maxHeight: '85dvh' }}
+            className="relative z-10 w-full sm:max-w-lg animate-fade-in-up flex flex-col overflow-hidden
+              rounded-t-[32px] sm:rounded-[32px]
+              border border-rose/50 dark:border-[#b99ae6]/60
+              shadow-[0_0_60px_rgba(142,74,159,0.6),0_0_120px_rgba(142,74,159,0.3)]
+              dark:shadow-[0_0_60px_rgba(185,154,230,0.5),0_0_120px_rgba(185,154,230,0.25)]
+              bg-gradient-to-br from-[#FDFAFF]/95 to-[#EDE3F1]/95 dark:from-[#1F162B]/95 dark:to-[#120E1A]/95"
+            style={{
+              maxHeight: '88dvh',
+            }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Header - sticky */}
-            <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-border-color/40 shrink-0">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">💌</span>
-                <p className="font-aref text-lg text-wine dark:text-[#E0AAEF] font-bold">
+            {/* Top glow bar */}
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-rose to-transparent opacity-80" />
+
+            {/* Decorative bg circles */}
+            <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-rose/10 dark:bg-rose/15 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-wine/10 dark:bg-wine/20 blur-3xl pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-rose/20 shrink-0 relative">
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">💌</span>
+                <p className="font-aref text-lg text-wine dark:text-[#E0AAEF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.5)] dark:drop-shadow-[0_0_10px_rgba(224,170,239,0.8)]">
                   {formatDateArabic(randomMsg.date)}
                 </p>
               </div>
               <button
                 onClick={closeRandom}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-border-color/30 hover:bg-rose/20 text-text-muted hover:text-rose transition-all text-lg font-bold shrink-0"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-wine/10 hover:bg-rose/20 text-wine hover:text-rose transition-all text-base font-bold shrink-0 border border-wine/20"
                 aria-label="إغلاق"
               >
                 ✕
@@ -155,25 +171,25 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             </div>
 
             {/* Scrollable body */}
-            <div className="overflow-y-auto flex-1 px-5 py-4 text-center">
+            <div className="overflow-y-auto flex-1 px-5 py-5 text-center scrollbar-timeline">
               {randomMsg.title && (
-                <div className="flex justify-center mb-4">
-                  <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep text-white px-4 py-1.5 rounded-full font-markazi text-base sm:text-lg font-bold shadow-[0_0_15px_rgba(142,74,159,0.5)] border border-white/20">
+                <div className="flex justify-center mb-5">
+                  <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep text-white px-5 py-2 rounded-full font-markazi text-lg font-bold shadow-[0_0_18px_rgba(142,74,159,0.55)] border border-white/20">
                     <span>✨</span>
                     <span>{randomMsg.title}</span>
                   </span>
                 </div>
               )}
-              <p className="font-markazi text-xl sm:text-2xl text-text-main leading-relaxed whitespace-pre-wrap">
+              <p className="font-markazi text-xl sm:text-2xl text-wine-deep dark:text-[#F8F5FF] leading-[1.9] whitespace-pre-wrap drop-shadow-[0_0_6px_rgba(142,74,159,0.2)]">
                 {randomMsg.message}
               </p>
             </div>
 
-            {/* Footer - sticky */}
-            <div className="px-5 pb-6 pt-3 border-t border-border-color/40 shrink-0 flex justify-center">
+            {/* Footer */}
+            <div className="px-5 pb-7 pt-4 border-t border-rose/20 shrink-0 flex justify-center relative">
               <button
                 onClick={pickRandomMessage}
-                className="bg-gradient-to-r from-wine to-wine-deep text-white px-7 py-2.5 rounded-full font-markazi text-xl font-bold shadow-[0_0_20px_rgba(142,74,159,0.5)] hover:shadow-[0_0_30px_rgba(142,74,159,0.7)] hover:-translate-y-0.5 transition-all active:scale-95 cursor-pointer"
+                className="bg-gradient-to-r from-wine via-[#74359D] to-wine-deep text-white px-8 py-3 rounded-full font-markazi text-xl font-bold shadow-[0_0_25px_rgba(142,74,159,0.6)] hover:shadow-[0_0_35px_rgba(142,74,159,0.8)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer border border-white/20"
               >
                 🎲 ذكرى تانية
               </button>
