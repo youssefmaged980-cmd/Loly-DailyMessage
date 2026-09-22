@@ -1,0 +1,25 @@
+import { MetadataRoute } from 'next'
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: 'Loly Daily Message',
+    short_name: 'Loly',
+    description: 'رسائل يومية لليلى',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#1a0b2e',
+    theme_color: '#8e4a9f',
+    icons: [
+      {
+        src: '/icon.png',
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
+        src: '/icon.png',
+        sizes: '512x512',
+        type: 'image/png',
+      },
+    ],
+  }
+}
