@@ -3,31 +3,18 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --cream: #EDE3F1; /* Soft warm mauve-cream card, clearly defined */
-  --paper: #DDD0E3; /* Warm antique cashmere mauve background, rich mood, zero glare */
-  --wine: #5A2780; /* Deep Royal Purple */
-  --wine-deep: #3D1558; /* Rich Plum Velvet */
-  --rose: #8B4D9E; /* Romantic Violet-Rose */
-  --rose-pale: #C1A2D6; /* Soft pastel violet */
-  --gold: #B3861B; /* Warm Antique Gold */
-  --ink: #22102E; /* Deep plum-charcoal text */
-  --ink-soft: #533B63; /* Soft readable secondary text */
-  
-  --bg-color: var(--paper);
-  --card-bg: var(--cream);
-  --text-main: var(--ink);
-  --text-muted: var(--ink-soft);
-  --border-color: rgba(90, 39, 128, 0.22);
-  --shadow: 0 10px 30px rgba(61, 21, 88, 0.1);
-  --card-shadow: 0 8px 24px rgba(61, 21, 88, 0.08);
-  
-  --bg-gradient: radial-gradient(at 0% 0%, rgba(139, 77, 158, 0.18) 0px, transparent 50%),
-                 radial-gradient(at 100% 0%, rgba(179, 134, 27, 0.1) 0px, transparent 50%),
-                 radial-gradient(at 100% 100%, rgba(90, 39, 128, 0.14) 0px, transparent 50%),
-                 radial-gradient(at 0% 100%, rgba(193, 162, 214, 0.35) 0px, transparent 50%);
-}
+  /* Core Colors */
+  --cream: #EDE3F1;
+  --paper: #DDD0E3;
+  --wine: #5A2780;
+  --wine-deep: #3D1558;
+  --rose: #8B4D9E;
+  --rose-pale: #C1A2D6;
+  --gold: #B3861B;
+  --ink: #22102E;
+  --ink-soft: #533B63;
 
-:root[data-theme="light"] {
+  /* LIGHT MODE (Default) */
   --bg-color: #F2E8F5;
   --card-bg: #FDFAFF;
   --text-main: #22102E;
@@ -42,14 +29,14 @@
 }
 
 :root[data-theme="dark"] {
-  --bg-color: #120E1A; /* Deep dark purple-black */
-  --card-bg: #1F162B; /* Rich dark purple card */
+  /* DARK MODE */
+  --bg-color: #120E1A;
+  --card-bg: #1F162B;
   --text-main: #F8F5FF;
-  --text-muted: #DCCCF5; /* Light Lavender */
+  --text-muted: #DCCCF5;
   --border-color: rgba(185, 154, 230, 0.3);
   --shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(185, 154, 230, 0.1);
-  
   --bg-gradient: radial-gradient(at 0% 0%, rgba(185, 154, 230, 0.15) 0px, transparent 50%),
                  radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
                  radial-gradient(at 100% 100%, rgba(108, 63, 160, 0.15) 0px, transparent 50%),
@@ -69,21 +56,6 @@
                    radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
                    radial-gradient(at 100% 100%, rgba(108, 63, 160, 0.15) 0px, transparent 50%),
                    radial-gradient(at 0% 100%, rgba(31, 22, 43, 0.5) 0px, transparent 50%);
-  }
-
-  /* Force light mode to win even on dark-preference devices */
-  :root[data-theme="light"] {
-    --bg-color: #F2E8F5;
-    --card-bg: #FDFAFF;
-    --text-main: #22102E;
-    --text-muted: #533B63;
-    --border-color: rgba(90, 39, 128, 0.2);
-    --shadow: 0 10px 30px rgba(61, 21, 88, 0.12);
-    --card-shadow: 0 8px 24px rgba(61, 21, 88, 0.1), inset 0 0 20px rgba(193, 162, 214, 0.12);
-    --bg-gradient: radial-gradient(at 0% 0%, rgba(193, 162, 214, 0.35) 0px, transparent 50%),
-                   radial-gradient(at 100% 0%, rgba(179, 134, 27, 0.12) 0px, transparent 50%),
-                   radial-gradient(at 100% 100%, rgba(90, 39, 128, 0.1) 0px, transparent 50%),
-                   radial-gradient(at 0% 100%, rgba(139, 77, 158, 0.2) 0px, transparent 50%);
   }
 }
 

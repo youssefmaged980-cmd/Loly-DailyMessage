@@ -33,6 +33,7 @@ export async function getMessages(): Promise<Message[]> {
             allMessages.push({
               id: doc.name.split('/').pop() || "",
               date: doc.fields.date.stringValue,
+              title: doc.fields.title?.stringValue || "",
               message: doc.fields.message.stringValue,
               createdAt: doc.fields.createdAt?.stringValue || doc.createTime || ""
             });
@@ -75,6 +76,7 @@ export async function getMessage(id: string): Promise<Message | null> {
     return {
       id: data.name.split('/').pop() || id,
       date: data.fields.date.stringValue,
+      title: data.fields.title?.stringValue || "",
       message: data.fields.message.stringValue,
       createdAt: data.fields.createdAt?.stringValue || data.createTime || ""
     };

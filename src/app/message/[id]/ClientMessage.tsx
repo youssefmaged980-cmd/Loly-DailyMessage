@@ -75,11 +75,12 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
           </div>
 
           <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-2 sm:px-6 md:px-10 break-words w-full max-w-full whitespace-pre-wrap">
-            {/* Show title if exists */}
+            {/* Show title if exists - styled as archive pill */}
             {message?.title && (
-              <div className="w-full text-center mb-4">
-                <span className="font-markazi text-xl sm:text-2xl text-wine dark:text-[#F9C88A] font-bold tracking-wide drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(249,200,138,0.7)]">
-                  ✨ {message.title}
+              <div className="w-full flex justify-center mb-4">
+                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-5 py-2 rounded-full font-markazi text-lg sm:text-xl font-bold shadow-[0_4px_15px_rgba(90,39,128,0.3)] dark:shadow-[0_0_18px_rgba(185,154,230,0.35)] border border-white/20">
+                  <span>✨</span>
+                  <span>{message.title}</span>
                 </span>
               </div>
             )}
