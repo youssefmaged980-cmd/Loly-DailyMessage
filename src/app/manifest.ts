@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'رسائل يومية لليلى',
     start_url: '/',
     display: 'standalone',
-    background_color: '#1a0b2e',
-    theme_color: '#8e4a9f',
+    background_color: "hsl(257.59deg 96.67% 11.76%)",
+    theme_color: 'hsl(282.09deg 83.41% 44.9%)',
     icons: [
       {
         src: '/icon2.png',
