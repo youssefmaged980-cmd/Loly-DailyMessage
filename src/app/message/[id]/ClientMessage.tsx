@@ -36,6 +36,31 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
     }
   };
 
+  // Web Audio API magic chime
+  const playMagicChime = () => {
+    try {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const ctx = new AudioCtx();
+      const notes = [880, 1108, 1320, 1760];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        const start = ctx.currentTime + i * 0.1;
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.0, start);
+        gain.gain.linearRampToValueAtTime(0.18, start + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+        osc.start(start);
+        osc.stop(start + 0.55);
+      });
+    } catch (e) {
+      console.log('Web Audio not supported', e);
+    }
+  };
+
   return (
     <>
       <FloatingEffects count={12} />
@@ -90,7 +115,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
           {message && message.id !== 'error' && (
             <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
               <button
-                onClick={downloadImage}
+                onClick={() => { playMagicChime(); downloadImage(); }}
                 disabled={isDownloading}
                 className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_0_20px_rgba(142,74,159,0.4)] hover:shadow-[0_0_30px_rgba(142,74,159,0.6)] hover:-translate-y-1 active:scale-95 group-hover:scale-105 disabled:opacity-50"
               >

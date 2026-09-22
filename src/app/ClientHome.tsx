@@ -326,7 +326,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
           <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
             <button
-              onClick={downloadImage}
+              onClick={() => { playMagicChime(); downloadImage(); }}
               disabled={isDownloading}
               className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_0_20px_rgba(142,74,159,0.4)] hover:shadow-[0_0_30px_rgba(142,74,159,0.6)] hover:-translate-y-1 active:scale-95 group-hover:scale-105 disabled:opacity-50"
             >
