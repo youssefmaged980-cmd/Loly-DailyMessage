@@ -126,7 +126,7 @@ export function getTimeGreeting(): { emoji: string; text: string } {
     return { emoji: '☀️', text: 'مساء الجمال والحلاوة علي اجمل لولو' };
   }
   if (cairoHour >= 17 && cairoHour < 21) {
-    return { emoji: '🌆', text: 'ليلك جميل يا ليلتي زيك' };
+    return { emoji: '💖', text: 'اهلا يا روح قلبي فمكانك' };
   }
   // 9pm – 6am
   return { emoji: '🌙', text: 'ليلك جميل يا روحي زيك' };
