@@ -21,9 +21,19 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
 });
 
+export const viewport = {
+  themeColor: '#8e4a9f',
+};
+
 export const metadata: Metadata = {
   title: "رسائل ليلى 💌",
   description: "رسائل يومية لليلى",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Loly",
+  },
 };
 
 export default function RootLayout({
