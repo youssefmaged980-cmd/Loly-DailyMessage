@@ -84,8 +84,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
           style={{ backgroundColor: 'var(--card-bg)' }}
           className="w-full rounded-[32px] pt-12 sm:pt-14 pb-24 sm:pb-32 px-4 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
         >
-          <FloralCorner className="floral-corner-tl opacity-50 group-hover:opacity-75 transition-opacity" />
-          <FloralCorner className="floral-corner-tr opacity-50 group-hover:opacity-75 transition-opacity" />
+          {/* Decorative Corners Removed to avoid overlap */}
 
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>

@@ -252,9 +252,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             <h2 className="font-aref text-2xl md:text-3xl text-wine dark:text-[#F6A5D6] dark:drop-shadow-[0_0_16px_rgba(246,165,214,0.9)] mb-2 drop-shadow-[0_0_12px_rgba(142,74,159,0.5)] font-bold">
               رسايلك الجميلة الذيك يا حبيبي هنا
             </h2>
-            <div className="font-cormorant italic text-gold text-xl md:text-2xl tracking-widest mt-1 drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">
+            <Link href="/admin" className="font-cormorant italic text-gold text-xl md:text-2xl tracking-widest mt-1 drop-shadow-[0_0_8px_rgba(212,175,55,0.4)] no-underline decoration-transparent outline-none cursor-default sm:cursor-pointer">
               For my one and only Laila
-            </div>
+            </Link>
 
             <div className="mt-6 w-full border border-rose/30 rounded-3xl p-6 relative shadow-[var(--shadow)] transition-all duration-500 bg-card-bg/10 backdrop-blur-sm">
               {/* Title INSIDE the frame */}
@@ -312,11 +312,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           style={{ backgroundColor: 'var(--card-bg)' }}
           className="rounded-[32px] pt-12 sm:pt-14 pb-10 px-6 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group w-full"
         >
-          {/* Decorative Corners */}
-          <FloralCorner className="floral-corner-tl opacity-50 group-hover:opacity-75 transition-opacity" />
-          <FloralCorner className="floral-corner-tr opacity-50 group-hover:opacity-75 transition-opacity" />
-          <FloralCorner className="floral-corner-bl opacity-50 group-hover:opacity-75 transition-opacity" />
-          <FloralCorner className="floral-corner-br opacity-50 group-hover:opacity-75 transition-opacity" />
+          {/* Decorative Corners Removed to avoid overlap */}
 
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
@@ -441,16 +437,6 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             ))}
           </div>
         </section>
-      </div>
-      
-      {/* Hidden Admin Entry */}
-      <div className="w-full flex justify-center py-6 pb-8">
-        <Link 
-          href="/admin" 
-          className="font-markazi text-xl text-wine/20 dark:text-[#E0AAEF]/20 hover:text-wine/60 dark:hover:text-[#E0AAEF]/50 transition-colors tracking-wider decoration-transparent hover:decoration-wine/30 underline-offset-4 outline-none"
-        >
-          for my one and only laila
-        </Link>
       </div>
     </>
   );
