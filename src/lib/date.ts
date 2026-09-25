@@ -110,14 +110,8 @@ export function getSpecialOccasion(date: Date = new Date()): SpecialOccasion | n
  * Returns a romantic greeting based on the current Cairo time of day.
  */
 export function getTimeGreeting(): { emoji: string; text: string } {
-  const cairoHour = parseInt(
-    new Intl.DateTimeFormat('en-US', {
-      timeZone: 'Africa/Cairo',
-      hour: 'numeric',
-      hour12: false,
-    }).format(new Date()),
-    10
-  );
+  const dateStr = new Date().toLocaleString("en-US", { timeZone: "Africa/Cairo" });
+  const cairoHour = new Date(dateStr).getHours();
 
   if (cairoHour >= 6 && cairoHour < 12) {
     return { emoji: '🌸', text: 'صباح الورد يا عيوني انتي' };

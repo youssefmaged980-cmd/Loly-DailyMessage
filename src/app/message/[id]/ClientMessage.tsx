@@ -8,6 +8,7 @@ import { generateCardImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
 import ThemeToggle from "@/components/ThemeToggle";
 import FloatingEffects from "@/components/FloatingEffects";
+import ReplySection from "@/components/ReplySection";
 
 export default function ClientMessage({ initialMessage }: { initialMessage: Message | null }) {
   const [message] = useState<Message | null>(initialMessage);
@@ -113,18 +114,24 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
           </div>
 
           {message && message.id !== 'error' && (
-            <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
-              <button
-                onClick={() => { playMagicChime(); downloadImage(); }}
-                disabled={isDownloading}
-                className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_0_20px_rgba(142,74,159,0.4)] hover:shadow-[0_0_30px_rgba(142,74,159,0.6)] hover:-translate-y-1 active:scale-95 group-hover:scale-105 disabled:opacity-50"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-5 h-5 fill-white shrink-0">
-                  <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
-                </svg>
-                <span>{isDownloading ? "جاري تحضير الرسالة..." : "نزلي الرسالة عندك يا عيوني لو حابة"}</span>
-              </button>
-            </div>
+            <>
+              <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
+                <button
+                  onClick={() => { playMagicChime(); downloadImage(); }}
+                  disabled={isDownloading}
+                  className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_0_20px_rgba(142,74,159,0.4)] hover:shadow-[0_0_30px_rgba(142,74,159,0.6)] hover:-translate-y-1 active:scale-95 group-hover:scale-105 disabled:opacity-50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-5 h-5 fill-white shrink-0">
+                    <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
+                  </svg>
+                  <span>{isDownloading ? "جاري تحضير الرسالة..." : "نزلي الرسالة عندك يا عيوني لو حابة"}</span>
+                </button>
+              </div>
+
+              <div className="w-full relative z-10" data-html2canvas-ignore="true">
+                <ReplySection message={message} />
+              </div>
+            </>
           )}
         </main>
       </div>

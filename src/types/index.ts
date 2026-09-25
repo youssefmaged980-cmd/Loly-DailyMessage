@@ -4,6 +4,8 @@ export interface Message {
   title?: string;
   message: string;
   createdAt?: string;
+  reply?: string;
+  reaction?: string;
 }
 
 export interface TimeTogether {
