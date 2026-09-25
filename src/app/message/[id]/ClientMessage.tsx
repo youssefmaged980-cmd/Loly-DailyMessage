@@ -86,8 +86,6 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
         >
           <FloralCorner className="floral-corner-tl opacity-50 group-hover:opacity-75 transition-opacity" />
           <FloralCorner className="floral-corner-tr opacity-50 group-hover:opacity-75 transition-opacity" />
-          <FloralCorner className="floral-corner-bl opacity-50 group-hover:opacity-75 transition-opacity" />
-          <FloralCorner className="floral-corner-br opacity-50 group-hover:opacity-75 transition-opacity" />
 
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>

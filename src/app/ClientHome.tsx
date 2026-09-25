@@ -444,7 +444,14 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
       </div>
       
       {/* Hidden Admin Entry */}
-      <Link href="/admin" className="fixed bottom-0 left-0 w-12 h-12 opacity-0 z-50 rounded-tr-full" aria-label="Admin Access" />
+      <div className="w-full flex justify-center py-6 pb-8">
+        <Link 
+          href="/admin" 
+          className="font-markazi text-xl text-wine/20 dark:text-[#E0AAEF]/20 hover:text-wine/60 dark:hover:text-[#E0AAEF]/50 transition-colors tracking-wider decoration-transparent hover:decoration-wine/30 underline-offset-4 outline-none"
+        >
+          for my one and only laila
+        </Link>
+      </div>
     </>
   );
 }
