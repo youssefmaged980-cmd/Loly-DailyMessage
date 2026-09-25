@@ -66,13 +66,24 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
 
 
   return (
-    <div className="mt-8 pt-6 border-t border-rose/30 flex flex-col gap-5 animate-fade-in-up">
-      <h3 className="font-aref text-xl md:text-2xl text-wine dark:text-[#F8F4FF] flex items-center gap-2 font-bold">
-        <span>✍️</span>
-        <span>اكتبي رد او سيبي ريأكت يا عيون قلبي 🫶🏻</span>
-      </h3>
+    <div className="mt-8 pt-8 border-t border-rose/30 flex flex-col gap-6 animate-fade-in-up relative">
+      {/* Decorative stars */}
+      <div className="absolute top-4 -left-2 text-rose-pale text-xl opacity-60 animate-pulse">✨</div>
+      <div className="absolute top-4 -right-2 text-rose-pale text-xl opacity-60 animate-pulse delay-300">✨</div>
 
-      <div className="flex flex-col gap-4">
+      <div className="bg-gradient-to-br from-white/80 to-cream/50 dark:from-[#261738]/80 dark:to-[#1E142B]/60 backdrop-blur-md rounded-[2rem] p-6 sm:p-8 border border-rose/40 dark:border-[#b99ae6]/30 shadow-[0_8px_30px_rgba(142,74,159,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] relative overflow-hidden">
+        
+        {/* Subtle inner corner decorations */}
+        <div className="absolute top-2 left-2 text-2xl opacity-20">💮</div>
+        <div className="absolute bottom-2 right-2 text-2xl opacity-20">🌸</div>
+
+        <h3 className="font-aref text-2xl md:text-3xl text-wine dark:text-[#E0AAEF] flex items-center justify-center gap-3 font-bold mb-6 drop-shadow-sm">
+          <span className="text-3xl">✍️</span>
+          <span>اكتبي رد او سيبي ريأكت يا عيون قلبي 🫶🏻</span>
+          <span className="text-3xl">✨</span>
+        </h3>
+
+        <div className="flex flex-col gap-5 relative z-10">
         {/* Emojis */}
         <div className="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start bg-card-bg/40 p-3.5 rounded-2xl border border-rose/20 shadow-inner">
           {EMOJIS.map(emoji => {
@@ -128,6 +139,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
             <span className="text-2xl">🥰</span>
           </button>
         )}
+      </div>
       </div>
     </div>
   );

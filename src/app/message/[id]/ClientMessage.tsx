@@ -82,7 +82,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
         <main
           ref={messageRef}
           style={{ backgroundColor: 'var(--card-bg)' }}
-          className="w-full rounded-[32px] pt-12 sm:pt-14 pb-10 px-6 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
+          className="w-full rounded-[32px] pt-12 sm:pt-14 pb-16 sm:pb-20 px-4 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
         >
           <FloralCorner className="floral-corner-tl opacity-50 group-hover:opacity-75 transition-opacity" />
           <FloralCorner className="floral-corner-tr opacity-50 group-hover:opacity-75 transition-opacity" />
@@ -100,17 +100,29 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
             </h1>
           </div>
 
-          <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-2 sm:px-6 md:px-10 break-words w-full max-w-full whitespace-pre-wrap">
-            {/* Show title if exists - styled as archive pill */}
-            {message?.title && (
-              <div className="w-full flex justify-center mb-4">
-                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-5 py-2 rounded-full font-markazi text-lg sm:text-xl font-bold shadow-[0_0_15px_rgba(142,74,159,0.5)] dark:shadow-[0_0_18px_rgba(185,154,230,0.35)] border border-white/20">
-                  <span>✨</span>
-                  <span>{message.title}</span>
-                </span>
+          <div className="w-full max-w-3xl mx-auto relative z-10 my-2">
+            <div className="bg-gradient-to-br from-white/70 to-rose-pale/20 dark:from-[#261738]/70 dark:to-[#1E142B]/40 backdrop-blur-md border border-rose/30 dark:border-[#b99ae6]/20 rounded-[2rem] p-6 sm:p-10 shadow-[0_8px_32px_rgba(142,74,159,0.15)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden group/msg">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose/40 to-transparent"></div>
+              
+              {/* Decorative background elements inside message box */}
+              <div className="absolute -top-6 -right-6 text-6xl opacity-10 rotate-12 group-hover/msg:rotate-45 transition-transform duration-700">🌸</div>
+              <div className="absolute -bottom-6 -left-6 text-6xl opacity-10 -rotate-12 group-hover/msg:-rotate-45 transition-transform duration-700">🦋</div>
+
+              {/* Show title if exists - styled as archive pill */}
+              {message?.title && (
+                <div className="w-full flex justify-center mb-6 relative z-10">
+                  <span className="inline-flex items-center gap-2 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-6 py-2.5 rounded-full font-markazi text-xl sm:text-2xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.5)] dark:shadow-[0_4px_18px_rgba(185,154,230,0.35)] border border-white/20 hover:scale-105 transition-transform">
+                    <span className="animate-pulse">✨</span>
+                    <span>{message.title}</span>
+                    <span className="animate-pulse">✨</span>
+                  </span>
+                </div>
+              )}
+              
+              <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-wine-deep dark:text-[#F8F4FF] font-semibold relative z-10 transition-opacity duration-500 break-words w-full max-w-full whitespace-pre-wrap">
+                {message ? message.message : "لم يتم العثور على هذه الرسالة أو أنها لم تُنشر بعد."}
               </div>
-            )}
-            {message ? message.message : "لم يتم العثور على هذه الرسالة أو أنها لم تُنشر بعد."}
+            </div>
           </div>
 
           {message && message.id !== 'error' && (
