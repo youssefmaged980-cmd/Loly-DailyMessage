@@ -58,7 +58,12 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
   };
 
   const openWhatsApp = () => {
-    const text = `حبيبي، أنا رديت على رسالة يوم ${message.date}:\n\n${replyText}`;
+    let text = "";
+    if (replyText.trim()) text += replyText.trim();
+    if (selectedEmoji) text += (text ? " " : "") + selectedEmoji;
+    
+    if (!text) return;
+    
     const url = `https://wa.me/201270535210?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
@@ -121,13 +126,39 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
           className="w-full p-4 rounded-2xl border border-rose/30 font-markazi text-xl bg-white/60 dark:bg-[#1E142B]/60 text-wine-deep dark:text-[#F8F4FF] focus:outline-none focus:ring-2 focus:ring-rose/50 shadow-inner resize-none overflow-hidden placeholder:text-wine/40 dark:placeholder:text-[#F8F4FF]/40 transition-all duration-300 leading-relaxed"
         />
 
-        <button
-          onClick={handleSaveText}
-          disabled={isSaving || !replyText.trim() || replyText.trim() === savedReply}
-          className="bg-gradient-to-r from-wine to-wine-deep dark:from-[#b99ae6] dark:to-[#8E4A9F] text-white px-6 py-3 rounded-full font-markazi text-xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.3)] hover:shadow-[0_4px_20px_rgba(142,74,159,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-        >
-          {isSaving ? "بحفظ ردك الحلو..." : (replyText.trim() === savedReply && replyText.trim() !== "" ? "ردك محفوظ يا قلبي ✨" : "احفظي ردك مع الرسالة دي للأبد ✨")}
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={handleSaveText}
+            disabled={isSaving || !replyText.trim() || replyText.trim() === savedReply}
+            className="flex-1 bg-gradient-to-r from-wine to-wine-deep dark:from-[#b99ae6] dark:to-[#8E4A9F] text-white px-6 py-3 rounded-full font-markazi text-xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.3)] hover:shadow-[0_4px_20px_rgba(142,74,159,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+          >
+            {isSaving ? "بحفظ ردك الحلو..." : (replyText.trim() === savedReply && replyText.trim() !== "" ? "ردك محفوظ يا قلبي ✨" : "احفظي ردك مع الرسالة دي للأبد ✨")}
+          </button>
+          
+          {savedReply && (
+            <button
+              onClick={async () => {
+                setReplyText("");
+                setIsSaving(true);
+                try {
+                  await updateDoc(doc(db, "messages", message.id), { reply: "" });
+                  setSavedReply("");
+                  if (!selectedEmoji) setIsSaved(false);
+                  if (onReplySaved) onReplySaved("", selectedEmoji);
+                } catch (e) {
+                  console.error(e);
+                  alert("حصل مشكلة، جربي تاني 🥺");
+                } finally { 
+                  setIsSaving(false); 
+                }
+              }}
+              disabled={isSaving}
+              className="px-6 py-3 rounded-full font-markazi text-xl font-bold border border-rose/40 text-wine dark:text-[#F8F4FF] hover:bg-rose/10 dark:hover:bg-rose/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              مسح الرد 🗑️
+            </button>
+          )}
+        </div>
 
         {/* WhatsApp Action */}
         {savedReply.trim() !== "" && replyText.trim() === savedReply && (
