@@ -398,7 +398,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                 {/* Right side: Date + Title */}
-                <div className="flex flex-col gap-0.5 min-w-0">
+                <div className="flex flex-col gap-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2.5">
                     <span className="w-8 h-8 rounded-xl bg-wine/10 dark:bg-rose/15 flex items-center justify-center text-sm text-wine dark:text-rose-pale border border-wine/20 dark:border-rose/30 shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-sm">
                       📅
@@ -407,19 +407,23 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                       {formatDateArabic(msg.date)}
                     </span>
                   </div>
-
+                  {msg.title && (
+                    <span className="font-markazi text-sm sm:text-base text-rose dark:text-[#F9C88A] truncate max-w-full drop-shadow-sm pr-10">
+                      ✨ {msg.title}
+                    </span>
+                  )}
                 </div>
 
                 {/* Center flourish connector line (desktop/tablet) */}
-                <div className="hidden sm:flex flex-1 items-center justify-center mx-4 opacity-30 group-hover:opacity-80 transition-opacity duration-300">
+                <div className="hidden sm:flex flex-1 items-center justify-center mx-2 opacity-30 group-hover:opacity-80 transition-opacity duration-300">
                   <div className="w-full border-b border-dashed border-rose/50"></div>
                   <span className="text-xs text-rose mx-2.5 select-none shrink-0">❦</span>
                   <div className="w-full border-b border-dashed border-rose/50"></div>
                 </div>
 
-                {/* Left side: CTA Button - shows title or default */}
-                <div className="shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-2 rounded-full font-markazi text-sm sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 max-w-[160px] sm:max-w-[220px]">
-                  <span className="line-clamp-2 text-center leading-snug">{msg.title || 'افتكري ذكرياتنا'}</span>
+                {/* Left side: CTA Button - uniform size */}
+                <div className="shrink-0 flex items-center justify-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-2 rounded-full font-markazi text-sm sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 whitespace-nowrap">
+                  <span>اقرأي الرسالة</span>
                   <span className="text-base group-hover:translate-x-0.5 transition-transform shrink-0">💌</span>
                 </div>
               </Link>
