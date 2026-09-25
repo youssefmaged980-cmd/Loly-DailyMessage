@@ -401,13 +401,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 <Link
                   href={`/message/${msg.id}`}
                   onClick={playMagicChime}
-                  className="w-full min-h-[64px] border p-4 sm:px-5 sm:py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 hover:-translate-y-1 hover:shadow-lg bg-gradient-to-r from-white/95 via-cream/90 to-white/95 dark:from-[#1E142B]/95 dark:via-[#261738]/90 dark:to-[#1E142B]/95 border-wine/20 dark:border-rose/30 hover:border-rose/60 dark:hover:border-rose/70 backdrop-blur-md no-underline group shadow-[0_4px_16px_rgba(90,39,128,0.08)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_0_25px_rgba(185,154,230,0.25)] relative overflow-hidden"
+                  className="w-full min-h-[64px] border p-4 sm:px-5 sm:py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 block sm:flex sm:items-center sm:justify-between gap-3 sm:gap-4 hover:-translate-y-1 hover:shadow-lg bg-gradient-to-r from-white/95 via-cream/90 to-white/95 dark:from-[#1E142B]/95 dark:via-[#261738]/90 dark:to-[#1E142B]/95 border-wine/20 dark:border-rose/30 hover:border-rose/60 dark:hover:border-rose/70 backdrop-blur-md no-underline group shadow-[0_4px_16px_rgba(90,39,128,0.08)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_0_25px_rgba(185,154,230,0.25)] relative overflow-hidden"
                 >
                 {/* Subtle top shimmer bar on hover */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                 {/* Right side: Date + Title */}
-                <div className="flex flex-col gap-1.5 min-w-0 w-full sm:w-auto flex-1">
+                <div className="flex flex-col gap-1.5 min-w-0 w-full sm:w-auto flex-1 mb-3 sm:mb-0">
                   <div className="flex items-center gap-2.5">
                     <span className="w-8 h-8 rounded-xl bg-wine/10 dark:bg-rose/15 flex items-center justify-center text-sm text-wine dark:text-rose-pale border border-wine/20 dark:border-rose/30 shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-sm">
                       📅
@@ -417,7 +417,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                     </span>
                   </div>
                   {msg.title && (
-                    <span className="font-markazi text-base text-rose dark:text-[#F9C88A] break-words whitespace-normal drop-shadow-sm sm:pr-10">
+                    <span className="font-markazi text-lg sm:text-base text-rose dark:text-[#F9C88A] break-words whitespace-normal drop-shadow-sm sm:pr-10">
                       ✨ {msg.title}
                     </span>
                   )}
@@ -431,10 +431,10 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 </div>
 
                 {/* Left side: CTA Button - uniform size */}
-                <div className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-full font-markazi text-sm sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-white/20 whitespace-nowrap mt-2 sm:mt-0">
+                <div className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-3 sm:py-2.5 rounded-xl sm:rounded-full font-markazi text-lg sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-white/20 whitespace-nowrap">
                   <span>بحب افرحك يا لولي</span>
-                  <span className="text-base">❤️</span>
-                  <span className="text-base group-hover:-translate-x-1 transition-transform shrink-0">💌</span>
+                  <span className="text-xl sm:text-base">❤️</span>
+                  <span className="text-xl sm:text-base group-hover:-translate-x-1 transition-transform shrink-0">💌</span>
                 </div>
               </Link>
             </motion.div>
