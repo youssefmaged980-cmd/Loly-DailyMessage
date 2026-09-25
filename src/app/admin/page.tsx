@@ -424,6 +424,28 @@ export default function AdminPage() {
                     <p className="font-markazi text-text-main/90 text-lg line-clamp-3 leading-relaxed whitespace-pre-wrap select-text">
                       {msg.message}
                     </p>
+                    {(msg.reply || msg.reaction) && (
+                      <div className="mt-2 bg-wine/5 dark:bg-rose/10 p-2.5 rounded-xl border border-wine/10 dark:border-rose/20 flex justify-between items-start sm:items-center gap-2 flex-col sm:flex-row">
+                        <div className="flex flex-col gap-1">
+                          {msg.reply && <span className="font-markazi text-wine-deep dark:text-[#E0AAEF] text-lg">💬 {msg.reply}</span>}
+                          {msg.reaction && <span className="text-lg">تفاعل: {msg.reaction}</span>}
+                        </div>
+                        <button
+                          onClick={async () => {
+                            if (window.confirm("متأكد إنك عاوز تمسح الرد والتفاعل بتوع ليلى على الرسالة دي؟")) {
+                              try {
+                                const { updateDoc, doc } = await import("firebase/firestore");
+                                await updateDoc(doc(db, "messages", msg.id), { reply: "", reaction: "" });
+                                fetchAllMessages();
+                              } catch(e) { alert("حصل مشكلة في مسح الرد"); }
+                            }
+                          }}
+                          className="text-xs bg-red-500/10 text-red-500 px-3 py-1.5 rounded-lg border border-red-500/30 hover:bg-red-500 hover:text-white transition-colors shrink-0 font-markazi"
+                        >
+                          مسح الرد 🗑️
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -386,7 +386,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             </div>
           </div>
 
-          <div className="flex flex-col gap-3.5 sm:gap-4 px-1 sm:px-2 py-1 w-full">
+          <div className="flex flex-col gap-3.5 sm:gap-4 px-1 sm:px-2 py-1 w-full max-h-[55vh] overflow-y-auto scrollbar-timeline pb-4">
             {messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= todayStr).map((msg, index) => (
               <motion.div
                 key={msg.id}
