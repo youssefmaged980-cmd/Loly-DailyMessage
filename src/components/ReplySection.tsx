@@ -5,7 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Message } from "@/types";
 
-const EMOJIS = ["❤️", "🥺", "✨", "😂", "🌸", "🦋", "🥰", "🍓"];
+const EMOJIS = ["❤️", "🥺", "✨", "😂", "🌸", "🦋", "🥰", "🍒"];
 
 interface ReplySectionProps {
   message: Message;
@@ -20,7 +20,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
 
   const handleSave = async () => {
     if (!replyText.trim() && !selectedEmoji) return;
-    
+
     setIsSaving(true);
     try {
       await updateDoc(doc(db, "messages", message.id), {
@@ -52,7 +52,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
           <span className="text-2xl">💌</span> ردك الجميل متسجل:
         </h3>
         <div className="bg-gradient-to-br from-rose-pale/80 to-white/90 dark:from-[#2A1B3D]/90 dark:to-[#1F162B]/90 border border-rose/40 dark:border-[#b99ae6]/40 p-4 sm:p-5 rounded-2xl shadow-[0_4px_15px_rgba(142,74,159,0.15)] relative">
-          { (replyText || message.reply) && (
+          {(replyText || message.reply) && (
             <div className="font-markazi text-xl sm:text-2xl text-wine-deep dark:text-[#F8F4FF] leading-relaxed whitespace-pre-wrap">
               {replyText || message.reply}
             </div>
@@ -79,7 +79,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
       <h3 className="font-aref text-xl md:text-2xl text-wine dark:text-[#F8F4FF] flex items-center gap-2 font-bold">
         <span>✍️</span> اكتبيلي رد أو سيبيلي رياكت هنا:
       </h3>
-      
+
       <div className="flex flex-col gap-4">
         {/* Emojis */}
         <div className="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start bg-card-bg/50 p-3 rounded-2xl border border-rose/20">
@@ -87,11 +87,10 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
             <button
               key={emoji}
               onClick={() => setSelectedEmoji(emoji === selectedEmoji ? "" : emoji)}
-              className={`text-2xl sm:text-3xl p-2 rounded-xl transition-all ${
-                selectedEmoji === emoji 
-                  ? 'bg-rose/20 scale-125 shadow-inner' 
+              className={`text-2xl sm:text-3xl p-2 rounded-xl transition-all ${selectedEmoji === emoji
+                  ? 'bg-rose/20 scale-125 shadow-inner'
                   : 'hover:bg-rose/10 hover:scale-110'
-              }`}
+                }`}
             >
               {emoji}
             </button>
