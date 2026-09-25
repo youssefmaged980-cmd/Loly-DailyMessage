@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Message, TimeTogether } from "@/types";
 import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, getTimeGreeting, getMilestoneMessage, SpecialOccasion } from "@/lib/date";
-import { generateCardImage } from "@/lib/exportCard";
+import { generateCardImage, prepareImageSaveWindow, saveGeneratedImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
 import ThemeToggle from "@/components/ThemeToggle";
 import FloatingEffects from "@/components/FloatingEffects";
@@ -61,21 +61,21 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     setMilestoneMsg(getMilestoneMessage(days));
   }, [timeTogether]);
 
-  const downloadImage = async () => {
-    if (!currentMessage || isDownloading) return;
+  const downloadImage = async (targetMessage: Message | null = currentMessage) => {
+    if (!targetMessage || isDownloading) return;
+    const fallbackWindow = prepareImageSaveWindow();
     setIsDownloading(true);
     try {
       const dataUrl = await generateCardImage({
-        date: currentMessage.date,
-        messageText: currentMessage.message,
+        date: targetMessage.date,
+        title: targetMessage.title,
+        description: targetMessage.description,
+        messageText: targetMessage.message,
       });
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = `laila-message-${currentMessage.date || "today"}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const result = await saveGeneratedImage(dataUrl, `laila-message-${targetMessage.date || "today"}.png`, fallbackWindow);
+      if (result === "opened") alert("اتفتحت الصورة في Safari. اضغطي عليها مطولًا واختاري حفظ في الصور.");
     } catch (error) {
+      fallbackWindow?.close();
       console.error("Error generating image:", error);
       alert("حدث خطأ أثناء حفظ الصورة");
     } finally {
@@ -175,11 +175,17 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             <div className="overflow-y-auto flex-1 px-5 py-5 text-center scrollbar-timeline">
               {randomMsg.title && (
                 <div className="flex justify-center mb-5">
-                  <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep text-white px-5 py-2 rounded-full font-markazi text-lg font-bold shadow-[0_0_18px_rgba(142,74,159,0.55)] border border-white/20">
+                  <span className="inline-flex max-w-full items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep text-white px-5 py-2 rounded-full font-aref text-lg sm:text-xl font-bold leading-relaxed shadow-[0_0_18px_rgba(142,74,159,0.55)] border border-white/20 break-words">
                     <span>✨</span>
                     <span>{randomMsg.title}</span>
                   </span>
                 </div>
+              )}
+              {randomMsg.description && (
+                <p className="max-w-xl mx-auto mb-5 px-4 py-2.5 rounded-2xl border border-rose/20 dark:border-[#b99ae6]/25 bg-rose/5 dark:bg-[#b99ae6]/10 font-markazi text-lg sm:text-xl text-rose dark:text-[#F9C88A] leading-relaxed text-right relative">
+                  <span aria-hidden="true" className="ml-2">🌸</span>
+                  {randomMsg.description}
+                </p>
               )}
               <p className="font-markazi text-xl sm:text-2xl text-wine-deep dark:text-[#F8F5FF] leading-[1.9] whitespace-pre-wrap drop-shadow-[0_0_6px_rgba(142,74,159,0.2)]">
                 {randomMsg.message}
@@ -189,7 +195,14 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             </div>
 
             {/* Footer */}
-            <div className="px-5 pb-7 pt-4 border-t border-rose/20 shrink-0 flex justify-center relative">
+            <div className="px-5 pb-7 pt-4 border-t border-rose/20 shrink-0 flex flex-wrap justify-center gap-3 relative">
+              <button
+                onClick={() => downloadImage(randomMsg)}
+                disabled={isDownloading}
+                className="bg-white/70 dark:bg-[#261738] text-wine dark:text-[#E0AAEF] px-5 py-3 rounded-full font-markazi text-lg font-bold shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer border border-rose/30 disabled:opacity-50"
+              >
+                {isDownloading ? "جارٍ تجهيز الصورة…" : "💾 احفظي الذكرى"}
+              </button>
               <button
                 onClick={pickRandomMessage}
                 className="bg-gradient-to-r from-wine via-[#74359D] to-wine-deep text-white px-8 py-3 rounded-full font-markazi text-xl font-bold shadow-[0_0_25px_rgba(142,74,159,0.6)] hover:shadow-[0_0_35px_rgba(142,74,159,0.8)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer border border-white/20"
@@ -333,6 +346,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 <span>{currentMessage.title}</span>
               </span>
             </div>
+          )}
+
+          {currentMessage?.description && (
+            <p className="relative z-10 max-w-2xl mx-auto -mb-2 px-4 py-2 rounded-2xl border border-rose/20 dark:border-[#b99ae6]/25 bg-rose/5 dark:bg-[#b99ae6]/10 font-markazi text-lg sm:text-xl text-rose dark:text-[#F9C88A] leading-relaxed">
+              <span aria-hidden="true" className="ml-2">🌸</span>
+              {currentMessage.description}
+            </p>
           )}
 
           <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-2 sm:px-6 md:px-10 break-words w-full max-w-full whitespace-pre-wrap">

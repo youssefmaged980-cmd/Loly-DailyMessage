@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { Message } from "@/types";
 import { formatDateArabic } from "@/lib/date";
-import { generateCardImage } from "@/lib/exportCard";
+import { generateCardImage, prepareImageSaveWindow, saveGeneratedImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
 import ThemeToggle from "@/components/ThemeToggle";
 import FloatingEffects from "@/components/FloatingEffects";
@@ -17,19 +17,21 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
 
   const downloadImage = async () => {
     if (!message || isDownloading) return;
+    const fallbackWindow = prepareImageSaveWindow();
     setIsDownloading(true);
     try {
       const dataUrl = await generateCardImage({
         date: message.date,
+        title: message.title,
+        description: message.description,
         messageText: message.message,
       });
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `laila-message-${message.date || 'today'}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const result = await saveGeneratedImage(dataUrl, `laila-message-${message.date || 'today'}.png`, fallbackWindow);
+      if (result === 'opened') {
+        alert('اتفتحت الصورة في Safari. اضغطي عليها مطولًا واختاري حفظ في الصور.');
+      }
     } catch (err) {
+      fallbackWindow?.close();
       console.error('Image error:', err);
       alert('حدث خطأ أثناء حفظ الصورة');
     } finally {

@@ -2,8 +2,73 @@ import { toPng } from 'html-to-image';
 
 export interface CardExportOptions {
   date: string;
+  title?: string;
+  description?: string;
   messageText: string;
   isDark?: boolean;
+}
+
+export type ImageSaveResult = 'shared' | 'opened' | 'downloaded' | 'cancelled';
+
+function isAppleMobileDevice(): boolean {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+// Reserve a Safari tab during the button gesture so the image preview is not
+// blocked as a popup if file sharing is unavailable.
+export function prepareImageSaveWindow(): Window | null {
+  return isAppleMobileDevice() ? window.open('about:blank', '_blank') : null;
+}
+
+export async function saveGeneratedImage(
+  dataUrl: string,
+  filename: string,
+  fallbackWindow: Window | null,
+): Promise<ImageSaveResult> {
+  const base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+  const bytes = Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+  const blob = new Blob([bytes], { type: 'image/png' });
+  const file = new File([blob], filename, { type: 'image/png' });
+
+  if (isAppleMobileDevice() && navigator.share && navigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: 'رسالة حب' });
+      fallbackWindow?.close();
+      return 'shared';
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        fallbackWindow?.close();
+        return 'cancelled';
+      }
+      if (!fallbackWindow) throw error;
+    }
+  }
+
+  const imageUrl = URL.createObjectURL(blob);
+  const previewWindow = fallbackWindow && !fallbackWindow.closed
+    ? fallbackWindow
+    : isAppleMobileDevice()
+      ? window.open(imageUrl, '_blank')
+      : null;
+  if (previewWindow) {
+    if (previewWindow !== fallbackWindow) {
+      window.setTimeout(() => URL.revokeObjectURL(imageUrl), 60_000);
+      return 'opened';
+    }
+    previewWindow.location.replace(imageUrl);
+    window.setTimeout(() => URL.revokeObjectURL(imageUrl), 60_000);
+    return 'opened';
+  }
+
+  const link = document.createElement('a');
+  link.href = imageUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(imageUrl), 60_000);
+  return isAppleMobileDevice() ? 'opened' : 'downloaded';
 }
 
 import { formatDateArabic } from './date';
@@ -63,7 +128,7 @@ function splitTextIntoBalancedColumns(text: string, cols: number): string[] {
   return result;
 }
 
-export async function generateCardImage({ date, messageText, isDark }: CardExportOptions): Promise<string> {
+export async function generateCardImage({ date, title, description, messageText, isDark }: CardExportOptions): Promise<string> {
   const isDarkMode = isDark !== undefined
     ? isDark
     : document.documentElement.getAttribute('data-theme') === 'dark' ||
@@ -231,6 +296,56 @@ export async function generateCardImage({ date, messageText, isDark }: CardExpor
     <span style="color: ${roseColor}; opacity: 0.7; font-size: 24px; display: inline-block; transform: scaleX(-1);">❦</span>
   `;
   card.appendChild(dateHeader);
+
+  if (title?.trim()) {
+    const titleBadge = document.createElement('div');
+    titleBadge.style.cssText = `
+      max-width: 100%;
+      margin: 0 auto 18px;
+      padding: 12px 28px;
+      border-radius: 999px;
+      background: linear-gradient(110deg, ${wineColor}, ${roseColor}, ${wineColor});
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 6px 22px rgba(142, 74, 159, 0.3);
+      color: #fff;
+      font-family: var(--font-aref), serif, Arial;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1.6;
+      text-align: center;
+      direction: rtl;
+      overflow-wrap: anywhere;
+      position: relative;
+      z-index: 2;
+    `;
+    titleBadge.innerText = `✨ ${title.trim()} ✨`;
+    card.appendChild(titleBadge);
+  }
+
+  if (description?.trim()) {
+    const descriptionIntro = document.createElement('div');
+    descriptionIntro.style.cssText = `
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0 0 24px;
+      padding: 10px 18px;
+      border-right: 3px solid ${roseColor};
+      border-radius: 10px;
+      background: ${isDarkMode ? 'rgba(185, 154, 230, 0.08)' : 'rgba(90, 39, 128, 0.06)'};
+      color: ${wineColor};
+      font-family: var(--font-markazi), Arial, sans-serif;
+      font-size: 23px;
+      line-height: 1.7;
+      text-align: right;
+      direction: rtl;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      position: relative;
+      z-index: 2;
+    `;
+    descriptionIntro.innerText = description.trim();
+    card.appendChild(descriptionIntro);
+  }
 
   // Columns Wrapper
   const msgWrap = document.createElement('div');
