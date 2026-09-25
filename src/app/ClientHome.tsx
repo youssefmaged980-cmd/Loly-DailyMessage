@@ -432,7 +432,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
                 {/* Left side: CTA Button - uniform size */}
                 <div className="shrink-0 flex items-center justify-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-2 rounded-full font-markazi text-sm sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 whitespace-nowrap">
-                  <span>اقرأي الرسالة بفرح لولي</span>
+                  <span>بحب افرحك يا لولي</span>
                   <span className="text-base">❤️</span>
                   <span className="text-base group-hover:translate-x-0.5 transition-transform shrink-0">💌</span>
                 </div>
