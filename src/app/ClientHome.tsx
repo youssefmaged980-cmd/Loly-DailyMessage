@@ -349,8 +349,8 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           )}
 
           {currentMessage?.description && (
-            <p className="relative z-10 max-w-2xl mx-auto -mb-2 px-4 py-2 rounded-2xl border border-rose/20 dark:border-[#b99ae6]/25 bg-rose/5 dark:bg-[#b99ae6]/10 font-markazi text-lg sm:text-xl text-rose dark:text-[#F9C88A] leading-relaxed">
-              <span aria-hidden="true" className="ml-2">🌸</span>
+            <p className="relative z-10 w-full max-w-3xl px-3 sm:px-6 -mb-2 text-right font-markazi text-lg sm:text-xl text-rose dark:text-[#F9C88A] break-words leading-relaxed drop-shadow-sm">
+              <span aria-hidden="true" className="ml-2">✨</span>
               {currentMessage.description}
             </p>
           )}

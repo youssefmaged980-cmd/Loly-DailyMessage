@@ -76,19 +76,19 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
       <div className="absolute top-4 -left-2 text-rose-pale text-xl opacity-60 animate-pulse">✨</div>
       <div className="absolute top-4 -right-2 text-rose-pale text-xl opacity-60 animate-pulse delay-300">✨</div>
 
-      <div className="bg-gradient-to-br from-white/80 to-cream/50 dark:from-[#261738]/80 dark:to-[#1E142B]/60 backdrop-blur-md rounded-[2rem] p-6 sm:p-8 border border-rose/40 dark:border-[#b99ae6]/30 shadow-[0_8px_30px_rgba(142,74,159,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] relative overflow-hidden">
+      <div className="bg-gradient-to-br from-white/80 to-cream/50 dark:from-[#261738]/80 dark:to-[#1E142B]/60 backdrop-blur-md rounded-3xl p-4 sm:p-6 border border-rose/40 dark:border-[#b99ae6]/30 shadow-[0_8px_30px_rgba(142,74,159,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] relative overflow-hidden">
         
         {/* Subtle inner corner decorations */}
         <div className="absolute top-2 left-2 text-2xl opacity-20">💮</div>
         <div className="absolute bottom-2 right-2 text-2xl opacity-20">🌸</div>
 
-        <h3 className="font-aref text-2xl md:text-3xl text-wine dark:text-[#E0AAEF] flex items-center justify-center gap-3 font-bold mb-6 drop-shadow-sm">
+        <h3 className="font-aref text-xl sm:text-2xl text-wine dark:text-[#E0AAEF] flex items-center justify-center gap-2 font-bold mb-5 drop-shadow-sm text-center leading-relaxed">
           <span className="text-3xl">✍️</span>
           <span>اكتبي رد او سيبي ريأكت يا عيون قلبي 🫶🏻</span>
           <span className="text-3xl">✨</span>
         </h3>
 
-        <div className="flex flex-col gap-5 relative z-10">
+        <div className="flex flex-col gap-4 relative z-10">
         {/* Emojis */}
         <div className="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start bg-card-bg/40 p-3.5 rounded-2xl border border-rose/20 shadow-inner">
           {EMOJIS.map(emoji => {
@@ -111,25 +111,37 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
           })}
         </div>
 
-        {/* Text Area */}
+        {/* Reply editor */}
+        <div className="flex items-center justify-between gap-3 px-1">
+          <label htmlFor={`reply-${message.id}`} className="font-markazi text-lg sm:text-xl font-bold text-wine-deep dark:text-[#E0AAEF]">
+            اكتبي ردك هنا
+          </label>
+          <span className="font-markazi text-sm text-text-muted tabular-nums" aria-live="polite">
+            {replyText.length} حرف
+          </span>
+        </div>
         <textarea
+          id={`reply-${message.id}`}
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
           placeholder="نفسك تقوليلي إيه؟ 🥺"
-          rows={1}
-          style={{ minHeight: '60px' }}
+          dir="rtl"
+          aria-label="اكتبي ردك على الرسالة"
+          rows={4}
+          style={{ minHeight: '132px', maxHeight: '320px' }}
           onInput={(e) => {
             const target = e.target as HTMLTextAreaElement;
             target.style.height = 'auto';
-            target.style.height = `${target.scrollHeight}px`;
+            target.style.height = `${Math.min(target.scrollHeight, 320)}px`;
+            target.style.overflowY = target.scrollHeight > 320 ? 'auto' : 'hidden';
           }}
-          className="w-full p-4 rounded-2xl border border-rose/30 font-markazi text-xl bg-white/60 dark:bg-[#1E142B]/60 text-wine-deep dark:text-[#F8F4FF] focus:outline-none focus:ring-2 focus:ring-rose/50 shadow-inner resize-none overflow-hidden placeholder:text-wine/40 dark:placeholder:text-[#F8F4FF]/40 transition-all duration-300 leading-relaxed"
+          className="w-full p-4 sm:p-5 rounded-2xl border border-rose/35 dark:border-[#b99ae6]/30 font-markazi text-xl bg-white/75 dark:bg-[#1E142B]/75 text-wine-deep dark:text-[#F8F4FF] text-right focus:outline-none focus:ring-2 focus:ring-rose/60 focus:border-rose/60 shadow-inner resize-y overflow-y-auto placeholder:text-wine/45 dark:placeholder:text-[#F8F4FF]/45 transition-all duration-200 leading-relaxed"
         />
 
         <button
           onClick={handleSaveText}
           disabled={isSaving || !replyText.trim() || replyText.trim() === savedReply}
-          className="bg-gradient-to-r from-wine to-wine-deep dark:from-[#b99ae6] dark:to-[#8E4A9F] text-white px-6 py-3 rounded-full font-markazi text-xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.3)] hover:shadow-[0_4px_20px_rgba(142,74,159,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+          className="w-full sm:w-auto self-stretch sm:self-center bg-gradient-to-r from-wine to-wine-deep dark:from-[#b99ae6] dark:to-[#8E4A9F] text-white px-6 py-3 rounded-2xl sm:rounded-full font-markazi text-xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.3)] hover:shadow-[0_4px_20px_rgba(142,74,159,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] flex items-center justify-center gap-2"
         >
           {isSaving ? "بحفظ ردك الحلو..." : (replyText.trim() === savedReply && replyText.trim() !== "" ? "ردك محفوظ يا قلبي ✨" : "احفظي ردك مع الرسالة دي للأبد ✨")}
         </button>
