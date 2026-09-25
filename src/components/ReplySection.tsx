@@ -55,7 +55,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
     <div className="mt-8 pt-6 border-t border-rose/30 flex flex-col gap-5 animate-fade-in-up">
       <h3 className="font-aref text-xl md:text-2xl text-wine dark:text-[#F8F4FF] flex items-center gap-2 font-bold">
         <span>✍️</span>
-        اكتبي رد او سيبي ريأكت يا عيون قلبي 🫶🏻
+        <span>اكتبي رد او سيبي ريأكت يا عيون قلبي 🫶🏻</span>
       </h3>
 
       <div className="flex flex-col gap-4">
