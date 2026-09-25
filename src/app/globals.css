@@ -126,11 +126,12 @@ body {
   height: 40px;
   opacity: 0.7;
   pointer-events: none;
+  z-index: 0;
 }
-.floral-corner-tl { top: 15px; left: 15px; transform: rotate(0deg); }
-.floral-corner-tr { top: 15px; right: 15px; transform: rotate(90deg); }
-.floral-corner-bl { bottom: 15px; left: 15px; transform: rotate(-90deg); }
-.floral-corner-br { bottom: 15px; right: 15px; transform: rotate(180deg); }
+.floral-corner-tl { top: 25px; left: 25px; transform: rotate(0deg); }
+.floral-corner-tr { top: 25px; right: 25px; transform: rotate(90deg); }
+.floral-corner-bl { bottom: 25px; left: 25px; transform: rotate(-90deg); }
+.floral-corner-br { bottom: 25px; right: 25px; transform: rotate(180deg); }
 
 /* Universal Sleek Scrollbars */
 * {

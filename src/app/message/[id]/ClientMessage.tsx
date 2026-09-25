@@ -82,7 +82,7 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
         <main
           ref={messageRef}
           style={{ backgroundColor: 'var(--card-bg)' }}
-          className="w-full rounded-[32px] pt-12 sm:pt-14 pb-16 sm:pb-20 px-4 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
+          className="w-full rounded-[32px] pt-12 sm:pt-14 pb-24 sm:pb-32 px-4 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group"
         >
           <FloralCorner className="floral-corner-tl opacity-50 group-hover:opacity-75 transition-opacity" />
           <FloralCorner className="floral-corner-tr opacity-50 group-hover:opacity-75 transition-opacity" />

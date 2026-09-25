@@ -442,6 +442,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
         </section>
       </div>
+      
+      {/* Hidden Admin Entry */}
+      <Link href="/admin" className="fixed bottom-0 left-0 w-12 h-12 opacity-0 z-50 rounded-tr-full" aria-label="Admin Access" />
     </>
   );
 }
