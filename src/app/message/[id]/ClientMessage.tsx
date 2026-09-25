@@ -108,12 +108,12 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
               <div className="absolute -top-6 -right-6 text-6xl opacity-10 rotate-12 group-hover/msg:rotate-45 transition-transform duration-700">🌸</div>
               <div className="absolute -bottom-6 -left-6 text-6xl opacity-10 -rotate-12 group-hover/msg:-rotate-45 transition-transform duration-700">🦋</div>
 
-              {/* Show title if exists - styled as archive pill */}
-              {message?.title && (
+              {/* Show description if exists - styled as archive pill */}
+              {message?.description && (
                 <div className="w-full flex justify-center mb-6 relative z-10">
                   <span className="inline-flex items-center gap-2 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-6 py-2.5 rounded-full font-markazi text-xl sm:text-2xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.5)] dark:shadow-[0_4px_18px_rgba(185,154,230,0.35)] border border-white/20 hover:scale-105 transition-transform">
                     <span className="animate-pulse">✨</span>
-                    <span>{message.title}</span>
+                    <span>{message.description}</span>
                     <span className="animate-pulse">✨</span>
                   </span>
                 </div>

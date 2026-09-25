@@ -13,6 +13,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [date, setDate] = useState("");
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,7 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState("");
   const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
   const [editMessage, setEditMessage] = useState("");
   const [editLoading, setEditLoading] = useState(false);
 
@@ -83,6 +85,7 @@ export default function AdminPage() {
     setEditingId(msg.id);
     setEditDate(msg.date);
     setEditTitle(msg.title || "");
+    setEditDescription(msg.description || "");
     setEditMessage(msg.message);
   };
 
@@ -90,6 +93,7 @@ export default function AdminPage() {
     setEditingId(null);
     setEditDate("");
     setEditTitle("");
+    setEditDescription("");
     setEditMessage("");
   };
 
@@ -100,9 +104,9 @@ export default function AdminPage() {
       const updateData: Partial<Message> = {
         date: editDate,
         message: editMessage.trim(),
+        title: editTitle.trim(),
+        description: editDescription.trim(),
       };
-      if (editTitle.trim()) updateData.title = editTitle.trim();
-      else updateData.title = "";
       await updateDoc(doc(db, "messages", msgId), updateData);
       setEditingId(null);
       fetchAllMessages();
@@ -152,11 +156,13 @@ export default function AdminPage() {
       await addDoc(collection(db, "messages"), {
         date,
         title: title.trim() || "",
+        description: description.trim() || "",
         message: message.trim(),
         createdAt: new Date().toISOString()
       });
       setStatus("تم نشر الرسالة بنجاح وحفظها في السحابة للأبد! ✅");
       setTitle("");
+      setDescription("");
       setMessage("");
       fetchAllMessages();
       setTimeout(() => setStatus(""), 4000);
@@ -242,12 +248,25 @@ export default function AdminPage() {
 
           <div className="flex flex-col gap-1.5">
             <label className="font-markazi text-xl text-text-main font-semibold flex items-center gap-2">
-              <span>✨</span> عنوان الرسالة: <span className="text-text-muted text-base">(اختياري)</span>
+              <span>✨</span> عنوان الزرار الكبير: <span className="text-text-muted text-base">(اختياري)</span>
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              placeholder="مثال: بحب افرحك يا لولي"
+              className="p-3 rounded-xl border border-border-color font-markazi text-xl bg-card-bg/70 text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 transition-all shadow-inner w-full"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="font-markazi text-xl text-text-main font-semibold flex items-center gap-2">
+              <span>💬</span> وصف بسيط للرسالة: <span className="text-text-muted text-base">(اختياري)</span>
+            </label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="مثال: يوم غيّر حياتي..."
               className="p-3 rounded-xl border border-border-color font-markazi text-xl bg-card-bg/70 text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 transition-all shadow-inner w-full"
             />
@@ -329,7 +348,14 @@ export default function AdminPage() {
                       type="text"
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
-                      placeholder="العنوان (اختياري)..."
+                      placeholder="عنوان الزرار (اختياري)..."
+                      className="p-2.5 rounded-xl border border-border-color font-markazi text-lg bg-card-bg text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 w-full"
+                    />
+                    <input
+                      type="text"
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                      placeholder="وصف بسيط (اختياري)..."
                       className="p-2.5 rounded-xl border border-border-color font-markazi text-lg bg-card-bg text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 w-full"
                     />
                     <textarea

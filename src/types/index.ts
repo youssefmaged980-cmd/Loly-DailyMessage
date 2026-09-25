@@ -2,6 +2,7 @@ export interface Message {
   id: string;
   date: string;
   title?: string;
+  description?: string;
   message: string;
   createdAt?: string;
   reply?: string;

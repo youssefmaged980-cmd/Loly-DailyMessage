@@ -416,9 +416,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                       {formatDateArabic(msg.date)}
                     </span>
                   </div>
-                  {msg.title && (
+                  {msg.description && (
                     <span className="font-markazi text-lg sm:text-base text-rose dark:text-[#F9C88A] break-words whitespace-normal drop-shadow-sm sm:pr-10">
-                      ✨ {msg.title}
+                      ✨ {msg.description}
                     </span>
                   )}
                 </div>
@@ -431,9 +431,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 </div>
 
                 {/* Left side: CTA Button - uniform size */}
-                <div className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-3 sm:py-2.5 rounded-xl sm:rounded-full font-markazi text-lg sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-white/20 whitespace-nowrap">
-                  <span>بحب افرحك يا لولي</span>
-                  <span className="text-xl sm:text-base">❤️</span>
+                <div className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-3 sm:py-2.5 rounded-xl sm:rounded-full font-markazi text-lg sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-white/20 whitespace-normal text-center min-h-[44px]">
+                  <span>{msg.title || "بحب افرحك يا لولي"}</span>
+                  <span className="text-xl sm:text-base shrink-0">❤️</span>
                   <span className="text-xl sm:text-base group-hover:-translate-x-1 transition-transform shrink-0">💌</span>
                 </div>
               </Link>
