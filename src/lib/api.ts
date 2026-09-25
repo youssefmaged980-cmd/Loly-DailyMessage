@@ -35,7 +35,9 @@ export async function getMessages(): Promise<Message[]> {
               date: doc.fields.date.stringValue,
               title: doc.fields.title?.stringValue || "",
               message: doc.fields.message.stringValue,
-              createdAt: doc.fields.createdAt?.stringValue || doc.createTime || ""
+              createdAt: doc.fields.createdAt?.stringValue || doc.createTime || "",
+              reply: doc.fields.reply?.stringValue || undefined,
+              reaction: doc.fields.reaction?.stringValue || undefined,
             });
           }
         }
@@ -78,7 +80,9 @@ export async function getMessage(id: string): Promise<Message | null> {
       date: data.fields.date.stringValue,
       title: data.fields.title?.stringValue || "",
       message: data.fields.message.stringValue,
-      createdAt: data.fields.createdAt?.stringValue || data.createTime || ""
+      createdAt: data.fields.createdAt?.stringValue || data.createTime || "",
+      reply: data.fields.reply?.stringValue || undefined,
+      reaction: data.fields.reaction?.stringValue || undefined,
     };
   } catch (error) {
     console.error(`Failed to fetch message ${id}:`, error);
