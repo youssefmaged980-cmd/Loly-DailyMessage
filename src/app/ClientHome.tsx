@@ -405,9 +405,14 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 {/* Right side: Date + Title */}
                 <div className="flex flex-col gap-1.5 min-w-0 w-full sm:w-auto flex-1 mb-3 sm:mb-0">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-8 h-8 rounded-xl bg-wine/10 dark:bg-rose/15 flex items-center justify-center text-sm text-wine dark:text-rose-pale border border-wine/20 dark:border-rose/30 shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-sm">
-                      📅
-                    </span>
+                    <div className="w-9 h-[38px] rounded-[10px] bg-white dark:bg-[#2A1B3D] flex flex-col overflow-hidden shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-[0_2px_8px_rgba(142,74,159,0.15)] dark:shadow-[0_2px_8px_rgba(246,165,214,0.2)] border border-wine/20 dark:border-rose/30">
+                      <div className="bg-rose/90 dark:bg-rose text-white text-[11px] font-bold text-center py-0.5 w-full font-markazi leading-tight">
+                        {['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'][parseInt(msg.date.split('-')[1], 10) - 1]}
+                      </div>
+                      <div className="text-wine-deep dark:text-[#F8F4FF] text-base font-extrabold flex-1 flex items-center justify-center font-sans -mt-0.5">
+                        {msg.date.split('-')[2]}
+                      </div>
+                    </div>
                     <span className="font-aref text-lg sm:text-xl md:text-2xl text-wine-deep dark:text-[#F8F4FF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.4)] dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] whitespace-normal sm:whitespace-nowrap group-hover:text-wine dark:group-hover:text-rose-pale transition-colors leading-tight">
                       {formatDateArabic(msg.date)}
                     </span>
