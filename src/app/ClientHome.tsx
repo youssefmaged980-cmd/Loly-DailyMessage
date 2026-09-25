@@ -438,6 +438,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
         </section>
       </div>
+      
+      {/* Footer Sign-off */}
+      <div className="w-full flex justify-center pt-8 pb-12 sm:pb-16 opacity-60 hover:opacity-100 transition-opacity duration-500">
+        <div className="font-cormorant italic text-wine/60 dark:text-[#E0AAEF]/50 text-lg sm:text-xl tracking-[0.25em] flex items-center gap-3 select-none">
+          I LOVE YOU MY LOLY <span className="text-base sm:text-lg animate-pulse-slow">❤️</span>
+        </div>
+      </div>
     </>
   );
 }
