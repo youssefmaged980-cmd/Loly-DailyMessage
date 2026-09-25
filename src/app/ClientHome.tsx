@@ -405,12 +405,23 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 {/* Right side: Date + Title */}
                 <div className="flex flex-col gap-1.5 min-w-0 w-full sm:w-auto flex-1 mb-3 sm:mb-0">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-[38px] rounded-[10px] bg-white dark:bg-[#2A1B3D] flex flex-col overflow-hidden shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-[0_2px_8px_rgba(142,74,159,0.15)] dark:shadow-[0_2px_8px_rgba(246,165,214,0.2)] border border-wine/20 dark:border-rose/30">
-                      <div className="bg-rose/90 dark:bg-rose text-white text-[11px] font-bold text-center py-0.5 w-full font-markazi leading-tight">
-                        {['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'][parseInt(msg.date.split('-')[1], 10) - 1]}
+                    <div className="relative shrink-0 w-12 h-12 flex items-center justify-center group-hover:-rotate-12 transition-transform duration-500">
+                      {/* Outer glowing dashed ring */}
+                      <div className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-[#FF9A9E] dark:border-[#FFB8C6] drop-shadow-[0_0_6px_rgba(255,154,158,0.6)] dark:drop-shadow-[0_0_8px_rgba(255,184,198,0.5)]"></div>
+                      
+                      {/* Inner glowing circle */}
+                      <div className="w-[38px] h-[38px] rounded-full bg-gradient-to-br from-[#FFF0F5] to-[#FFE4E1] dark:from-[#4A192C] dark:to-[#6B2443] flex flex-col items-center justify-center shadow-[0_0_12px_rgba(255,154,158,0.5)] dark:shadow-[0_0_15px_rgba(255,184,198,0.4)]">
+                        <span className="text-[#D81B60] dark:text-[#FFE4E8] font-sans font-extrabold text-lg leading-none mt-0.5">
+                          {msg.date.split('-')[2]}
+                        </span>
+                        <span className="text-[9px] text-[#C2185B] dark:text-[#FFB8C6] font-bold leading-none tracking-tighter">
+                           {['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'][parseInt(msg.date.split('-')[1], 10) - 1]}
+                        </span>
                       </div>
-                      <div className="text-wine-deep dark:text-[#F8F4FF] text-base font-extrabold flex-1 flex items-center justify-center font-sans -mt-0.5">
-                        {msg.date.split('-')[2]}
+                      
+                      {/* Glowing magical sparkle on the edge */}
+                      <div className="absolute -bottom-1 -right-1 text-[13px] drop-shadow-[0_0_8px_rgba(255,154,158,0.9)] opacity-100 group-hover:scale-125 group-hover:-translate-y-1 group-hover:rotate-12 transition-all duration-300 z-10">
+                        ✨
                       </div>
                     </div>
                     <span className="font-aref text-lg sm:text-xl md:text-2xl text-wine-deep dark:text-[#F8F4FF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.4)] dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] whitespace-normal sm:whitespace-nowrap group-hover:text-wine dark:group-hover:text-rose-pale transition-colors leading-tight">

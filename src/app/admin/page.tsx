@@ -235,7 +235,7 @@ export default function AdminPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5">
           <div className="flex flex-col gap-1.5">
             <label className="font-markazi text-xl text-text-main font-semibold flex items-center gap-2">
-              <span>📅</span> تاريخ النشر:
+              <span>🗓️</span> تاريخ النشر:
             </label>
             <input
               type="date"
