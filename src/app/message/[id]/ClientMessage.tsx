@@ -105,15 +105,19 @@ export default function ClientMessage({ initialMessage }: { initialMessage: Mess
               <div className="absolute -top-6 -right-6 text-6xl opacity-10 rotate-12 group-hover/msg:rotate-45 transition-transform duration-700">🌸</div>
               <div className="absolute -bottom-6 -left-6 text-6xl opacity-10 -rotate-12 group-hover/msg:-rotate-45 transition-transform duration-700">🦋</div>
 
-              {/* Show description if exists - styled as archive pill */}
+              {message?.title && (
+                <h2 className="w-fit max-w-full mx-auto mb-5 px-6 py-2.5 rounded-full bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white font-aref text-xl sm:text-2xl font-bold leading-relaxed shadow-[0_4px_18px_rgba(142,74,159,0.4)] border border-white/20 relative z-10 break-words">
+                  <span aria-hidden="true" className="ml-2">✨</span>
+                  {message.title}
+                  <span aria-hidden="true" className="mr-2">✨</span>
+                </h2>
+              )}
+
               {message?.description && (
-                <div className="w-full flex justify-center mb-6 relative z-10">
-                  <span className="inline-flex items-center gap-2 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-6 py-2.5 rounded-full font-markazi text-xl sm:text-2xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.5)] dark:shadow-[0_4px_18px_rgba(185,154,230,0.35)] border border-white/20 hover:scale-105 transition-transform">
-                    <span className="animate-pulse">✨</span>
-                    <span>{message.description}</span>
-                    <span className="animate-pulse">✨</span>
-                  </span>
-                </div>
+                <p className="max-w-2xl mx-auto mb-5 px-3 font-markazi text-lg sm:text-xl text-rose dark:text-[#F9C88A] leading-relaxed relative z-10">
+                  <span aria-hidden="true" className="ml-2 opacity-80">🌸</span>
+                  {message.description}
+                </p>
               )}
               
               <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-wine-deep dark:text-[#F8F4FF] font-semibold relative z-10 transition-opacity duration-500 break-words w-full max-w-full whitespace-pre-wrap">
