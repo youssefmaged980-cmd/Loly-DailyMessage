@@ -20,17 +20,31 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(!!(message.reply || message.reaction));
 
-  const handleSave = async () => {
-    if (!replyText.trim() && !selectedEmoji) return;
+  const handleEmojiSelect = async (emoji: string) => {
+    const newEmoji = selectedEmoji === emoji ? "" : emoji;
+    setSelectedEmoji(newEmoji);
+    setSavedReaction(newEmoji);
+    try {
+      await updateDoc(doc(db, "messages", message.id), {
+        reaction: newEmoji,
+      });
+      if (onReplySaved) {
+        onReplySaved(replyText.trim(), newEmoji);
+      }
+    } catch (error) {
+      console.error("Error saving reaction:", error);
+    }
+  };
+
+  const handleSaveText = async () => {
+    if (!replyText.trim()) return;
 
     setIsSaving(true);
     try {
       await updateDoc(doc(db, "messages", message.id), {
         reply: replyText.trim(),
-        reaction: selectedEmoji,
       });
       setSavedReply(replyText.trim());
-      setSavedReaction(selectedEmoji);
       setIsSaved(true);
       if (onReplySaved) {
         onReplySaved(replyText.trim(), selectedEmoji);
@@ -44,7 +58,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
   };
 
   const openWhatsApp = () => {
-    const text = `حبيبي، أنا رديت على رسالة يوم ${message.date}:\n\n${replyText}\n\n${selectedEmoji}`;
+    const text = `حبيبي، أنا رديت على رسالة يوم ${message.date}:\n\n${replyText}`;
     const url = `https://wa.me/201270535210?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
@@ -66,7 +80,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
             return (
               <button
                 key={emoji}
-                onClick={() => setSelectedEmoji(isSelected ? "" : emoji)}
+                onClick={() => handleEmojiSelect(emoji)}
                 className={`text-2xl sm:text-3xl p-2 rounded-xl transition-all duration-300 relative ${isSelected
                   ? 'scale-125 z-10 drop-shadow-[0_0_15px_rgba(255,105,180,0.8)]'
                   : 'opacity-50 hover:opacity-100 hover:scale-110 hover:bg-rose/10'
@@ -97,15 +111,15 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
         />
 
         <button
-          onClick={handleSave}
-          disabled={isSaving || (!replyText.trim() && !selectedEmoji)}
+          onClick={handleSaveText}
+          disabled={isSaving || !replyText.trim() || replyText.trim() === savedReply}
           className="bg-gradient-to-r from-wine to-wine-deep dark:from-[#b99ae6] dark:to-[#8E4A9F] text-white px-6 py-3 rounded-full font-markazi text-xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.3)] hover:shadow-[0_4px_20px_rgba(142,74,159,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
         >
-          {isSaving ? "بحفظ ردك الحلو..." : (isSaved && replyText === savedReply && selectedEmoji === savedReaction ? "ردك محفوظ يا قلبي ✨" : "احفظي ردك مع الرسالة دي للأبد ✨")}
+          {isSaving ? "بحفظ ردك الحلو..." : (replyText.trim() === savedReply && replyText.trim() !== "" ? "ردك محفوظ يا قلبي ✨" : "احفظي ردك مع الرسالة دي للأبد ✨")}
         </button>
 
         {/* WhatsApp Action */}
-        {isSaved && (
+        {savedReply.trim() !== "" && replyText.trim() === savedReply && (
           <button
             onClick={openWhatsApp}
             className="mt-2 self-start md:self-center flex items-center gap-2 bg-gradient-to-r from-wine/90 to-wine-deep/90 dark:from-[#b99ae6]/20 dark:to-[#8E4A9F]/20 border border-transparent dark:border-[#b99ae6]/30 text-white dark:text-[#F8F4FF] px-6 py-3 rounded-full font-markazi text-xl sm:text-2xl shadow-[0_4px_15px_rgba(142,74,159,0.3)] hover:shadow-[0_4px_25px_rgba(142,74,159,0.5)] transition-all hover:scale-105 active:scale-95 backdrop-blur-sm"
