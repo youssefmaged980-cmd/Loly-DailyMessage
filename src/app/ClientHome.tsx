@@ -23,6 +23,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   const [greeting, setGreeting] = useState<{ emoji: string; text: string } | null>(null);
   const [milestoneMsg, setMilestoneMsg] = useState<string | null>(null);
   const [randomMsg, setRandomMsg] = useState<Message | null>(null);
+  const [selectedArchiveMonth, setSelectedArchiveMonth] = useState<string | null>(null);
   const messageRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -118,6 +119,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   const closeRandom = () => setRandomMsg(null);
 
   const todayStr = getEgyptTodayString();
+  const archiveMessages = messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= todayStr);
+  const archiveMonths = Array.from(new Set(archiveMessages.map(msg => msg.date.slice(0, 7))));
+  const formatArchiveMonth = (monthKey: string) => new Intl.DateTimeFormat("ar-EG", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${monthKey}-01T12:00:00Z`));
 
   return (
     <>
@@ -407,7 +415,20 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
 
           <div className="flex flex-col gap-3.5 sm:gap-4 px-1 sm:px-2 py-1 w-full max-h-[55vh] overflow-y-auto scrollbar-timeline pb-4">
-            {messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= todayStr).map((msg, index) => (
+            {selectedArchiveMonth ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setSelectedArchiveMonth(null)}
+                  className="self-start inline-flex min-h-11 items-center gap-2 rounded-full border border-rose/30 bg-card-bg/80 px-5 py-2 font-markazi text-lg font-bold text-wine shadow-sm transition hover:-translate-x-1 hover:border-rose/60 dark:text-[#E0AAEF]"
+                >
+                  <span aria-hidden="true">→</span>
+                  <span>رجوع للشهور</span>
+                </button>
+                <h3 className="text-center font-aref text-2xl font-bold text-wine-deep dark:text-[#E0AAEF]">
+                  {formatArchiveMonth(selectedArchiveMonth)}
+                </h3>
+                {archiveMessages.filter(msg => msg.date.startsWith(`${selectedArchiveMonth}-`)).map((msg, index) => (
               <motion.div
                 key={msg.id}
                 initial={{ opacity: 0, y: 24 }}
@@ -470,7 +491,32 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 </div>
               </Link>
             </motion.div>
-            ))}
+                ))}
+              </>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {archiveMonths.map((monthKey, index) => {
+                  const count = archiveMessages.filter(msg => msg.date.startsWith(`${monthKey}-`)).length;
+                  return (
+                    <motion.button
+                      key={monthKey}
+                      type="button"
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      onClick={() => setSelectedArchiveMonth(monthKey)}
+                      className="group relative flex min-h-28 flex-col items-center justify-center gap-2 overflow-hidden rounded-3xl border border-rose/35 bg-gradient-to-br from-white/90 via-cream/80 to-white/90 p-5 text-center shadow-[0_6px_24px_rgba(90,39,128,0.12)] transition hover:-translate-y-1 hover:border-rose/70 hover:shadow-[0_10px_30px_rgba(142,74,159,0.25)] dark:from-[#1E142B] dark:via-[#261738] dark:to-[#1E142B] dark:text-[#F8F4FF]"
+                    >
+                      <span aria-hidden="true" className="text-2xl">🗓️</span>
+                      <span className="font-aref text-2xl font-bold text-wine-deep dark:text-[#E0AAEF]">{formatArchiveMonth(monthKey)}</span>
+                      <span className="rounded-full bg-rose/10 px-3 py-0.5 font-markazi text-base text-rose dark:bg-[#b99ae6]/15 dark:text-[#F9C88A]">
+                        {count} {count === 1 ? "رسالة" : "رسائل"}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
       </div>
