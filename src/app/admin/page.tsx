@@ -18,6 +18,7 @@ export default function AdminPage() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [allMessages, setAllMessages] = useState<Message[]>([]);
+  const [selectedAdminMonth, setSelectedAdminMonth] = useState<string | null>(null);
 
   // Edit state
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -208,6 +209,12 @@ export default function AdminPage() {
   }
 
   const todayString = getEgyptTodayString();
+  const adminMonths = Array.from(new Set(allMessages.map((msg) => msg.date.slice(0, 7))));
+  const formatAdminMonth = (monthKey: string) => new Intl.DateTimeFormat("ar-EG", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${monthKey}-01T12:00:00Z`));
 
   return (
     <div className="flex flex-col items-center min-h-screen p-3 sm:p-6 md:p-8 bg-bg-color transition-colors duration-300">
@@ -325,7 +332,20 @@ export default function AdminPage() {
         </div>
 
         <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto pl-1 pr-1 scrollbar-timeline">
-          {allMessages.map(msg => {
+          {selectedAdminMonth ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setSelectedAdminMonth(null)}
+                className="self-start inline-flex min-h-10 items-center gap-2 rounded-full border border-wine/20 bg-wine/5 px-4 py-1.5 font-markazi text-lg font-bold text-wine transition hover:border-rose/60 hover:bg-rose/10 dark:text-[#E0AAEF]"
+              >
+                <span aria-hidden="true">→</span>
+                <span>رجوع للشهور</span>
+              </button>
+              <h3 className="py-1 text-center font-aref text-xl font-bold text-wine dark:text-[#E0AAEF]">
+                {formatAdminMonth(selectedAdminMonth)}
+              </h3>
+              {allMessages.filter((msg) => msg.date.startsWith(`${selectedAdminMonth}-`)).map(msg => {
             const isFuture = msg.date > todayString;
             const isEditing = editingId === msg.id;
 
@@ -450,7 +470,38 @@ export default function AdminPage() {
                 )}
               </div>
             );
-          })}
+              })}
+            </>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {adminMonths.map((monthKey) => {
+                const count = allMessages.filter((msg) => msg.date.startsWith(`${monthKey}-`)).length;
+                return (
+                  <button
+                    key={monthKey}
+                    type="button"
+                    onClick={() => setSelectedAdminMonth(monthKey)}
+                    className="group flex min-h-24 items-center gap-4 rounded-2xl border border-rose/30 bg-gradient-to-br from-white/90 via-cream/70 to-white/90 p-4 text-right shadow-sm transition hover:-translate-y-0.5 hover:border-rose/60 hover:shadow-md dark:from-[#1E142B] dark:via-[#261738] dark:to-[#1E142B]"
+                  >
+                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-rose/35 bg-gradient-to-br from-white to-[#EADCF2] text-wine shadow-sm transition group-hover:-translate-y-0.5 dark:from-[#34213F] dark:to-[#21152D] dark:text-[#E0AAEF]">
+                      <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="1.7" />
+                        <path d="M3 9h18M8 3v4m8-4v4m-9 6h2m4 0h2m-8 4h2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                        <path d="m18 14 .7 1.4 1.5.2-1.1 1 .3 1.5-1.4-.7-1.3.7.2-1.5-1-1 1.4-.2.7-1.4Z" fill="#D79B35" />
+                      </svg>
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                      <span className="font-aref text-lg font-bold text-wine-deep dark:text-[#E0AAEF]">{formatAdminMonth(monthKey)}</span>
+                      <span className="self-start rounded-full bg-rose/10 px-2.5 py-0.5 font-markazi text-sm text-rose dark:bg-[#b99ae6]/15 dark:text-[#F9C88A]">
+                        {count} {count === 1 ? "رسالة" : "رسائل"}
+                      </span>
+                    </span>
+                    <span className="text-xl text-rose transition-transform group-hover:-translate-x-1" aria-hidden="true">←</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {allMessages.length === 0 && (
             <div className="text-center font-markazi text-xl text-text-muted py-8">
