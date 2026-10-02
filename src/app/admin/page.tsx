@@ -5,7 +5,7 @@ import Link from "next/link";
 import { collection, addDoc, getDocs, query, doc, deleteDoc, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { Message } from "@/types";
-import { formatDateArabic, getEgyptTodayString } from "@/lib/date";
+import { formatDateArabic, getEgyptTodayString, formatMonthName } from "@/lib/date";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function AdminPage() {
@@ -476,6 +476,7 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {adminMonths.map((monthKey) => {
                 const count = allMessages.filter((msg) => msg.date.startsWith(`${monthKey}-`)).length;
+                const monthStars = Number(monthKey.slice(5, 7));
                 return (
                   <button
                     key={monthKey}
@@ -483,12 +484,9 @@ export default function AdminPage() {
                     onClick={() => setSelectedAdminMonth(monthKey)}
                     className="group flex min-h-24 items-center gap-4 rounded-2xl border border-rose/30 bg-gradient-to-br from-white/90 via-cream/70 to-white/90 p-4 text-right shadow-sm transition hover:-translate-y-0.5 hover:border-rose/60 hover:shadow-md dark:from-[#1E142B] dark:via-[#261738] dark:to-[#1E142B]"
                   >
-                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-rose/35 bg-gradient-to-br from-white to-[#EADCF2] text-wine shadow-sm transition group-hover:-translate-y-0.5 dark:from-[#34213F] dark:to-[#21152D] dark:text-[#E0AAEF]">
-                      <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden="true">
-                        <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="1.7" />
-                        <path d="M3 9h18M8 3v4m8-4v4m-9 6h2m4 0h2m-8 4h2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-                        <path d="m18 14 .7 1.4 1.5.2-1.1 1 .3 1.5-1.4-.7-1.3.7.2-1.5-1-1 1.4-.2.7-1.4Z" fill="#D79B35" />
-                      </svg>
+                    <span aria-hidden="true" className="relative grid h-[4.25rem] w-[4.75rem] shrink-0 grid-rows-[1.55rem_1fr] overflow-hidden rounded-2xl border border-rose/40 bg-gradient-to-br from-white to-[#EADCF2] text-wine shadow-sm transition group-hover:-translate-y-0.5 dark:from-[#34213F] dark:to-[#21152D] dark:text-[#E0AAEF]">
+                      <span className="relative flex items-center justify-center bg-gradient-to-r from-[#713B8D] to-[#B86DAD] px-1 font-aref text-sm font-bold leading-none text-white shadow-sm">{formatMonthName(monthKey)}<span className="absolute top-0.5 left-2 h-2 w-2 rounded-full border border-white/80 bg-[#F9C88A]" /><span className="absolute top-0.5 right-2 h-2 w-2 rounded-full border border-white/80 bg-[#F9C88A]" /></span>
+                      <span className="grid grid-cols-4 content-center justify-items-center gap-x-1 gap-y-0 text-[8px] leading-[9px] text-[#D7A246]">{Array.from({ length: monthStars }, (_, starIndex) => <span key={starIndex}>✦</span>)}</span>
                     </span>
                     <span className="flex min-w-0 flex-1 flex-col gap-1">
                       <span className="font-aref text-lg font-bold text-wine-deep dark:text-[#E0AAEF]">{formatAdminMonth(monthKey)}</span>

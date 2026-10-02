@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Message, TimeTogether } from "@/types";
-import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, getTimeGreeting, getMilestoneMessage, SpecialOccasion } from "@/lib/date";
+import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, getTimeGreeting, getMilestoneMessage, formatMonthName, SpecialOccasion } from "@/lib/date";
 import { generateCardImage, prepareImageSaveWindow, saveGeneratedImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -497,6 +497,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {archiveMonths.map((monthKey, index) => {
                   const count = archiveMessages.filter(msg => msg.date.startsWith(`${monthKey}-`)).length;
+                  const monthStars = Number(monthKey.slice(5, 7));
                   return (
                     <motion.button
                       key={monthKey}
@@ -507,20 +508,9 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                       onClick={() => setSelectedArchiveMonth(monthKey)}
                       className="group relative flex min-h-28 flex-col items-center justify-center gap-2 overflow-hidden rounded-3xl border border-rose/35 bg-gradient-to-br from-white/90 via-cream/80 to-white/90 p-5 text-center shadow-[0_6px_24px_rgba(90,39,128,0.12)] transition hover:-translate-y-1 hover:border-rose/70 hover:shadow-[0_10px_30px_rgba(142,74,159,0.25)] dark:from-[#1E142B] dark:via-[#261738] dark:to-[#1E142B] dark:text-[#F8F4FF]"
                     >
-                      <span aria-hidden="true" className="relative grid h-14 w-14 place-items-center rounded-2xl border border-rose/35 bg-gradient-to-br from-white via-[#FBEAF3] to-[#EADCF2] shadow-[0_5px_16px_rgba(142,74,159,0.2)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:rotate-[-4deg] dark:from-[#34213F] dark:via-[#2A1A37] dark:to-[#21152D]">
-                        <svg viewBox="0 0 64 64" className="h-11 w-11" fill="none">
-                          <defs>
-                            <linearGradient id={`archive-calendar-${monthKey}`} x1="12" y1="10" x2="52" y2="56" gradientUnits="userSpaceOnUse">
-                              <stop stopColor="#B86DAD" />
-                              <stop offset="1" stopColor="#713B8D" />
-                            </linearGradient>
-                          </defs>
-                          <rect x="9" y="13" width="46" height="43" rx="9" fill="white" fillOpacity=".82" stroke={`url(#archive-calendar-${monthKey})`} strokeWidth="2.5" />
-                          <path d="M9 22a9 9 0 0 1 9-9h28a9 9 0 0 1 9 9v4H9v-4Z" fill={`url(#archive-calendar-${monthKey})`} />
-                          <path d="M21 9v9M43 9v9" stroke="#FFF9FF" strokeWidth="3.5" strokeLinecap="round" />
-                          <path d="M19 34h4m8 0h4m8 0h3M19 43h4m8 0h4" stroke="#A66A9F" strokeWidth="3.5" strokeLinecap="round" />
-                          <path d="m48 40 1.8 3.7 4.1.6-3 2.9.7 4.1-3.6-1.9-3.7 1.9.7-4.1-3-2.9 4.1-.6L48 40Z" fill="#D79B35" stroke="#FFF7DF" strokeWidth="1" />
-                        </svg>
+                      <span aria-hidden="true" className="relative grid h-[4.25rem] w-[4.75rem] shrink-0 grid-rows-[1.55rem_1fr] overflow-hidden rounded-2xl border border-rose/40 bg-gradient-to-br from-white via-[#FBEAF3] to-[#EADCF2] shadow-[0_5px_16px_rgba(142,74,159,0.2)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:rotate-[-3deg] dark:from-[#34213F] dark:via-[#2A1A37] dark:to-[#21152D]">
+                        <span className="relative flex items-center justify-center bg-gradient-to-r from-[#713B8D] to-[#B86DAD] px-1 font-aref text-sm font-bold leading-none text-white shadow-sm">{formatMonthName(monthKey)}<span className="absolute top-0.5 left-2 h-2 w-2 rounded-full border border-white/80 bg-[#F9C88A]" /><span className="absolute top-0.5 right-2 h-2 w-2 rounded-full border border-white/80 bg-[#F9C88A]" /></span>
+                        <span className="grid grid-cols-4 content-center justify-items-center gap-x-1 gap-y-0 text-[8px] leading-[9px] text-[#D7A246]">{Array.from({ length: monthStars }, (_, starIndex) => <span key={starIndex}>✦</span>)}</span>
                       </span>
                       <span className="font-aref text-2xl font-bold text-wine-deep dark:text-[#E0AAEF]">{formatArchiveMonth(monthKey)}</span>
                       <span className="rounded-full bg-rose/10 px-3 py-0.5 font-markazi text-base text-rose dark:bg-[#b99ae6]/15 dark:text-[#F9C88A]">

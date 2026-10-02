@@ -22,6 +22,14 @@ export function getEgyptTodayString(): string {
   }
 }
 
+/** Returns the Arabic month name for a key formatted as YYYY-MM. */
+export function formatMonthName(monthKey: string): string {
+  return new Intl.DateTimeFormat("ar-EG", {
+    month: "long",
+    timeZone: "UTC",
+  }).format(new Date(`${monthKey}-01T12:00:00Z`));
+}
+
 /**
  * Formats a date string (YYYY-MM-DD or ISO) into Arabic full text.
  * Example: "السبت، 19 سبتمبر 2026"
