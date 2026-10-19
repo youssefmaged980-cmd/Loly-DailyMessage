@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Message, MESSAGE_TYPE_DETAILS, TimeTogether } from "@/types";
+import { ENVELOPE_ICON_DETAILS, getEnvelopeIcon, getMessageTypeLabel, Message, MessageType, MESSAGE_TYPE_DETAILS, TimeTogether } from "@/types";
 import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, getTimeGreeting, getMilestoneMessage, formatMonthName, SpecialOccasion } from "@/lib/date";
 import { generateCardImage, prepareImageSaveWindow, saveGeneratedImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
@@ -26,6 +26,16 @@ function getLatestUploadedMessage(messages: Message[]): Message | null {
   })[0] ?? null;
 }
 
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize("NFKC")
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+    .replace(/[أإآ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .toLocaleLowerCase("ar")
+    .trim();
+}
+
 export default function ClientHome({ initialMessages }: { initialMessages: Message[] }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [currentMessage, setCurrentMessage] = useState<Message | null>(() => getLatestUploadedMessage(initialMessages));
@@ -36,7 +46,11 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   const [milestoneMsg, setMilestoneMsg] = useState<string | null>(null);
   const [randomMsg, setRandomMsg] = useState<Message | null>(null);
   const [selectedArchiveMonth, setSelectedArchiveMonth] = useState<string | null>(null);
+  const [archiveSearch, setArchiveSearch] = useState("");
+  const [archiveTypeFilter, setArchiveTypeFilter] = useState<MessageType | "all">("all");
+  const [isArchiveFilterOpen, setIsArchiveFilterOpen] = useState(false);
   const messageRef = useRef<HTMLElement>(null);
+  const archiveFilterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Initial and periodic time counter calculation
@@ -69,6 +83,26 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
     return () => clearInterval(timer);
   }, [initialMessages]);
+
+  useEffect(() => {
+    if (!isArchiveFilterOpen) return;
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!archiveFilterRef.current?.contains(event.target as Node)) {
+        setIsArchiveFilterOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsArchiveFilterOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isArchiveFilterOpen]);
 
   // Compute milestone after timeTogether is known
   useEffect(() => {
@@ -134,7 +168,25 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
 
   const todayStr = getEgyptTodayString();
   const archiveMessages = messages.filter((msg) => msg.id !== currentMessage?.id && msg.date <= todayStr);
-  const archiveMonths = Array.from(new Set(archiveMessages.map(msg => msg.date.slice(0, 7))));
+  const matchesArchiveType = (msg: Message) => archiveTypeFilter === "all" || (msg.type ?? "morning") === archiveTypeFilter;
+  const filteredArchiveMessages = archiveMessages.filter(matchesArchiveType);
+  const normalizedArchiveSearch = normalizeSearchText(archiveSearch);
+  const searchableMessages = messages.filter((msg) => msg.date <= todayStr && matchesArchiveType(msg));
+  const searchResults = normalizedArchiveSearch
+    ? searchableMessages.filter((msg) => {
+        const searchableText = normalizeSearchText([
+          msg.title,
+          msg.description,
+          msg.message,
+          msg.typeLabel,
+          MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].label,
+          msg.date,
+          formatDateArabic(msg.date),
+        ].filter(Boolean).join(" "));
+        return searchableText.includes(normalizedArchiveSearch);
+      })
+    : [];
+  const archiveMonths = Array.from(new Set(filteredArchiveMessages.map(msg => msg.date.slice(0, 7))));
   const formatArchiveMonth = (monthKey: string) => new Intl.DateTimeFormat("ar-EG", {
     month: "long",
     year: "numeric",
@@ -179,12 +231,12 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-rose/20 shrink-0 relative">
               <div className="flex items-center gap-2.5">
-                <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">{MESSAGE_TYPE_DETAILS[randomMsg.type ?? "morning"].icon}</span>
+                <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">{ENVELOPE_ICON_DETAILS[getEnvelopeIcon(randomMsg)].symbol}</span>
                 <div>
                   <p className="font-aref text-lg text-wine dark:text-[#E0AAEF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.5)] dark:drop-shadow-[0_0_10px_rgba(224,170,239,0.8)]">
                     {formatDateArabic(randomMsg.date)}
                   </p>
-                  <p className="font-markazi text-sm text-rose dark:text-[#F9C88A]">{randomMsg.typeLabel?.trim() || MESSAGE_TYPE_DETAILS[randomMsg.type ?? "morning"].label}</p>
+                  <p className="font-markazi text-sm text-rose dark:text-[#F9C88A]">{getMessageTypeLabel(randomMsg)}</p>
                 </div>
               </div>
               <button
@@ -401,8 +453,119 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             </div>
           </div>
 
+          <div className="relative z-40 mb-4 flex isolate flex-col gap-1 rounded-[1.6rem] border border-rose/30 bg-white/65 p-1.5 shadow-[0_8px_24px_rgba(90,39,128,0.1)] backdrop-blur-md dark:border-[#b99ae6]/25 dark:bg-[#1E142B]/65 sm:mx-2 sm:flex-row sm:items-stretch sm:gap-0 sm:p-2">
+            <div role="search" className="relative min-w-0 flex-1">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute right-4 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-rose/75 dark:text-[#E0AAEF]/80">
+                <circle cx="10.8" cy="10.8" r="6.6" stroke="currentColor" strokeWidth="1.8" />
+                <path d="m16 16 4.2 4.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+              <input
+                type="text"
+                value={archiveSearch}
+                onChange={(event) => setArchiveSearch(event.target.value)}
+                placeholder="دوري على كلمة في الرسالة أو عنوانها..."
+                aria-label="ابحثي في الرسائل والذكريات"
+                dir="rtl"
+                className="min-h-12 w-full rounded-[1.2rem] border border-transparent bg-transparent py-3 pr-12 pl-12 font-markazi text-lg text-wine-deep outline-none transition placeholder:text-wine/50 focus:border-rose/25 focus:bg-white/70 focus:ring-2 focus:ring-rose/15 dark:text-[#F8F4FF] dark:placeholder:text-[#E0AAEF]/55 dark:focus:bg-white/[.04]"
+              />
+              {archiveSearch && (
+                <button
+                  type="button"
+                  onClick={() => setArchiveSearch("")}
+                  aria-label="مسح البحث"
+                  className="absolute left-3 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-lg text-wine/55 transition hover:bg-rose/10 hover:text-rose dark:text-[#E0AAEF]"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+            <div ref={archiveFilterRef} className="relative flex min-h-12 shrink-0 items-center border-t border-rose/15 px-1 dark:border-[#b99ae6]/20 sm:w-56 sm:border-r sm:border-t-0 sm:px-2">
+              <button
+                type="button"
+                onClick={() => setIsArchiveFilterOpen((open) => !open)}
+                aria-haspopup="true"
+                aria-expanded={isArchiveFilterOpen}
+                aria-label="فلترة الرسائل حسب النوع"
+                dir="rtl"
+                className={`flex min-h-11 w-full items-center justify-between gap-2 rounded-xl px-3 font-markazi text-lg text-wine-deep outline-none transition focus-visible:ring-2 focus-visible:ring-rose/30 dark:text-[#F8F4FF] ${isArchiveFilterOpen ? "bg-rose/10 dark:bg-white/[.06]" : "hover:bg-rose/5 dark:hover:bg-white/[.04]"}`}
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-[18px] w-[18px] shrink-0 text-rose/75 dark:text-[#E0AAEF]/80">
+                    <path d="M4 7h5m4 0h7M4 17h9m4 0h3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                    <circle cx="11" cy="7" r="2" fill="var(--card-bg)" stroke="currentColor" strokeWidth="1.7" />
+                    <circle cx="15" cy="17" r="2" fill="var(--card-bg)" stroke="currentColor" strokeWidth="1.7" />
+                  </svg>
+                  <span className="truncate">{archiveTypeFilter === "all" ? "كل أنواع الرسائل" : MESSAGE_TYPE_DETAILS[archiveTypeFilter].label}</span>
+                </span>
+                <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className={`h-4 w-4 shrink-0 text-wine/50 transition-transform dark:text-[#E0AAEF]/60 ${isArchiveFilterOpen ? "rotate-180" : ""}`}>
+                  <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {isArchiveFilterOpen && (
+                <div role="group" aria-label="أنواع الرسائل" style={{ backgroundColor: "var(--card-bg)" }} className="absolute left-0 right-0 top-full z-[80] mt-2 max-h-64 overflow-y-auto rounded-2xl border border-rose/35 p-2 shadow-[0_18px_45px_rgba(55,25,70,0.32)] dark:border-[#b99ae6]/40 sm:left-auto sm:right-0 sm:w-60">
+                  <button
+                    type="button"
+                    aria-pressed={archiveTypeFilter === "all"}
+                    onClick={() => {
+                      setArchiveTypeFilter("all");
+                      setSelectedArchiveMonth(null);
+                      setIsArchiveFilterOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-right font-markazi text-lg transition ${archiveTypeFilter === "all" ? "bg-gradient-to-l from-rose/15 to-[#b99ae6]/10 text-wine-deep dark:text-[#F8F4FF]" : "text-wine/80 hover:bg-rose/8 dark:text-[#E8DDF2] dark:hover:bg-white/[.05]"}`}
+                  >
+                    <span className="flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-full bg-rose/10 text-base">💌</span>كل أنواع الرسائل</span>
+                    {archiveTypeFilter === "all" && <span aria-hidden="true" className="text-rose">✓</span>}
+                  </button>
+                  {Object.entries(MESSAGE_TYPE_DETAILS).map(([value, details]) => {
+                    const isSelected = archiveTypeFilter === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={isSelected}
+                        onClick={() => {
+                          setArchiveTypeFilter(value as MessageType);
+                          setSelectedArchiveMonth(null);
+                          setIsArchiveFilterOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-right font-markazi text-lg transition ${isSelected ? "bg-gradient-to-l from-rose/15 to-[#b99ae6]/10 text-wine-deep dark:text-[#F8F4FF]" : "text-wine/80 hover:bg-rose/8 dark:text-[#E8DDF2] dark:hover:bg-white/[.05]"}`}
+                      >
+                        <span className="flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-full bg-rose/10 text-base">{details.icon}</span>{details.label}</span>
+                        {isSelected && <span aria-hidden="true" className="text-rose">✓</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="flex flex-col gap-3.5 sm:gap-4 px-1 sm:px-2 py-1 w-full max-h-[55vh] overflow-y-auto scrollbar-timeline pb-4">
-            {selectedArchiveMonth ? (
+            {normalizedArchiveSearch ? (
+              searchResults.length > 0 ? (
+                searchResults.map((msg, index) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.04 }}
+                  >
+                    <MessageEnvelope
+                      message={msg}
+                      compact
+                      onOpen={(openedMessage) => {
+                        setRandomMsg(openedMessage);
+                        playMagicChime();
+                      }}
+                    />
+                  </motion.div>
+                ))
+              ) : (
+                <div className="rounded-3xl border border-dashed border-rose/35 bg-card-bg/40 px-5 py-8 text-center font-markazi text-xl text-text-muted">
+                  مش لاقية الرسالة دي.. جربي كلمة تانية 💌
+                </div>
+              )
+            ) : selectedArchiveMonth ? (
               <>
                 <button
                   type="button"
@@ -415,7 +578,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                 <h3 className="text-center font-aref text-2xl font-bold text-wine-deep dark:text-[#E0AAEF]">
                   {formatArchiveMonth(selectedArchiveMonth)}
                 </h3>
-                {archiveMessages.filter(msg => msg.date.startsWith(`${selectedArchiveMonth}-`)).map((msg, index) => (
+                {filteredArchiveMessages.filter(msg => msg.date.startsWith(`${selectedArchiveMonth}-`)).map((msg, index) => (
                   <motion.div
                     key={msg.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -433,10 +596,14 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                   </motion.div>
                 ))}
               </>
+            ) : filteredArchiveMessages.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-rose/35 bg-card-bg/40 px-5 py-8 text-center font-markazi text-xl text-text-muted">
+                {archiveTypeFilter === "all" ? "لسه بنكتب ذكرياتنا الحلوة هنا 💌" : "مفيش رسائل من النوع ده في الأرشيف لسه 💌"}
+              </div>
             ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {archiveMonths.map((monthKey, index) => {
-                  const count = archiveMessages.filter(msg => msg.date.startsWith(`${monthKey}-`)).length;
+                  const count = filteredArchiveMessages.filter(msg => msg.date.startsWith(`${monthKey}-`)).length;
                   const monthStars = Number(monthKey.slice(5, 7));
                   return (
                     <motion.button

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { collection, addDoc, getDocs, query, doc, deleteDoc, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { Message, MessageType, MESSAGE_TYPE_DETAILS } from "@/types";
+import { ENVELOPE_ICON_DETAILS, EnvelopeIcon, getEnvelopeIcon, Message, MessageType, MESSAGE_TYPE_DETAILS } from "@/types";
 import { formatDateArabic, getEgyptTodayString, formatMonthName } from "@/lib/date";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -13,7 +13,8 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [date, setDate] = useState("");
   const [messageType, setMessageType] = useState<MessageType>("morning");
-  const [typeLabel, setTypeLabel] = useState("");
+  const [envelopeIcon, setEnvelopeIcon] = useState<EnvelopeIcon>("heart");
+  const [typeLabel, setTypeLabel] = useState("بحبك يا لولو");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
@@ -26,6 +27,7 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState("");
   const [editType, setEditType] = useState<MessageType>("morning");
+  const [editEnvelopeIcon, setEditEnvelopeIcon] = useState<EnvelopeIcon>("heart");
   const [editTypeLabel, setEditTypeLabel] = useState("");
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -94,7 +96,8 @@ export default function AdminPage() {
     setEditingId(msg.id);
     setEditDate(msg.date);
     setEditType(msg.type ?? "morning");
-    setEditTypeLabel(msg.typeLabel || "");
+    setEditEnvelopeIcon(getEnvelopeIcon(msg));
+    setEditTypeLabel(msg.typeLabel?.trim() || "بحبك يا لولو");
     setEditTitle(msg.title || "");
     setEditDescription(msg.description || "");
     setEditMessage(msg.message);
@@ -104,6 +107,7 @@ export default function AdminPage() {
     setEditingId(null);
     setEditDate("");
     setEditType("morning");
+    setEditEnvelopeIcon("heart");
     setEditTypeLabel("");
     setEditTitle("");
     setEditDescription("");
@@ -117,6 +121,7 @@ export default function AdminPage() {
       const updateData: Partial<Message> = {
         date: editDate,
         type: editType,
+        envelopeIcon: editEnvelopeIcon,
         typeLabel: editTypeLabel.trim(),
         message: editMessage.trim(),
         title: editTitle.trim(),
@@ -171,6 +176,7 @@ export default function AdminPage() {
       await addDoc(collection(db, "messages"), {
         date,
         type: messageType,
+        envelopeIcon,
         typeLabel: typeLabel.trim(),
         title: title.trim() || "",
         description: description.trim() || "",
@@ -182,7 +188,8 @@ export default function AdminPage() {
       setDescription("");
       setMessage("");
       setMessageType("morning");
-      setTypeLabel("");
+      setEnvelopeIcon("heart");
+      setTypeLabel("بحبك يا لولو");
       fetchAllMessages();
       setTimeout(() => setStatus(""), 4000);
     } catch (error) {
@@ -284,6 +291,20 @@ export default function AdminPage() {
             >
               {Object.entries(MESSAGE_TYPE_DETAILS).map(([value, details]) => (
                 <option key={value} value={value}>{details.icon} {details.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="envelope-icon" className="font-markazi text-xl text-text-main font-semibold">رمز الظرف:</label>
+            <select
+              id="envelope-icon"
+              value={envelopeIcon}
+              onChange={(event) => setEnvelopeIcon(event.target.value as EnvelopeIcon)}
+              className="p-3 rounded-xl border border-border-color font-markazi text-xl bg-card-bg/70 text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 transition-all shadow-inner w-full"
+            >
+              {Object.entries(ENVELOPE_ICON_DETAILS).map(([value, details]) => (
+                <option key={value} value={value}>{details.symbol} {details.label}</option>
               ))}
             </select>
           </div>
@@ -422,6 +443,16 @@ export default function AdminPage() {
                         <option key={value} value={value}>{details.icon} {details.label}</option>
                       ))}
                     </select>
+                    <select
+                      value={editEnvelopeIcon}
+                      onChange={(event) => setEditEnvelopeIcon(event.target.value as EnvelopeIcon)}
+                      className="p-2.5 rounded-xl border border-border-color font-markazi text-lg bg-card-bg text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 w-full"
+                      aria-label="رمز الظرف"
+                    >
+                      {Object.entries(ENVELOPE_ICON_DETAILS).map(([value, details]) => (
+                        <option key={value} value={value}>{details.symbol} {details.label}</option>
+                      ))}
+                    </select>
                     <input
                       type="text"
                       value={editTypeLabel}
@@ -477,7 +508,7 @@ export default function AdminPage() {
                             {formatDateArabic(msg.date)}
                           </span>
                           <span className="rounded-full border border-rose/25 bg-rose/10 px-2 py-0.5 font-markazi text-sm text-rose dark:text-[#F9C88A]">
-                            {MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].icon} {msg.typeLabel?.trim() || MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].label}
+                            {ENVELOPE_ICON_DETAILS[getEnvelopeIcon(msg)].symbol} {msg.typeLabel?.trim() || MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].label}
                           </span>
                           {isFuture && (
                             <span className="font-markazi text-xs text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-md whitespace-nowrap">

@@ -1,10 +1,14 @@
-import { Message, MessageType } from "@/types";
+import { EnvelopeIcon, Message, MessageType } from "@/types";
 
 const FIRESTORE_PROJECT_ID = "lolo-daily-messa";
 const BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIRESTORE_PROJECT_ID}/databases/(default)/documents/messages`;
 
 function parseMessageType(value?: string): MessageType {
   return value === "extra" || value === "special" ? value : "morning";
+}
+
+function parseEnvelopeIcon(value?: string): EnvelopeIcon {
+  return value === "sun" ? "sun" : "heart";
 }
 
 /**
@@ -38,6 +42,7 @@ export async function getMessages(): Promise<Message[]> {
               id: doc.name.split('/').pop() || "",
               date: doc.fields.date.stringValue,
               type: parseMessageType(doc.fields.type?.stringValue),
+              envelopeIcon: parseEnvelopeIcon(doc.fields.envelopeIcon?.stringValue),
               typeLabel: doc.fields.typeLabel?.stringValue || "",
               title: doc.fields.title?.stringValue || "",
               description: doc.fields.description?.stringValue || "",
@@ -86,6 +91,7 @@ export async function getMessage(id: string): Promise<Message | null> {
       id: data.name.split('/').pop() || id,
       date: data.fields.date.stringValue,
       type: parseMessageType(data.fields.type?.stringValue),
+      envelopeIcon: parseEnvelopeIcon(data.fields.envelopeIcon?.stringValue),
       typeLabel: data.fields.typeLabel?.stringValue || "",
       title: data.fields.title?.stringValue || "",
       description: data.fields.description?.stringValue || "",
