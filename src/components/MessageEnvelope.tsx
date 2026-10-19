@@ -31,6 +31,12 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
       envelope: "text-[#D9AE5C]",
       seal: "border-[#F6D994] bg-gradient-to-br from-[#FFE9A8] to-[#C99139] text-[#4D2D46] shadow-[#E2B752]/35",
     },
+    apology: {
+      card: "border-[#D98BAE]/60 bg-gradient-to-br from-[#FFF5F8] via-[#F9E9F1] to-[#EEE4F4] text-[#653C5D] dark:from-[#33202F] dark:via-[#302037] dark:to-[#241B32] dark:text-[#FFEAF3]",
+      badge: "border-[#D98BAE]/50 bg-[#FFF0F5]/90 text-[#8A496A] dark:bg-[#4A2B42] dark:text-[#FFC5DA]",
+      envelope: "text-[#C879A2]",
+      seal: "border-[#F5C4D7] bg-gradient-to-br from-[#FFE4EE] to-[#D982AA] text-[#703B5D] shadow-[#CC78A0]/35",
+    },
   }[type];
 
   const formattedDate = new Intl.DateTimeFormat("ar-EG", {

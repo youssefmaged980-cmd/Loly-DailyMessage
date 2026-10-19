@@ -1,4 +1,4 @@
-export type MessageType = "morning" | "extra" | "special";
+export type MessageType = "morning" | "extra" | "special" | "apology";
 export type EnvelopeIcon = "heart" | "sun";
 
 export const ENVELOPE_ICON_DETAILS: Record<EnvelopeIcon, { label: string; symbol: string }> = {
@@ -10,6 +10,7 @@ export const MESSAGE_TYPE_DETAILS: Record<MessageType, { label: string; icon: st
   morning: { label: "رسالة صباحية", icon: "☀️", caption: "بداية حلوة ليومك" },
   extra: { label: "رسالة إضافية", icon: "💌", caption: "كلمة حب زيادة" },
   special: { label: "رسالة مميزة", icon: "✦", caption: "رسالة معمولة عشانك" },
+  apology: { label: "رسالة مصالحة", icon: "🥺", caption: "حقك عليا يا حبيبتي" },
 };
 
 export interface Message {

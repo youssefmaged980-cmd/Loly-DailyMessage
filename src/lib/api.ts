@@ -4,7 +4,7 @@ const FIRESTORE_PROJECT_ID = "lolo-daily-messa";
 const BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIRESTORE_PROJECT_ID}/databases/(default)/documents/messages`;
 
 function parseMessageType(value?: string): MessageType {
-  return value === "extra" || value === "special" ? value : "morning";
+  return value === "extra" || value === "special" || value === "apology" ? value : "morning";
 }
 
 function parseEnvelopeIcon(value?: string): EnvelopeIcon {
