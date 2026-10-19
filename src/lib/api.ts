@@ -1,7 +1,11 @@
-import { Message } from "@/types";
+import { Message, MessageType } from "@/types";
 
 const FIRESTORE_PROJECT_ID = "lolo-daily-messa";
 const BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIRESTORE_PROJECT_ID}/databases/(default)/documents/messages`;
+
+function parseMessageType(value?: string): MessageType {
+  return value === "extra" || value === "special" ? value : "morning";
+}
 
 /**
  * Fetches ALL messages from Firestore cloud database without any limitation.
@@ -22,8 +26,8 @@ export async function getMessages(): Promise<Message[]> {
       });
 
       if (!res.ok) {
-        console.error(`Firestore fetch failed with status: ${res.status}`);
-        break;
+        const details = await res.text();
+        throw new Error(`Firestore HTTP ${res.status}: ${details}`);
       }
 
       const data = await res.json();
@@ -33,6 +37,8 @@ export async function getMessages(): Promise<Message[]> {
             allMessages.push({
               id: doc.name.split('/').pop() || "",
               date: doc.fields.date.stringValue,
+              type: parseMessageType(doc.fields.type?.stringValue),
+              typeLabel: doc.fields.typeLabel?.stringValue || "",
               title: doc.fields.title?.stringValue || "",
               description: doc.fields.description?.stringValue || "",
               message: doc.fields.message.stringValue,
@@ -55,7 +61,7 @@ export async function getMessages(): Promise<Message[]> {
     });
   } catch (error) {
     console.error("Failed to fetch messages from Firestore:", error);
-    return allMessages;
+    throw error;
   }
 }
 
@@ -79,6 +85,8 @@ export async function getMessage(id: string): Promise<Message | null> {
     return {
       id: data.name.split('/').pop() || id,
       date: data.fields.date.stringValue,
+      type: parseMessageType(data.fields.type?.stringValue),
+      typeLabel: data.fields.typeLabel?.stringValue || "",
       title: data.fields.title?.stringValue || "",
       description: data.fields.description?.stringValue || "",
       message: data.fields.message.stringValue,

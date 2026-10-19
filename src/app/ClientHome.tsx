@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Message, TimeTogether } from "@/types";
+import { Message, MESSAGE_TYPE_DETAILS, TimeTogether } from "@/types";
 import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, getTimeGreeting, getMilestoneMessage, formatMonthName, SpecialOccasion } from "@/lib/date";
 import { generateCardImage, prepareImageSaveWindow, saveGeneratedImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
@@ -12,11 +12,23 @@ import CelebrationOverlay from "@/components/CelebrationOverlay";
 import MilestoneOverlay from "@/components/MilestoneOverlay";
 import InteractiveHearts from "@/components/InteractiveHearts";
 import ReplySection from "@/components/ReplySection";
+import MessageEnvelope from "@/components/MessageEnvelope";
 import { motion } from "framer-motion";
 
-export default function ClientHome({ initialMessages }: { initialMessages: Message[] }) {
+function getLatestUploadedMessage(messages: Message[]): Message | null {
+  return [...messages].sort((a, b) => {
+    const aCreatedAt = Date.parse(a.createdAt ?? "");
+    const bCreatedAt = Date.parse(b.createdAt ?? "");
+    if (Number.isFinite(aCreatedAt) && Number.isFinite(bCreatedAt) && aCreatedAt !== bCreatedAt) {
+      return bCreatedAt - aCreatedAt;
+    }
+    return b.date.localeCompare(a.date);
+  })[0] ?? null;
+}
+
+export default function ClientHome({ initialMessages, messageLoadError }: { initialMessages: Message[]; messageLoadError?: string | null }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
+  const [currentMessage, setCurrentMessage] = useState<Message | null>(() => getLatestUploadedMessage(initialMessages));
   const [timeTogether, setTimeTogether] = useState<TimeTogether | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [occasion, setOccasion] = useState<SpecialOccasion | null>(null);
@@ -37,17 +49,20 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     setOccasion(getSpecialOccasion(new Date()));
     setGreeting(getTimeGreeting());
 
-    // Filter messages up to Cairo today so future scheduled messages don't leak
+    // Keep every saved message; the latest uploaded message is the featured letter.
     const todayString = getEgyptTodayString();
-    const validMessages = initialMessages.filter((m: Message) => m.date <= todayString);
-    setMessages(validMessages);
+    setMessages(initialMessages);
 
-    if (validMessages.length > 0) {
-      setCurrentMessage(validMessages[0]);
+    const latestMessage = getLatestUploadedMessage(initialMessages);
+    if (latestMessage) {
+      setCurrentMessage(latestMessage);
     } else {
       setCurrentMessage({
         id: 'fallback',
         date: todayString,
+        type: "morning",
+        title: "رسالة الصباح",
+        description: "ظرف صغير مليان حب ليكي",
         message: "حبيبتي ليلى، حتى لو مفيش رسالة مكتوبة النهاردة، حبي ليكي بيكبر كل لحظة. بحبك دايماً ❤️"
       });
     }
@@ -110,7 +125,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   };
 
   const pickRandomMessage = () => {
-    const pool = messages.filter(m => m.id !== currentMessage?.id);
+    const pool = messages.filter((m) => m.id !== currentMessage?.id && m.date <= getEgyptTodayString());
     if (pool.length === 0) return;
     setRandomMsg(pool[Math.floor(Math.random() * pool.length)]);
     playMagicChime();
@@ -119,7 +134,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
   const closeRandom = () => setRandomMsg(null);
 
   const todayStr = getEgyptTodayString();
-  const archiveMessages = messages.filter(msg => msg.id !== currentMessage?.id && msg.date <= todayStr);
+  const archiveMessages = messages.filter((msg) => msg.id !== currentMessage?.id && msg.date <= todayStr);
   const archiveMonths = Array.from(new Set(archiveMessages.map(msg => msg.date.slice(0, 7))));
   const formatArchiveMonth = (monthKey: string) => new Intl.DateTimeFormat("ar-EG", {
     month: "long",
@@ -165,10 +180,13 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-rose/20 shrink-0 relative">
               <div className="flex items-center gap-2.5">
-                <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">💌</span>
-                <p className="font-aref text-lg text-wine dark:text-[#E0AAEF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.5)] dark:drop-shadow-[0_0_10px_rgba(224,170,239,0.8)]">
-                  {formatDateArabic(randomMsg.date)}
-                </p>
+                <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">{MESSAGE_TYPE_DETAILS[randomMsg.type ?? "morning"].icon}</span>
+                <div>
+                  <p className="font-aref text-lg text-wine dark:text-[#E0AAEF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.5)] dark:drop-shadow-[0_0_10px_rgba(224,170,239,0.8)]">
+                    {formatDateArabic(randomMsg.date)}
+                  </p>
+                  <p className="font-markazi text-sm text-rose dark:text-[#F9C88A]">{randomMsg.typeLabel?.trim() || MESSAGE_TYPE_DETAILS[randomMsg.type ?? "morning"].label}</p>
+                </div>
               </div>
               <button
                 onClick={closeRandom}
@@ -327,65 +345,34 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
         </header>
 
-        {/* Message Card */}
+        {/* Today's message envelopes */}
         <main
           ref={messageRef}
-          style={{ backgroundColor: 'var(--card-bg)' }}
-          className="rounded-[32px] pt-12 sm:pt-14 pb-10 px-6 sm:px-10 md:px-14 shadow-[var(--card-shadow)] border border-border-color text-center relative min-h-[260px] flex flex-col justify-center items-center gap-6 sm:gap-8 animate-fade-in-up transition-all duration-500 overflow-hidden group w-full"
+          className="w-full animate-fade-in-up"
         >
-          {/* Decorative Corners Removed to avoid overlap */}
-
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-rose to-transparent opacity-50"></div>
-
-          <div className="relative z-10 w-full mb-1 sm:mb-2 flex flex-col items-center">
-            <h1 className="font-aref text-2xl sm:text-3xl md:text-4xl text-wine-deep dark:text-[#E0AAEF] dark:drop-shadow-[0_0_14px_rgba(224,170,239,0.85)] mb-2 drop-shadow-[0_0_12px_rgba(142,74,159,0.5)] relative inline-block font-bold">
-              <span className="absolute -left-7 sm:-left-9 top-1/2 -translate-y-1/2 text-rose text-lg sm:text-xl opacity-75">❦</span>
+          <div className="relative mx-auto max-w-xl px-5 py-7 text-center sm:py-9">
+            <span aria-hidden="true" className="absolute left-4 top-5 text-2xl text-rose/70 animate-pulse">♡</span>
+            <span aria-hidden="true" className="absolute right-4 top-12 text-xl text-[#D7A246] animate-pulse">✦</span>
+            <p className="mb-2 font-markazi text-xl text-rose dark:text-[#F9C88A]">ظرف صغير… جواه كل الحب</p>
+            <h1 className="mb-2 font-aref text-3xl font-bold text-wine-deep drop-shadow-[0_0_12px_rgba(142,74,159,0.45)] dark:text-[#E0AAEF] sm:text-4xl">
               {currentMessage ? formatDateArabic(currentMessage.date) : formatDateArabic(todayStr)}
-              <span className="absolute -right-7 sm:-right-9 top-1/2 -translate-y-1/2 text-rose text-lg sm:text-xl opacity-75 flex scale-x-[-1]">❦</span>
             </h1>
-          </div>
-
-          {/* Title inside card - pill style matching archive */}
-          {currentMessage?.title && (
-            <div className="relative z-10 w-full flex justify-center -mb-2">
-              <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-5 py-2 rounded-full font-markazi text-lg sm:text-xl font-bold shadow-[0_0_15px_rgba(142,74,159,0.5)] dark:shadow-[0_0_18px_rgba(185,154,230,0.35)] border border-white/20">
-                <span>✨</span>
-                <span>{currentMessage.title}</span>
-              </span>
-            </div>
-          )}
-
-          {currentMessage?.description && (
-            <p className="relative z-10 w-full max-w-3xl px-3 sm:px-6 -mb-2 text-right font-markazi text-lg sm:text-xl text-rose dark:text-[#F9C88A] break-words leading-relaxed drop-shadow-sm">
-              <span aria-hidden="true" className="ml-2">✨</span>
-              {currentMessage.description}
-            </p>
-          )}
-
-          <div className="text-xl sm:text-2xl md:text-3xl leading-[2] sm:leading-[2.2] text-text-main font-semibold relative z-10 transition-opacity duration-500 px-2 sm:px-6 md:px-10 break-words w-full max-w-full whitespace-pre-wrap">
-            {currentMessage?.message}
-          </div>
-
-            <div className="relative z-10 mt-4" data-html2canvas-ignore="true">
-              <button
-                onClick={() => { playMagicChime(); downloadImage(); }}
-                disabled={isDownloading}
-                className="bg-gradient-to-r from-wine to-wine-deep text-white border-none py-3 px-6 sm:px-8 rounded-full font-markazi text-xl sm:text-2xl cursor-pointer inline-flex items-center gap-2.5 sm:gap-3 transition-all duration-300 shadow-[0_0_20px_rgba(142,74,159,0.4)] hover:shadow-[0_0_30px_rgba(142,74,159,0.6)] hover:-translate-y-1 active:scale-95 group-hover:scale-105 disabled:opacity-50"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-5 h-5 fill-white shrink-0">
-                  <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
-                </svg>
-                <span>{isDownloading ? "جاري تحضير الرسالة..." : "نزلي الرسالة عندك يا عيوني لو حابة"}</span>
-              </button>
-            </div>
-
+            <p className="mb-7 font-markazi text-lg text-text-muted">رسالة واحدة مخصوص ليكي يا لولو 💌</p>
             {currentMessage && (
-              <div className="w-full relative z-10" data-html2canvas-ignore="true">
-                <ReplySection key={currentMessage.id} message={currentMessage} />
+              <div className="relative mx-auto max-w-sm">
+                <span aria-hidden="true" className="absolute -left-4 top-20 z-10 text-2xl text-rose drop-shadow-md">♥</span>
+                <span aria-hidden="true" className="absolute -right-3 bottom-16 z-10 text-2xl text-[#D7A246] drop-shadow-md">✦</span>
+                <MessageEnvelope
+                  message={currentMessage}
+                  onOpen={(openedMessage) => {
+                    setRandomMsg(openedMessage);
+                    playMagicChime();
+                  }}
+                />
               </div>
             )}
-          </main>
+          </div>
+        </main>
 
         {/* Archive Section */}
         <section className="mt-8 mb-12 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
@@ -415,6 +402,11 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
           </div>
 
           <div className="flex flex-col gap-3.5 sm:gap-4 px-1 sm:px-2 py-1 w-full max-h-[55vh] overflow-y-auto scrollbar-timeline pb-4">
+            {messageLoadError && (
+              <div role="alert" className="mb-2 rounded-2xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-right font-markazi text-lg text-red-700 dark:text-red-200" dir="rtl">
+                تعذر تحميل الرسائل من قاعدة البيانات. {messageLoadError.includes("permission-denied") || messageLoadError.includes("PERMISSION_DENIED") ? "صلاحيات Firestore تمنع القراءة. راجع قواعد Firestore في Firebase Console." : "تحقّق من اتصال Firestore، ثم راجع تفاصيل الخطأ في سجل الخادم."}
+              </div>
+            )}
             {selectedArchiveMonth ? (
               <>
                 <button
@@ -429,72 +421,25 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                   {formatArchiveMonth(selectedArchiveMonth)}
                 </h3>
                 {archiveMessages.filter(msg => msg.date.startsWith(`${selectedArchiveMonth}-`)).map((msg, index) => (
-              <motion.div
-                key={msg.id}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.07, ease: "easeOut" }}
-              >
-                <Link
-                  href={`/message/${msg.id}`}
-                  onClick={playMagicChime}
-                  className="w-full min-h-[64px] border p-4 sm:px-5 sm:py-3.5 rounded-2xl text-right cursor-pointer transition-all duration-300 block sm:flex sm:items-center sm:justify-between gap-3 sm:gap-4 hover:-translate-y-1 hover:shadow-lg bg-gradient-to-r from-white/95 via-cream/90 to-white/95 dark:from-[#1E142B]/95 dark:via-[#261738]/90 dark:to-[#1E142B]/95 border-wine/20 dark:border-rose/30 hover:border-rose/60 dark:hover:border-rose/70 backdrop-blur-md no-underline group shadow-[0_4px_16px_rgba(90,39,128,0.08)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_0_25px_rgba(185,154,230,0.25)] relative overflow-hidden"
-                >
-                {/* Subtle top shimmer bar on hover */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                {/* Right side: Date + Title */}
-                <div className="flex flex-col gap-1.5 min-w-0 w-full sm:w-auto flex-1 mb-3 sm:mb-0">
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative shrink-0 w-12 h-12 flex items-center justify-center group-hover:-rotate-12 transition-transform duration-500">
-                      {/* Outer glowing dashed ring */}
-                      <div className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-[#FF9A9E] dark:border-[#FFB8C6] drop-shadow-[0_0_6px_rgba(255,154,158,0.6)] dark:drop-shadow-[0_0_8px_rgba(255,184,198,0.5)]"></div>
-                      
-                      {/* Inner glowing circle */}
-                      <div className="w-[38px] h-[38px] rounded-full bg-gradient-to-br from-[#FFF0F5] to-[#FFE4E1] dark:from-[#4A192C] dark:to-[#6B2443] flex flex-col items-center justify-center shadow-[0_0_12px_rgba(255,154,158,0.5)] dark:shadow-[0_0_15px_rgba(255,184,198,0.4)]">
-                        <span className="text-[#D81B60] dark:text-[#FFE4E8] font-sans font-extrabold text-lg leading-none mt-0.5">
-                          {msg.date.split('-')[2]}
-                        </span>
-                        <span className="text-[9px] text-[#C2185B] dark:text-[#FFB8C6] font-bold leading-none tracking-tighter">
-                           {['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'][parseInt(msg.date.split('-')[1], 10) - 1]}
-                        </span>
-                      </div>
-                      
-                      {/* Glowing magical sparkle on the edge */}
-                      <div className="absolute -bottom-1 -right-1 text-[13px] drop-shadow-[0_0_8px_rgba(255,154,158,0.9)] opacity-100 group-hover:scale-125 group-hover:-translate-y-1 group-hover:rotate-12 transition-all duration-300 z-10">
-                        ✨
-                      </div>
-                    </div>
-                    <span className="font-aref text-lg sm:text-xl md:text-2xl text-wine-deep dark:text-[#F8F4FF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.4)] dark:drop-shadow-[0_0_8px_rgba(185,154,230,0.5)] whitespace-normal sm:whitespace-nowrap group-hover:text-wine dark:group-hover:text-rose-pale transition-colors leading-tight">
-                      {formatDateArabic(msg.date)}
-                    </span>
-                  </div>
-                  {msg.description && (
-                    <span className="font-markazi text-lg sm:text-base text-rose dark:text-[#F9C88A] break-words whitespace-normal drop-shadow-sm sm:pr-10">
-                      ✨ {msg.description}
-                    </span>
-                  )}
-                </div>
-
-                {/* Center flourish connector line (desktop/tablet) */}
-                <div className="hidden sm:flex flex-1 items-center justify-center mx-2 opacity-30 group-hover:opacity-80 transition-opacity duration-300">
-                  <div className="w-full border-b border-dashed border-rose/50"></div>
-                  <span className="text-xs text-rose mx-2.5 select-none shrink-0">❦</span>
-                  <div className="w-full border-b border-dashed border-rose/50"></div>
-                </div>
-
-                {/* Left side: CTA Button - uniform size */}
-                <div className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep dark:from-wine dark:via-[#7A3EAA] dark:to-wine-deep text-white px-3 sm:px-4 py-3 sm:py-2.5 rounded-xl sm:rounded-full font-markazi text-lg sm:text-base font-bold shadow-[0_0_15px_rgba(142,74,159,0.4)] hover:shadow-[0_0_20px_rgba(142,74,159,0.6)] dark:shadow-[0_0_15px_rgba(185,154,230,0.3)] group-hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-white/20 whitespace-normal text-center min-h-[44px]">
-                  <span>{msg.title || "بحب افرحك يا لولي"}</span>
-                  <span className="text-xl sm:text-base shrink-0">❤️</span>
-                  <span className="text-xl sm:text-base group-hover:-translate-x-1 transition-transform shrink-0">💌</span>
-                </div>
-              </Link>
-            </motion.div>
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: index * 0.05 }}
+                  >
+                    <MessageEnvelope
+                      message={msg}
+                      compact
+                      onOpen={(openedMessage) => {
+                        setRandomMsg(openedMessage);
+                        playMagicChime();
+                      }}
+                    />
+                  </motion.div>
                 ))}
               </>
             ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {archiveMonths.map((monthKey, index) => {
                   const count = archiveMessages.filter(msg => msg.date.startsWith(`${monthKey}-`)).length;
                   const monthStars = Number(monthKey.slice(5, 7));

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { collection, addDoc, getDocs, query, doc, deleteDoc, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { Message } from "@/types";
+import { Message, MessageType, MESSAGE_TYPE_DETAILS } from "@/types";
 import { formatDateArabic, getEgyptTodayString, formatMonthName } from "@/lib/date";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -12,6 +12,8 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [date, setDate] = useState("");
+  const [messageType, setMessageType] = useState<MessageType>("morning");
+  const [typeLabel, setTypeLabel] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
@@ -23,6 +25,8 @@ export default function AdminPage() {
   // Edit state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState("");
+  const [editType, setEditType] = useState<MessageType>("morning");
+  const [editTypeLabel, setEditTypeLabel] = useState("");
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editMessage, setEditMessage] = useState("");
@@ -65,6 +69,10 @@ export default function AdminPage() {
         setAllMessages(fetched);
       } catch (e) {
         console.error("Error fetching messages:", e);
+        const detail = e instanceof Error ? e.message : String(e);
+        setStatus(detail.includes("permission-denied") || detail.includes("Missing or insufficient permissions")
+          ? "فشل تحميل الرسائل: صلاحيات Firestore تمنع القراءة (permission-denied). راجع قواعد Firestore في Firebase Console."
+          : `فشل تحميل الرسائل: ${detail}`);
       }
     }
   };
@@ -85,6 +93,8 @@ export default function AdminPage() {
   const startEdit = (msg: Message) => {
     setEditingId(msg.id);
     setEditDate(msg.date);
+    setEditType(msg.type ?? "morning");
+    setEditTypeLabel(msg.typeLabel || "");
     setEditTitle(msg.title || "");
     setEditDescription(msg.description || "");
     setEditMessage(msg.message);
@@ -93,6 +103,8 @@ export default function AdminPage() {
   const cancelEdit = () => {
     setEditingId(null);
     setEditDate("");
+    setEditType("morning");
+    setEditTypeLabel("");
     setEditTitle("");
     setEditDescription("");
     setEditMessage("");
@@ -104,6 +116,8 @@ export default function AdminPage() {
     try {
       const updateData: Partial<Message> = {
         date: editDate,
+        type: editType,
+        typeLabel: editTypeLabel.trim(),
         message: editMessage.trim(),
         title: editTitle.trim(),
         description: editDescription.trim(),
@@ -156,6 +170,8 @@ export default function AdminPage() {
     try {
       await addDoc(collection(db, "messages"), {
         date,
+        type: messageType,
+        typeLabel: typeLabel.trim(),
         title: title.trim() || "",
         description: description.trim() || "",
         message: message.trim(),
@@ -165,11 +181,16 @@ export default function AdminPage() {
       setTitle("");
       setDescription("");
       setMessage("");
+      setMessageType("morning");
+      setTypeLabel("");
       fetchAllMessages();
       setTimeout(() => setStatus(""), 4000);
     } catch (error) {
       console.error("Error saving message:", error);
-      setStatus("حدث خطأ أثناء الحفظ! ❌");
+      const detail = error instanceof Error ? error.message : String(error);
+      setStatus(detail.includes("permission-denied") || detail.includes("Missing or insufficient permissions")
+        ? "فشل الرفع: صلاحيات Firestore تمنع الكتابة (permission-denied). راجع قواعد Firestore في Firebase Console."
+        : `فشل الرفع: ${detail}`);
     } finally {
       setLoading(false);
     }
@@ -254,6 +275,33 @@ export default function AdminPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
+            <label htmlFor="message-type" className="font-markazi text-xl text-text-main font-semibold">ستايل الظرف:</label>
+            <select
+              id="message-type"
+              value={messageType}
+              onChange={(event) => setMessageType(event.target.value as MessageType)}
+              className="p-3 rounded-xl border border-border-color font-markazi text-xl bg-card-bg/70 text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 transition-all shadow-inner w-full"
+            >
+              {Object.entries(MESSAGE_TYPE_DETAILS).map(([value, details]) => (
+                <option key={value} value={value}>{details.icon} {details.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="message-type-label" className="font-markazi text-xl text-text-main font-semibold">الاسم اللي هيظهر على الظرف، من كتابتك:</label>
+            <input
+              id="message-type-label"
+              type="text"
+              value={typeLabel}
+              onChange={(event) => setTypeLabel(event.target.value)}
+              placeholder="مثال: رسالة صباحية، أو كلمة من قلبي"
+              className="p-3 rounded-xl border border-border-color font-markazi text-xl bg-card-bg/70 text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 transition-all shadow-inner w-full"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <label className="font-markazi text-xl text-text-main font-semibold flex items-center gap-2">
               <span>✨</span> عنوان الزرار الكبير: <span className="text-text-muted text-base">(اختياري)</span>
             </label>
@@ -304,7 +352,7 @@ export default function AdminPage() {
 
           {status && (
             <div className={`p-3 rounded-xl font-markazi text-xl text-center border ${
-              status.includes('خطأ') 
+              status.includes('خطأ') || status.includes('فشل')
                 ? 'bg-red-500/10 border-red-500/30 text-red-500' 
                 : 'bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400'
             }`}>
@@ -364,6 +412,24 @@ export default function AdminPage() {
                       onChange={(e) => setEditDate(e.target.value)}
                       className="p-2.5 rounded-xl border border-border-color font-markazi text-lg bg-card-bg text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 w-full"
                     />
+                    <select
+                      value={editType}
+                      onChange={(event) => setEditType(event.target.value as MessageType)}
+                      className="p-2.5 rounded-xl border border-border-color font-markazi text-lg bg-card-bg text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 w-full"
+                      aria-label="نوع الرسالة"
+                    >
+                      {Object.entries(MESSAGE_TYPE_DETAILS).map(([value, details]) => (
+                        <option key={value} value={value}>{details.icon} {details.label}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="text"
+                      value={editTypeLabel}
+                      onChange={(event) => setEditTypeLabel(event.target.value)}
+                      placeholder="الاسم اللي يظهر على الظرف (اختياري)"
+                      className="p-2.5 rounded-xl border border-border-color font-markazi text-lg bg-card-bg text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 w-full"
+                      aria-label="اسم نوع الرسالة على الظرف"
+                    />
                     <input
                       type="text"
                       value={editTitle}
@@ -409,6 +475,9 @@ export default function AdminPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-aref text-base sm:text-lg text-wine font-bold whitespace-nowrap">
                             {formatDateArabic(msg.date)}
+                          </span>
+                          <span className="rounded-full border border-rose/25 bg-rose/10 px-2 py-0.5 font-markazi text-sm text-rose dark:text-[#F9C88A]">
+                            {MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].icon} {msg.typeLabel?.trim() || MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].label}
                           </span>
                           {isFuture && (
                             <span className="font-markazi text-xs text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-md whitespace-nowrap">
