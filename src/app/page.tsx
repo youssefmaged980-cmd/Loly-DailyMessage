@@ -6,13 +6,11 @@ export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   let messages: Message[] = [];
-  let messageLoadError: string | null = null;
-
   try {
     messages = await getMessages();
   } catch (error) {
-    messageLoadError = error instanceof Error ? error.message : "تعذر الاتصال بقاعدة الرسائل.";
+    console.error("Failed to load messages for the home page:", error);
   }
 
-  return <ClientHome initialMessages={messages} messageLoadError={messageLoadError} />;
+  return <ClientHome initialMessages={messages} />;
 }

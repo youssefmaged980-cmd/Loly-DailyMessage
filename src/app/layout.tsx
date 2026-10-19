@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Aref_Ruqaa, Markazi_Text, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
@@ -53,7 +54,9 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${arefRuqaa.variable} ${markaziText.variable} ${cormorant.variable}`} suppressHydrationWarning>
       <head>
-        <script
+        <Script
+          id="theme-initializer"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {

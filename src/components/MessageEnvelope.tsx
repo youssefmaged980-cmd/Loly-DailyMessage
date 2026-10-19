@@ -42,37 +42,45 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
     <button
       type="button"
       onClick={() => onOpen(message)}
-      aria-label={`افتح ${details.label}: ${message.title || formattedDate}`}
-      className={`group relative flex w-full flex-col overflow-hidden rounded-[1.75rem] border p-4 text-right shadow-[0_8px_24px_rgba(74,42,112,0.12)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(142,74,159,0.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose focus-visible:ring-offset-2 ${compact ? "min-h-48" : "min-h-56"} ${style.card}`}
+      aria-label={`افتح ${message.typeLabel?.trim() || details.label}: ${message.title || formattedDate}`}
+      className={`group relative flex w-full flex-col overflow-hidden rounded-[1.75rem] border p-4 text-right shadow-[0_12px_32px_rgba(42,20,54,0.2)] transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_42px_rgba(142,74,159,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose focus-visible:ring-offset-2 ${compact ? "min-h-52" : "min-h-60"} ${style.card}`}
       dir="rtl"
     >
+      <span aria-hidden="true" className="pointer-events-none absolute -left-12 -top-14 h-36 w-36 rounded-full bg-white/25 blur-3xl transition-opacity group-hover:opacity-80" />
       <div className="flex w-full items-center justify-between gap-2">
-        <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-markazi text-base font-bold ${style.badge}`}>
+        <span className={`inline-flex max-w-[70%] items-center gap-1.5 rounded-full border px-3.5 py-1 font-markazi text-base font-bold shadow-sm ${style.badge}`}>
           <span aria-hidden="true">{details.icon}</span>{message.typeLabel?.trim() || details.label}
         </span>
-        <span className="font-markazi text-sm opacity-75">{formattedDate}</span>
+        <span className="shrink-0 font-markazi text-sm opacity-75">{formattedDate}</span>
       </div>
 
-      <span className={`relative mx-auto my-3 flex h-24 w-full max-w-[15rem] items-center justify-center ${style.envelope}`} aria-hidden="true">
-        <svg viewBox="0 0 240 132" className="absolute inset-0 h-full w-full drop-shadow-md" fill="none">
-          <rect x="17" y="25" width="206" height="94" rx="17" fill="currentColor" fillOpacity=".12" stroke="currentColor" strokeOpacity=".72" strokeWidth="2.5" />
-          <path d="M20 39 105 98a25 25 0 0 0 30 0l85-59" stroke="currentColor" strokeOpacity=".8" strokeWidth="3" strokeLinecap="round" />
-          <path d="m20 114 67-52m133 52-67-52" stroke="currentColor" strokeOpacity=".4" strokeWidth="2" strokeLinecap="round" />
-          <path d="M18 41 105 98a25 25 0 0 0 30 0l87-57" fill="currentColor" fillOpacity=".09" />
+      <span className={`relative mx-auto my-3 flex h-28 w-full max-w-[17rem] items-center justify-center ${style.envelope}`} aria-hidden="true">
+        <span className="absolute inset-x-[12%] top-0 h-[77%] rounded-t-xl border border-current/25 bg-white/75 shadow-[0_3px_12px_rgba(36,20,46,0.15)] transition-transform duration-500 group-hover:-translate-y-1 dark:bg-white/10">
+          <span className="absolute inset-x-5 top-4 h-px bg-current/20" />
+          <span className="absolute inset-x-8 top-7 h-px bg-current/15" />
+          <span className="absolute left-1/2 top-3 -translate-x-1/2 text-xs opacity-50">✦</span>
+        </span>
+        <svg viewBox="0 0 240 132" className="absolute inset-x-0 bottom-0 h-[88%] w-full drop-shadow-[0_8px_8px_rgba(30,16,40,0.22)]" fill="none">
+          <rect x="17" y="25" width="206" height="94" rx="17" fill="currentColor" fillOpacity=".18" stroke="currentColor" strokeOpacity=".78" strokeWidth="2.5" />
+          <path d="M20 39 105 98a25 25 0 0 0 30 0l85-59" stroke="currentColor" strokeOpacity=".82" strokeWidth="3" strokeLinecap="round" />
+          <path d="m20 114 67-52m133 52-67-52" stroke="currentColor" strokeOpacity=".5" strokeWidth="2" strokeLinecap="round" />
+          <path d="M18 41 105 98a25 25 0 0 0 30 0l87-57-102 62z" fill="currentColor" fillOpacity=".16" />
         </svg>
-        <span className={`relative z-10 mt-1 grid h-11 w-11 place-items-center rounded-full border-2 text-xl shadow-lg transition duration-300 group-hover:scale-110 group-hover:rotate-6 ${style.seal}`}>
-          {type === "morning" ? "☀" : type === "extra" ? "♥" : "✦"}
+        <span className={`relative z-10 mt-5 grid h-12 w-12 place-items-center rounded-full border-2 text-xl shadow-[0_5px_14px_rgba(35,18,45,0.28)] transition duration-500 group-hover:scale-110 group-hover:rotate-6 ${style.seal}`}>
+          <span className="absolute inset-1 rounded-full border border-current/35" />
+          <span className="relative">{type === "morning" ? "☀" : type === "extra" ? "♥" : "✦"}</span>
         </span>
       </span>
 
-      <span className={`mt-auto block w-full font-aref font-bold leading-snug ${compact ? "text-lg" : "text-xl"}`}>
+      <span className={`mt-auto block w-full font-aref font-bold leading-relaxed ${compact ? "text-lg" : "text-xl"}`}>
         {message.title || details.caption}
       </span>
       {message.description && (
-        <span className="mt-1 block line-clamp-2 w-full font-markazi text-base leading-snug opacity-80">
+        <span className="mt-1.5 block line-clamp-2 w-full border-r-2 border-current/35 pr-2 font-markazi text-base leading-relaxed opacity-80">
           {message.description}
         </span>
       )}
+      <span aria-hidden="true" className="pointer-events-none absolute bottom-2 left-3 text-sm opacity-50">✧</span>
     </button>
   );
 }

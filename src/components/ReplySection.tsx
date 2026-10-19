@@ -18,7 +18,6 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
   const [savedReply, setSavedReply] = useState(message.reply || "");
   const [savedReaction, setSavedReaction] = useState(message.reaction || "");
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(!!(message.reply || message.reaction));
 
   const handleEmojiSelect = async (emoji: string) => {
     const newEmoji = selectedEmoji === emoji ? "" : emoji;
@@ -45,13 +44,11 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
         reply: replyText.trim(),
       });
       setSavedReply(replyText.trim());
-      setIsSaved(true);
       if (onReplySaved) {
         onReplySaved(replyText.trim(), selectedEmoji);
       }
     } catch (error) {
       console.error("Error saving reply:", error);
-      alert("حصل مشكلة في حفظ الرد يا حبيبتي، جربي تاني 🥺");
     } finally {
       setIsSaving(false);
     }
@@ -143,7 +140,7 @@ export default function ReplySection({ message, onReplySaved }: ReplySectionProp
           disabled={isSaving || !replyText.trim() || replyText.trim() === savedReply}
           className="w-full sm:w-auto self-stretch sm:self-center bg-gradient-to-r from-wine to-wine-deep dark:from-[#b99ae6] dark:to-[#8E4A9F] text-white px-6 py-3 rounded-2xl sm:rounded-full font-markazi text-xl font-bold shadow-[0_4px_15px_rgba(142,74,159,0.3)] hover:shadow-[0_4px_20px_rgba(142,74,159,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] flex items-center justify-center gap-2"
         >
-          {isSaving ? "بحفظ ردك الحلو..." : (replyText.trim() === savedReply && replyText.trim() !== "" ? "ردك محفوظ يا قلبي ✨" : "احفظي ردك مع الرسالة دي للأبد ✨")}
+          احفظي ردك مع الرسالة دي للأبد ✨
         </button>
 
         {/* WhatsApp Action */}

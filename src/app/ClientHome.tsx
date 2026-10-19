@@ -26,7 +26,7 @@ function getLatestUploadedMessage(messages: Message[]): Message | null {
   })[0] ?? null;
 }
 
-export default function ClientHome({ initialMessages, messageLoadError }: { initialMessages: Message[]; messageLoadError?: string | null }) {
+export default function ClientHome({ initialMessages }: { initialMessages: Message[] }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [currentMessage, setCurrentMessage] = useState<Message | null>(() => getLatestUploadedMessage(initialMessages));
   const [timeTogether, setTimeTogether] = useState<TimeTogether | null>(null);
@@ -89,11 +89,10 @@ export default function ClientHome({ initialMessages, messageLoadError }: { init
         messageText: targetMessage.message,
       });
       const result = await saveGeneratedImage(dataUrl, `laila-message-${targetMessage.date || "today"}.png`, fallbackWindow);
-      if (result === "opened") alert("اتفتحت الصورة في Safari. اضغطي عليها مطولًا واختاري حفظ في الصور.");
+      if (result === "opened") console.info("The message image opened in a new tab for saving.");
     } catch (error) {
       fallbackWindow?.close();
       console.error("Error generating image:", error);
-      alert("حدث خطأ أثناء حفظ الصورة");
     } finally {
       setIsDownloading(false);
     }
@@ -198,22 +197,23 @@ export default function ClientHome({ initialMessages, messageLoadError }: { init
             </div>
 
             {/* Scrollable body */}
-            <div className="overflow-y-auto flex-1 px-5 py-5 text-center scrollbar-timeline">
+            <div className="overflow-y-auto flex-1 px-5 py-6 text-center scrollbar-timeline sm:px-7 sm:py-7">
               {randomMsg.title && (
-                <div className="flex justify-center mb-5">
-                  <span className="inline-flex max-w-full items-center gap-1.5 bg-gradient-to-r from-wine via-[#74359D] to-wine-deep text-white px-5 py-2 rounded-full font-aref text-lg sm:text-xl font-bold leading-relaxed shadow-[0_0_18px_rgba(142,74,159,0.55)] border border-white/20 break-words">
+                <div className="relative mx-auto mb-5 max-w-xl rounded-[1.6rem] border border-[#C89ACC]/45 bg-gradient-to-br from-white/80 via-[#FFF8FC]/75 to-[#EDE0F1]/75 px-4 pb-5 pt-4 shadow-[0_10px_28px_rgba(88,42,111,0.12)] dark:from-[#33213F]/90 dark:via-[#2C1C38]/85 dark:to-[#261832]/90">
+                  <span aria-hidden="true" className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#CDAA69]/80 to-transparent" />
+                  <span className="relative inline-flex max-w-full items-center gap-1.5 px-3 py-1 font-aref text-2xl sm:text-3xl font-bold leading-relaxed text-wine-deep dark:text-[#F5D8FA] drop-shadow-[0_2px_10px_rgba(142,74,159,0.18)] break-words">
                     <span>✨</span>
                     <span>{randomMsg.title}</span>
                   </span>
                 </div>
               )}
               {randomMsg.description && (
-                <p className="max-w-xl mx-auto mb-5 px-4 py-2.5 rounded-2xl border border-rose/20 dark:border-[#b99ae6]/25 bg-rose/5 dark:bg-[#b99ae6]/10 font-markazi text-lg sm:text-xl text-rose dark:text-[#F9C88A] leading-relaxed text-right relative">
+                <p className="max-w-xl mx-auto mb-6 px-4 py-3 rounded-2xl border-r-[3px] border-[#CDAA69] dark:border-[#E2BC78] bg-[#F1E5F3]/70 dark:bg-white/[.045] font-markazi text-lg sm:text-xl text-[#81558A] dark:text-[#F3C8E5] leading-relaxed text-right relative shadow-inner">
                   <span aria-hidden="true" className="ml-2">🌸</span>
                   {randomMsg.description}
                 </p>
               )}
-              <p className="font-markazi text-xl sm:text-2xl text-wine-deep dark:text-[#F8F5FF] leading-[1.9] whitespace-pre-wrap drop-shadow-[0_0_6px_rgba(142,74,159,0.2)]">
+              <p className="max-w-xl mx-auto rounded-[1.7rem] border border-[#D5C0DB]/70 dark:border-[#B99AE6]/25 bg-gradient-to-br from-white/75 via-[#FFFBFE]/65 to-[#F0E6F2]/75 dark:from-[#2A1C35]/80 dark:via-[#271A32]/75 dark:to-[#21162B]/80 px-5 py-6 sm:px-7 sm:py-8 text-right font-markazi text-xl sm:text-2xl text-[#34243D] dark:text-[#FBF5FF] leading-[2] whitespace-pre-wrap break-words shadow-[0_10px_30px_rgba(67,35,83,0.1),inset_0_1px_0_rgba(255,255,255,0.8)]">
                 {randomMsg.message}
               </p>
               
@@ -227,7 +227,7 @@ export default function ClientHome({ initialMessages, messageLoadError }: { init
                 disabled={isDownloading}
                 className="bg-white/70 dark:bg-[#261738] text-wine dark:text-[#E0AAEF] px-5 py-3 rounded-full font-markazi text-lg font-bold shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer border border-rose/30 disabled:opacity-50"
               >
-                {isDownloading ? "جارٍ تجهيز الصورة…" : "💾 احفظي الذكرى"}
+                💾 احفظي الذكرى
               </button>
               <button
                 onClick={pickRandomMessage}
@@ -402,11 +402,6 @@ export default function ClientHome({ initialMessages, messageLoadError }: { init
           </div>
 
           <div className="flex flex-col gap-3.5 sm:gap-4 px-1 sm:px-2 py-1 w-full max-h-[55vh] overflow-y-auto scrollbar-timeline pb-4">
-            {messageLoadError && (
-              <div role="alert" className="mb-2 rounded-2xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-right font-markazi text-lg text-red-700 dark:text-red-200" dir="rtl">
-                تعذر تحميل الرسائل من قاعدة البيانات. {messageLoadError.includes("permission-denied") || messageLoadError.includes("PERMISSION_DENIED") ? "صلاحيات Firestore تمنع القراءة. راجع قواعد Firestore في Firebase Console." : "تحقّق من اتصال Firestore، ثم راجع تفاصيل الخطأ في سجل الخادم."}
-              </div>
-            )}
             {selectedArchiveMonth ? (
               <>
                 <button
