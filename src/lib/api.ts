@@ -1,4 +1,4 @@
-import { EnvelopeIcon, Message, MessageType } from "@/types";
+import { ENVELOPE_ICON_DETAILS, EnvelopeIcon, Message, MessageType } from "@/types";
 
 const FIRESTORE_PROJECT_ID = "lolo-daily-messa";
 const BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIRESTORE_PROJECT_ID}/databases/(default)/documents/messages`;
@@ -8,7 +8,7 @@ function parseMessageType(value?: string): MessageType {
 }
 
 function parseEnvelopeIcon(value?: string): EnvelopeIcon {
-  return value === "sun" ? "sun" : "heart";
+  return value && value in ENVELOPE_ICON_DETAILS ? value as EnvelopeIcon : "heart";
 }
 
 /**

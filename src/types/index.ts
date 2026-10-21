@@ -1,14 +1,22 @@
 export type MessageType = "morning" | "extra" | "special" | "apology";
-export type EnvelopeIcon = "heart" | "sun";
+export type EnvelopeIcon = "heart" | "sun" | "sparklingHeart" | "heartWithArrow" | "giftHeart" | "rose" | "bouquet" | "couple" | "handsHeart" | "loveLetter";
 
 export const ENVELOPE_ICON_DETAILS: Record<EnvelopeIcon, { label: string; symbol: string }> = {
   heart: { label: "قلب", symbol: "💗" },
   sun: { label: "شمس", symbol: "☀️" },
+  sparklingHeart: { label: "قلب لامع", symbol: "💖" },
+  heartWithArrow: { label: "قلب بسهم", symbol: "💘" },
+  giftHeart: { label: "قلب هدية", symbol: "💝" },
+  rose: { label: "وردة", symbol: "🌹" },
+  bouquet: { label: "باقة ورد", symbol: "💐" },
+  couple: { label: "حضن وحب", symbol: "🥰" },
+  handsHeart: { label: "قلب بإيدين", symbol: "🫶" },
+  loveLetter: { label: "جواب حب", symbol: "💌" },
 };
 
 export const MESSAGE_TYPE_DETAILS: Record<MessageType, { label: string; icon: string; caption: string }> = {
   morning: { label: "رسالة صباحية", icon: "☀️", caption: "بداية حلوة ليومك" },
-  extra: { label: "رسالة إضافية", icon: "💌", caption: "كلمة حب زيادة" },
+  extra: { label: "رسالة جميلة", icon: "💌", caption: "كلمة حب زيادة" },
   special: { label: "رسالة مميزة", icon: "✦", caption: "رسالة معمولة عشانك" },
   apology: { label: "رسالة مصالحة", icon: "🥺", caption: "حقك عليا يا حبيبتي" },
 };
@@ -37,7 +45,7 @@ export function getMessageTypeLabel(message: Pick<Message, "type" | "typeLabel">
 }
 
 export function getEnvelopeIcon(message: Pick<Message, "envelopeIcon">): EnvelopeIcon {
-  return message.envelopeIcon === "sun" ? "sun" : "heart";
+  return message.envelopeIcon && message.envelopeIcon in ENVELOPE_ICON_DETAILS ? message.envelopeIcon : "heart";
 }
 
 export interface TimeTogether {
