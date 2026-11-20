@@ -8,7 +8,7 @@ function parseMessageType(value?: string): MessageType {
 }
 
 function parseEnvelopeIcon(value?: string): EnvelopeIcon {
-  return value && value in ENVELOPE_ICON_DETAILS ? value as EnvelopeIcon : "heart";
+  return value && Object.prototype.hasOwnProperty.call(ENVELOPE_ICON_DETAILS, value) ? value as EnvelopeIcon : "heart";
 }
 
 /**

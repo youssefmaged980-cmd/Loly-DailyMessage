@@ -1,17 +1,22 @@
 export type MessageType = "morning" | "extra" | "special" | "apology";
-export type EnvelopeIcon = "heart" | "sun" | "sparklingHeart" | "heartWithArrow" | "giftHeart" | "rose" | "bouquet" | "couple" | "handsHeart" | "loveLetter";
+export type EnvelopeIcon = "heart" | "sun" | "sparklingHeart" | "heartWithArrow" | "giftHeart" | "rose" | "bouquet" | "couple" | "handsHeart" | "loveLetter" | "infinity" | "rings" | "ribbon" | "dove" | "lily";
 
-export const ENVELOPE_ICON_DETAILS: Record<EnvelopeIcon, { label: string; symbol: string }> = {
-  heart: { label: "قلب", symbol: "💗" },
-  sun: { label: "شمس", symbol: "☀️" },
-  sparklingHeart: { label: "قلب لامع", symbol: "💖" },
-  heartWithArrow: { label: "قلب بسهم", symbol: "💘" },
-  giftHeart: { label: "قلب هدية", symbol: "💝" },
-  rose: { label: "وردة", symbol: "🌹" },
-  bouquet: { label: "باقة ورد", symbol: "💐" },
-  couple: { label: "حضن وحب", symbol: "🥰" },
-  handsHeart: { label: "قلب بإيدين", symbol: "🫶" },
-  loveLetter: { label: "جواب حب", symbol: "💌" },
+export const ENVELOPE_ICON_DETAILS: Record<EnvelopeIcon, { label: string }> = {
+  heart: { label: "قلب مرسوم" },
+  sun: { label: "شروق رومانسي" },
+  sparklingHeart: { label: "قلب محاط بالنجوم" },
+  heartWithArrow: { label: "قلب وسهم" },
+  giftHeart: { label: "قلب مربوط بشريطة" },
+  rose: { label: "وردة طويلة" },
+  bouquet: { label: "باقة زهور" },
+  couple: { label: "قلبان متعانقان" },
+  handsHeart: { label: "قلب بين كفين" },
+  loveLetter: { label: "خطاب حب" },
+  infinity: { label: "علامة حب لا ينتهي" },
+  rings: { label: "خاتمان متداخلان" },
+  ribbon: { label: "فيونكة رومانسية" },
+  dove: { label: "حمامتان متقابلتان" },
+  lily: { label: "زهرة زنبق" },
 };
 
 export const MESSAGE_TYPE_DETAILS: Record<MessageType, { label: string; icon: string; caption: string }> = {
@@ -45,7 +50,8 @@ export function getMessageTypeLabel(message: Pick<Message, "type" | "typeLabel">
 }
 
 export function getEnvelopeIcon(message: Pick<Message, "envelopeIcon">): EnvelopeIcon {
-  return message.envelopeIcon && message.envelopeIcon in ENVELOPE_ICON_DETAILS ? message.envelopeIcon : "heart";
+  const icon = message.envelopeIcon as string | undefined;
+  return icon && Object.prototype.hasOwnProperty.call(ENVELOPE_ICON_DETAILS, icon) ? icon as EnvelopeIcon : "heart";
 }
 
 export interface TimeTogether {

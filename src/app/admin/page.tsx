@@ -7,6 +7,7 @@ import { db } from "../../firebase";
 import { ENVELOPE_ICON_DETAILS, EnvelopeIcon, getEnvelopeIcon, Message, MessageType, MESSAGE_TYPE_DETAILS } from "@/types";
 import { formatDateArabic, getEgyptTodayString, formatMonthName } from "@/lib/date";
 import ThemeToggle from "@/components/ThemeToggle";
+import RomanticMark from "@/components/RomanticMark";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -304,9 +305,10 @@ export default function AdminPage() {
               className="p-3 rounded-xl border border-border-color font-markazi text-xl bg-card-bg/70 text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 transition-all shadow-inner w-full"
             >
               {Object.entries(ENVELOPE_ICON_DETAILS).map(([value, details]) => (
-                <option key={value} value={value}>{details.symbol} {details.label}</option>
+                <option key={value} value={value}>{details.label}</option>
               ))}
             </select>
+            <RomanticMark kind={envelopeIcon} className="h-8 w-8 text-rose" />
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -443,6 +445,7 @@ export default function AdminPage() {
                         <option key={value} value={value}>{details.icon} {details.label}</option>
                       ))}
                     </select>
+                    <div className="flex items-center gap-2">
                     <select
                       value={editEnvelopeIcon}
                       onChange={(event) => setEditEnvelopeIcon(event.target.value as EnvelopeIcon)}
@@ -450,9 +453,11 @@ export default function AdminPage() {
                       aria-label="رمز الظرف"
                     >
                       {Object.entries(ENVELOPE_ICON_DETAILS).map(([value, details]) => (
-                        <option key={value} value={value}>{details.symbol} {details.label}</option>
+                        <option key={value} value={value}>{details.label}</option>
                       ))}
                     </select>
+                    <RomanticMark kind={editEnvelopeIcon} className="h-7 w-7 shrink-0 text-rose" />
+                    </div>
                     <input
                       type="text"
                       value={editTypeLabel}
@@ -508,7 +513,7 @@ export default function AdminPage() {
                             {formatDateArabic(msg.date)}
                           </span>
                           <span className="rounded-full border border-rose/25 bg-rose/10 px-2 py-0.5 font-markazi text-sm text-rose dark:text-[#F9C88A]">
-                            {ENVELOPE_ICON_DETAILS[getEnvelopeIcon(msg)].symbol} {msg.typeLabel?.trim() || MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].label}
+                            <RomanticMark kind={getEnvelopeIcon(msg)} className="inline-block h-4 w-4 align-middle" /> {msg.typeLabel?.trim() || MESSAGE_TYPE_DETAILS[msg.type ?? "morning"].label}
                           </span>
                           {isFuture && (
                             <span className="font-markazi text-xs text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-md whitespace-nowrap">

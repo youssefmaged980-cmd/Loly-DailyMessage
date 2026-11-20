@@ -1,6 +1,7 @@
 "use client";
 
-import { ENVELOPE_ICON_DETAILS, getEnvelopeIcon, getMessageTypeLabel, Message, MESSAGE_TYPE_DETAILS } from "@/types";
+import RomanticMark from "@/components/RomanticMark";
+import { getEnvelopeIcon, getMessageTypeLabel, Message, MESSAGE_TYPE_DETAILS } from "@/types";
 
 type Props = {
   message: Message;
@@ -11,7 +12,7 @@ type Props = {
 export default function MessageEnvelope({ message, onOpen, compact = false }: Props) {
   const type = message.type ?? "morning";
   const details = MESSAGE_TYPE_DETAILS[type];
-  const envelopeIcon = ENVELOPE_ICON_DETAILS[getEnvelopeIcon(message)].symbol;
+  const envelopeIcon = getEnvelopeIcon(message);
   const style = {
     morning: {
       shape: "rounded-[2.3rem_1.3rem_2.3rem_1.3rem]",
@@ -61,7 +62,7 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
       <span aria-hidden="true" className="pointer-events-none absolute -left-12 -top-14 h-36 w-36 rounded-full bg-white/25 blur-3xl transition-opacity group-hover:opacity-80" />
       <div className="flex w-full items-center justify-between gap-2">
         <span className={`inline-flex max-w-[70%] items-center gap-1.5 rounded-full border px-3.5 py-1 font-markazi text-base font-bold shadow-sm ${style.badge}`}>
-          <span aria-hidden="true">{envelopeIcon}</span>{getMessageTypeLabel(message)}
+          <RomanticMark kind={envelopeIcon} className="h-4 w-4 shrink-0" />{getMessageTypeLabel(message)}
         </span>
         <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-current/15 bg-white/35 px-3 py-1.5 font-markazi text-base font-semibold leading-none text-current/80 shadow-sm backdrop-blur-sm dark:bg-black/10">
           <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 opacity-70">
@@ -76,15 +77,17 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
       <span className={`relative mx-auto my-3 flex h-28 w-full max-w-[17rem] items-center justify-center ${style.envelope}`} aria-hidden="true">
         <span className="absolute inset-x-[18%] top-1/2 h-16 -translate-y-1/2 rounded-full bg-current/15 blur-2xl transition-opacity duration-500 group-hover:opacity-80" />
         <svg viewBox="0 0 240 132" className="absolute inset-x-0 bottom-0 h-full w-full drop-shadow-[0_9px_10px_rgba(30,16,40,0.2)] transition-transform duration-500 group-hover:-translate-y-0.5" fill="none">
+          {type === "extra" && <rect x="25" y="19" width="190" height="94" rx="17" fill="currentColor" fillOpacity=".06" stroke="currentColor" strokeOpacity=".25" strokeWidth="1.5" />}
+          {type === "special" && <path d="m120 13 7 9-7 9-7-9 7-9Z" fill="currentColor" fillOpacity=".18" stroke="currentColor" strokeOpacity=".55" strokeWidth="1.5" />}
           <rect x="17" y="25" width="206" height="94" rx="18" fill="currentColor" fillOpacity=".12" stroke="currentColor" strokeOpacity=".68" strokeWidth="2.5" />
-          <path d="m20 39 84 58a27 27 0 0 0 32 0l84-58" stroke="currentColor" strokeOpacity=".72" strokeWidth="2.6" strokeLinecap="round" />
+          {type === "apology" ? <path d="M20 40 95 91a42 42 0 0 0 50 0l75-51" stroke="currentColor" strokeOpacity=".72" strokeWidth="2.6" strokeLinecap="round" /> : <path d="m20 39 84 58a27 27 0 0 0 32 0l84-58" stroke="currentColor" strokeOpacity=".72" strokeWidth="2.6" strokeLinecap="round" />}
           <path d="m20 115 69-54m131 54-69-54" stroke="currentColor" strokeOpacity=".43" strokeWidth="2" strokeLinecap="round" />
           <path d="m20 39 84 58a27 27 0 0 0 32 0l84-58" fill="currentColor" fillOpacity=".09" />
           <path d="m19 40 89 63a20 20 0 0 0 24 0l89-63" stroke="currentColor" strokeOpacity=".25" strokeWidth="1" />
         </svg>
         <span className={`relative z-10 mt-5 grid h-12 w-12 place-items-center rounded-full border-2 text-xl shadow-[0_5px_14px_rgba(35,18,45,0.25)] ring-4 ring-white/20 transition duration-500 group-hover:scale-110 group-hover:rotate-6 ${style.seal}`}>
           <span className="absolute inset-1 rounded-full border border-current/30" />
-          <span className="relative">{envelopeIcon}</span>
+          <RomanticMark kind={envelopeIcon} className="relative h-6 w-6" />
         </span>
       </span>
 

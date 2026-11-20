@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ENVELOPE_ICON_DETAILS, getEnvelopeIcon, getMessageTypeLabel, Message, MessageType, MESSAGE_TYPE_DETAILS, TimeTogether } from "@/types";
+import { getEnvelopeIcon, getMessageTypeLabel, Message, MessageType, MESSAGE_TYPE_DETAILS, TimeTogether } from "@/types";
 import { getEgyptTodayString, formatDateArabic, calculateTimeTogether, getSpecialOccasion, getTimeGreeting, getMilestoneMessage, formatMonthName, SpecialOccasion } from "@/lib/date";
 import { generateCardImage, prepareImageSaveWindow, saveGeneratedImage } from "@/lib/exportCard";
 import FloralCorner from "@/components/FloralCorner";
@@ -13,10 +13,11 @@ import MilestoneOverlay from "@/components/MilestoneOverlay";
 import InteractiveHearts from "@/components/InteractiveHearts";
 import ReplySection from "@/components/ReplySection";
 import MessageEnvelope from "@/components/MessageEnvelope";
+import RomanticMark from "@/components/RomanticMark";
 import { motion } from "framer-motion";
 
-function getLatestUploadedMessage(messages: Message[]): Message | null {
-  return [...messages].sort((a, b) => {
+function getLatestUploadedMessage(messages: Message[], today = getEgyptTodayString()): Message | null {
+  return messages.filter((message) => message.date <= today).sort((a, b) => {
     const aCreatedAt = Date.parse(a.createdAt ?? "");
     const bCreatedAt = Date.parse(b.createdAt ?? "");
     if (Number.isFinite(aCreatedAt) && Number.isFinite(bCreatedAt) && aCreatedAt !== bCreatedAt) {
@@ -67,7 +68,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
     const todayString = getEgyptTodayString();
     setMessages(initialMessages);
 
-    const latestMessage = getLatestUploadedMessage(initialMessages);
+    const latestMessage = getLatestUploadedMessage(initialMessages, todayString);
     if (latestMessage) {
       setCurrentMessage(latestMessage);
     } else {
@@ -231,7 +232,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-rose/20 shrink-0 relative">
               <div className="flex items-center gap-2.5">
-                <span className="text-2xl drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]">{ENVELOPE_ICON_DETAILS[getEnvelopeIcon(randomMsg)].symbol}</span>
+                <RomanticMark kind={getEnvelopeIcon(randomMsg)} className="h-7 w-7 text-rose drop-shadow-[0_0_8px_rgba(255,105,180,0.8)]" />
                 <div>
                   <p className="font-aref text-lg text-wine dark:text-[#E0AAEF] font-bold drop-shadow-[0_0_8px_rgba(142,74,159,0.5)] dark:drop-shadow-[0_0_10px_rgba(224,170,239,0.8)]">
                     {formatDateArabic(randomMsg.date)}
