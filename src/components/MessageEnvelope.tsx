@@ -1,6 +1,7 @@
 "use client";
 
 import RomanticMark from "@/components/RomanticMark";
+import MessageTypeMark from "@/components/MessageTypeMark";
 import { getEnvelopeIcon, getMessageTypeLabel, Message, MESSAGE_TYPE_DETAILS } from "@/types";
 
 type Props = {
@@ -15,32 +16,32 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
   const envelopeIcon = getEnvelopeIcon(message);
   const style = {
     morning: {
-      shape: "rounded-[2.3rem_1.3rem_2.3rem_1.3rem]",
-      card: "border-[#D9B76F]/55 bg-gradient-to-br from-[#FFFDF5] via-[#FFF6E7] to-[#F7E9D7] text-[#684A69] dark:from-[#302536] dark:via-[#30233A] dark:to-[#382A36] dark:text-[#FFF2D2]",
-      badge: "border-[#D4AD5D]/45 bg-[#FFF7DF]/90 text-[#85632B] dark:bg-[#493B3A] dark:text-[#F7D991]",
-      envelope: "text-[#C99D50]",
-      seal: "border-[#F6D98D] bg-gradient-to-br from-[#FFF0AF] to-[#E7B95D] text-[#765322] shadow-[#D29C45]/35",
+      shape: "rounded-[2.7rem_1rem_2.7rem_1rem]",
+      card: "border-[#D9B76F]/70 bg-gradient-to-br from-[#FFFDF2] via-[#FFF3D5] to-[#F1D9A8] text-[#634723] shadow-[0_14px_38px_rgba(156,111,35,0.22)] dark:from-[#3B2D17] dark:via-[#302516] dark:to-[#241D17] dark:text-[#FFF0C5]",
+      badge: "border-[#D4AD5D]/60 bg-[#FFF7DF]/95 text-[#85632B] dark:bg-[#59451E] dark:text-[#FFE29A]",
+      envelope: "text-[#B88732]",
+      seal: "border-[#F6D98D] bg-gradient-to-br from-[#FFF1B9] to-[#D39C36] text-[#694816] shadow-[#D29C45]/45",
     },
     extra: {
-      shape: "rounded-[1.35rem_2.3rem_1.35rem_2.3rem]",
-      card: "border-[#AD83D5]/60 bg-gradient-to-br from-[#FCF8FF] via-[#F1E8FC] to-[#E6D9F5] text-[#533C70] shadow-[0_12px_34px_rgba(104,65,142,0.19)] dark:from-[#2A2036] dark:via-[#30213F] dark:to-[#211A30] dark:text-[#F3E7FF]",
-      badge: "border-[#AE86D0]/55 bg-[#F6EEFF]/95 text-[#684786] dark:bg-[#3D2C50] dark:text-[#E3C7FF]",
-      envelope: "text-[#9367B8]",
-      seal: "border-[#D7BFF0] bg-gradient-to-br from-[#F4E9FF] to-[#9870C2] text-white shadow-[#8F65B8]/40",
+      shape: "rounded-[0.8rem_2.7rem_0.8rem_2.7rem]",
+      card: "border-[#9874C7]/70 bg-gradient-to-br from-[#F8F5FF] via-[#EAE1FB] to-[#D5C7EF] text-[#493365] shadow-[0_14px_38px_rgba(91,60,143,0.25)] dark:from-[#302044] dark:via-[#261735] dark:to-[#1B1428] dark:text-[#F4E8FF]",
+      badge: "border-[#A88ACF]/65 bg-[#F4ECFF]/95 text-[#67478E] dark:bg-[#49305E] dark:text-[#E8CFFF]",
+      envelope: "text-[#855AAF]",
+      seal: "border-[#DCC9F6] bg-gradient-to-br from-[#F4E9FF] to-[#9870C2] text-white shadow-[#8F65B8]/50",
     },
     special: {
-      shape: "rounded-[2rem]",
-      card: "border-[#D9B66B]/60 bg-gradient-to-br from-[#33243D] via-[#261B32] to-[#1D1729] text-[#FFF4D8] shadow-[0_10px_35px_rgba(39,20,52,0.25)]",
-      badge: "border-[#D8B35E]/45 bg-[#574238]/70 text-[#FFE4A5]",
-      envelope: "text-[#D9AE5C]",
-      seal: "border-[#F6D994] bg-gradient-to-br from-[#FFE9A8] to-[#C99139] text-[#4D2D46] shadow-[#E2B752]/35",
+      shape: "rounded-[2.8rem_0.8rem_2.8rem_0.8rem]",
+      card: "border-[#8299C9]/75 bg-gradient-to-br from-[#F6F8FF] via-[#E4EAF8] to-[#CBD7EE] text-[#34466B] shadow-[0_15px_42px_rgba(46,66,111,0.27)] dark:from-[#1C2A47] dark:via-[#17223B] dark:to-[#10182C] dark:text-[#EAF0FF]",
+      badge: "border-[#A7B8DA]/70 bg-[#EFF3FF]/95 text-[#455D8A] dark:bg-[#2A3A5C] dark:text-[#D8E3FF]",
+      envelope: "text-[#8299C9]",
+      seal: "border-[#F2D28C] bg-gradient-to-br from-[#FFEFC1] to-[#C99D4D] text-[#55401F] shadow-[#C99D4D]/50",
     },
     apology: {
-      shape: "rounded-[2.4rem_2.4rem_1.2rem_1.2rem]",
-      card: "border-[#D77C91]/65 bg-gradient-to-br from-[#FFF8F7] via-[#FBE8E8] to-[#F1DADD] text-[#713F50] shadow-[0_12px_36px_rgba(150,70,94,0.2)] dark:from-[#35212D] dark:via-[#3B202F] dark:to-[#281A2B] dark:text-[#FFE9EE]",
-      badge: "border-[#D77C91]/55 bg-[#FFF0F1]/95 text-[#954B62] dark:bg-[#512B3B] dark:text-[#FFC3D0]",
-      envelope: "text-[#BE637F]",
-      seal: "border-[#F6C6D0] bg-gradient-to-br from-[#FFE9EC] to-[#CE718B] text-[#713F50] shadow-[#C5657F]/40",
+      shape: "rounded-[2.8rem_2.8rem_0.8rem_0.8rem]",
+      card: "border-[#D46A83]/75 bg-gradient-to-br from-[#FFF6F7] via-[#F9DDE4] to-[#EDC1CE] text-[#702D45] shadow-[0_15px_40px_rgba(164,54,85,0.27)] dark:from-[#4A1E2D] dark:via-[#381827] dark:to-[#26131F] dark:text-[#FFE8EF]",
+      badge: "border-[#D87591]/70 bg-[#FFF0F3]/95 text-[#963C58] dark:bg-[#5A263A] dark:text-[#FFD2DE]",
+      envelope: "text-[#C45473]",
+      seal: "border-[#F7C4D0] bg-gradient-to-br from-[#FFE4EA] to-[#C95271] text-[#67233C] shadow-[#C34B6C]/50",
     },
   }[type];
 
@@ -65,6 +66,7 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
           <RomanticMark kind={envelopeIcon} className="h-4 w-4 shrink-0" />{getMessageTypeLabel(message)}
         </span>
         <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-current/15 bg-white/35 px-3 py-1.5 font-markazi text-base font-semibold leading-none text-current/80 shadow-sm backdrop-blur-sm dark:bg-black/10">
+          <MessageTypeMark type={type} className="h-4 w-4 opacity-80" />
           <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 opacity-70">
             <rect x="3" y="4.5" width="14" height="12" rx="2.5" stroke="currentColor" strokeWidth="1.4" />
             <path d="M6.5 3v3M13.5 3v3M3.5 8h13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
