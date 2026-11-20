@@ -23,10 +23,10 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
     },
     extra: {
       shape: "rounded-[1.35rem_2.3rem_1.35rem_2.3rem]",
-      card: "border-[#DFA6C8]/55 bg-gradient-to-br from-[#FFF9FC] via-[#FDEDF6] to-[#F0E7FA] text-[#683C70] dark:from-[#302034] dark:via-[#35223B] dark:to-[#2B2039] dark:text-[#F9E8FF]",
-      badge: "border-[#D78AB7]/45 bg-[#FFF0F7]/90 text-[#8E4E79] dark:bg-[#492C49] dark:text-[#F4BDE0]",
-      envelope: "text-[#BB72A7]",
-      seal: "border-[#F7C7E4] bg-gradient-to-br from-[#F8D9F3] to-[#C57BB4] text-white shadow-[#C67CB8]/35",
+      card: "border-[#AD83D5]/60 bg-gradient-to-br from-[#FCF8FF] via-[#F1E8FC] to-[#E6D9F5] text-[#533C70] shadow-[0_12px_34px_rgba(104,65,142,0.19)] dark:from-[#2A2036] dark:via-[#30213F] dark:to-[#211A30] dark:text-[#F3E7FF]",
+      badge: "border-[#AE86D0]/55 bg-[#F6EEFF]/95 text-[#684786] dark:bg-[#3D2C50] dark:text-[#E3C7FF]",
+      envelope: "text-[#9367B8]",
+      seal: "border-[#D7BFF0] bg-gradient-to-br from-[#F4E9FF] to-[#9870C2] text-white shadow-[#8F65B8]/40",
     },
     special: {
       shape: "rounded-[2rem]",
@@ -37,10 +37,10 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
     },
     apology: {
       shape: "rounded-[2.4rem_2.4rem_1.2rem_1.2rem]",
-      card: "border-[#D98BAE]/60 bg-gradient-to-br from-[#FFF5F8] via-[#F9E9F1] to-[#EEE4F4] text-[#653C5D] dark:from-[#33202F] dark:via-[#302037] dark:to-[#241B32] dark:text-[#FFEAF3]",
-      badge: "border-[#D98BAE]/50 bg-[#FFF0F5]/90 text-[#8A496A] dark:bg-[#4A2B42] dark:text-[#FFC5DA]",
-      envelope: "text-[#C879A2]",
-      seal: "border-[#F5C4D7] bg-gradient-to-br from-[#FFE4EE] to-[#D982AA] text-[#703B5D] shadow-[#CC78A0]/35",
+      card: "border-[#D77C91]/65 bg-gradient-to-br from-[#FFF8F7] via-[#FBE8E8] to-[#F1DADD] text-[#713F50] shadow-[0_12px_36px_rgba(150,70,94,0.2)] dark:from-[#35212D] dark:via-[#3B202F] dark:to-[#281A2B] dark:text-[#FFE9EE]",
+      badge: "border-[#D77C91]/55 bg-[#FFF0F1]/95 text-[#954B62] dark:bg-[#512B3B] dark:text-[#FFC3D0]",
+      envelope: "text-[#BE637F]",
+      seal: "border-[#F6C6D0] bg-gradient-to-br from-[#FFE9EC] to-[#CE718B] text-[#713F50] shadow-[#C5657F]/40",
     },
   }[type];
 
@@ -76,14 +76,30 @@ export default function MessageEnvelope({ message, onOpen, compact = false }: Pr
 
       <span className={`relative mx-auto my-3 flex h-28 w-full max-w-[17rem] items-center justify-center ${style.envelope}`} aria-hidden="true">
         <span className="absolute inset-x-[18%] top-1/2 h-16 -translate-y-1/2 rounded-full bg-current/15 blur-2xl transition-opacity duration-500 group-hover:opacity-80" />
-        <svg viewBox="0 0 240 132" className="absolute inset-x-0 bottom-0 h-full w-full drop-shadow-[0_9px_10px_rgba(30,16,40,0.2)] transition-transform duration-500 group-hover:-translate-y-0.5" fill="none">
-          {type === "extra" && <rect x="25" y="19" width="190" height="94" rx="17" fill="currentColor" fillOpacity=".06" stroke="currentColor" strokeOpacity=".25" strokeWidth="1.5" />}
-          {type === "special" && <path d="m120 13 7 9-7 9-7-9 7-9Z" fill="currentColor" fillOpacity=".18" stroke="currentColor" strokeOpacity=".55" strokeWidth="1.5" />}
-          <rect x="17" y="25" width="206" height="94" rx="18" fill="currentColor" fillOpacity=".12" stroke="currentColor" strokeOpacity=".68" strokeWidth="2.5" />
-          {type === "apology" ? <path d="M20 40 95 91a42 42 0 0 0 50 0l75-51" stroke="currentColor" strokeOpacity=".72" strokeWidth="2.6" strokeLinecap="round" /> : <path d="m20 39 84 58a27 27 0 0 0 32 0l84-58" stroke="currentColor" strokeOpacity=".72" strokeWidth="2.6" strokeLinecap="round" />}
-          <path d="m20 115 69-54m131 54-69-54" stroke="currentColor" strokeOpacity=".43" strokeWidth="2" strokeLinecap="round" />
-          <path d="m20 39 84 58a27 27 0 0 0 32 0l84-58" fill="currentColor" fillOpacity=".09" />
-          <path d="m19 40 89 63a20 20 0 0 0 24 0l89-63" stroke="currentColor" strokeOpacity=".25" strokeWidth="1" />
+        <svg viewBox="0 0 240 132" className={`absolute inset-x-0 bottom-0 h-full w-full drop-shadow-[0_9px_10px_rgba(30,16,40,0.2)] transition-transform duration-500 group-hover:-translate-y-0.5 ${type === "extra" ? "rotate-[-3deg]" : type === "special" ? "scale-105" : type === "apology" ? "translate-y-1" : ""}`} fill="none">
+          {type === "morning" && <>
+            <path d="M23 103V43a9 9 0 0 1 9-9h176a9 9 0 0 1 9 9v60" fill="currentColor" fillOpacity=".12" stroke="currentColor" strokeOpacity=".78" strokeWidth="3" />
+            <path d="m23 43 80 53a16 16 0 0 0 34 0l80-53" stroke="currentColor" strokeOpacity=".84" strokeWidth="3" strokeLinecap="round" />
+            <path d="M90 36a30 30 0 0 1 60 0" stroke="currentColor" strokeOpacity=".46" strokeWidth="2" />
+            <path d="m30 113 61-49m118 49-61-49" stroke="currentColor" strokeOpacity=".45" strokeWidth="2" />
+          </>}
+          {type === "extra" && <>
+            <rect x="28" y="18" width="184" height="88" rx="13" fill="currentColor" fillOpacity=".06" stroke="currentColor" strokeOpacity=".36" strokeWidth="2" />
+            <path d="M18 48 89 97q31 24 62 0l71-49v56a12 12 0 0 1-12 12H30a12 12 0 0 1-12-12V48Z" fill="currentColor" fillOpacity=".2" stroke="currentColor" strokeOpacity=".8" strokeWidth="2.6" />
+            <path d="m19 48 85 49a30 30 0 0 0 32 0l85-49" stroke="currentColor" strokeOpacity=".78" strokeWidth="2.5" />
+            <path d="m29 114 55-43m127 43-55-43" stroke="currentColor" strokeOpacity=".4" strokeWidth="2" />
+          </>}
+          {type === "special" && <>
+            <path d="m120 9 103 43v38l-103 35L17 90V52L120 9Z" fill="currentColor" fillOpacity=".16" stroke="currentColor" strokeOpacity=".9" strokeWidth="3" />
+            <path d="m18 52 87 46a30 30 0 0 0 30 0l87-46M18 90l75-43m129 43-75-43" stroke="currentColor" strokeOpacity=".65" strokeWidth="2.5" />
+            <path d="m120 18 5 8 9 2-9 3-5 9-4-9-9-3 9-2 4-8Z" fill="currentColor" fillOpacity=".72" />
+          </>}
+          {type === "apology" && <>
+            <path d="M25 30h190a13 13 0 0 1 13 13v55a13 13 0 0 1-13 13H25a13 13 0 0 1-13-13V43a13 13 0 0 1 13-13Z" fill="currentColor" fillOpacity=".14" stroke="currentColor" strokeOpacity=".78" strokeWidth="2.7" strokeDasharray="5 3" />
+            <path d="M15 43 92 87q28 18 56 0l77-44" stroke="currentColor" strokeOpacity=".85" strokeWidth="3" strokeLinecap="round" />
+            <path d="m16 103 70-47m138 47-70-47" stroke="currentColor" strokeOpacity=".55" strokeWidth="2.5" />
+            <path d="M103 76c0-8 10-9 17-1 7-8 17-7 17 1 0 7-17 17-17 17s-17-10-17-17Z" fill="currentColor" fillOpacity=".55" />
+          </>}
         </svg>
         <span className={`relative z-10 mt-5 grid h-12 w-12 place-items-center rounded-full border-2 text-xl shadow-[0_5px_14px_rgba(35,18,45,0.25)] ring-4 ring-white/20 transition duration-500 group-hover:scale-110 group-hover:rotate-6 ${style.seal}`}>
           <span className="absolute inset-1 rounded-full border border-current/30" />

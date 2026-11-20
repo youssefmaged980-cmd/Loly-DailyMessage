@@ -8,6 +8,7 @@ import { ENVELOPE_ICON_DETAILS, EnvelopeIcon, getEnvelopeIcon, Message, MessageT
 import { formatDateArabic, getEgyptTodayString, formatMonthName } from "@/lib/date";
 import ThemeToggle from "@/components/ThemeToggle";
 import RomanticMark from "@/components/RomanticMark";
+import MessageTypeMark from "@/components/MessageTypeMark";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -284,6 +285,7 @@ export default function AdminPage() {
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="message-type" className="font-markazi text-xl text-text-main font-semibold">ستايل الظرف:</label>
+            <div className="flex items-center gap-2">
             <select
               id="message-type"
               value={messageType}
@@ -291,9 +293,11 @@ export default function AdminPage() {
               className="p-3 rounded-xl border border-border-color font-markazi text-xl bg-card-bg/70 text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 transition-all shadow-inner w-full"
             >
               {Object.entries(MESSAGE_TYPE_DETAILS).map(([value, details]) => (
-                <option key={value} value={value}>{details.icon} {details.label}</option>
+                <option key={value} value={value}>{details.label}</option>
               ))}
             </select>
+            <MessageTypeMark type={messageType} className="h-7 w-7 shrink-0 text-rose" />
+            </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -435,6 +439,7 @@ export default function AdminPage() {
                       onChange={(e) => setEditDate(e.target.value)}
                       className="p-2.5 rounded-xl border border-border-color font-markazi text-lg bg-card-bg text-text-main focus:outline-none focus:ring-2 focus:ring-rose/40 w-full"
                     />
+                    <div className="flex items-center gap-2">
                     <select
                       value={editType}
                       onChange={(event) => setEditType(event.target.value as MessageType)}
@@ -442,9 +447,11 @@ export default function AdminPage() {
                       aria-label="نوع الرسالة"
                     >
                       {Object.entries(MESSAGE_TYPE_DETAILS).map(([value, details]) => (
-                        <option key={value} value={value}>{details.icon} {details.label}</option>
+                        <option key={value} value={value}>{details.label}</option>
                       ))}
                     </select>
+                    <MessageTypeMark type={editType} className="h-6 w-6 shrink-0 text-rose" />
+                    </div>
                     <div className="flex items-center gap-2">
                     <select
                       value={editEnvelopeIcon}

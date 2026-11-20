@@ -14,6 +14,7 @@ import InteractiveHearts from "@/components/InteractiveHearts";
 import ReplySection from "@/components/ReplySection";
 import MessageEnvelope from "@/components/MessageEnvelope";
 import RomanticMark from "@/components/RomanticMark";
+import MessageTypeMark from "@/components/MessageTypeMark";
 import { motion } from "framer-motion";
 
 function getLatestUploadedMessage(messages: Message[], today = getEgyptTodayString()): Message | null {
@@ -514,7 +515,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                     }}
                     className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-right font-markazi text-lg transition ${archiveTypeFilter === "all" ? "bg-gradient-to-l from-rose/15 to-[#b99ae6]/10 text-wine-deep dark:text-[#F8F4FF]" : "text-wine/80 hover:bg-rose/8 dark:text-[#E8DDF2] dark:hover:bg-white/[.05]"}`}
                   >
-                    <span className="flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-full bg-rose/10 text-base">💌</span>كل أنواع الرسائل</span>
+                    <span className="flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-full bg-rose/10 text-rose"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z" stroke="currentColor" strokeWidth="1.6"/><path d="m3.5 8.5 8.5 5 8.5-5M12 13.5V21" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg></span>كل أنواع الرسائل</span>
                     {archiveTypeFilter === "all" && <span aria-hidden="true" className="text-rose">✓</span>}
                   </button>
                   {Object.entries(MESSAGE_TYPE_DETAILS).map(([value, details]) => {
@@ -531,7 +532,7 @@ export default function ClientHome({ initialMessages }: { initialMessages: Messa
                         }}
                         className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-right font-markazi text-lg transition ${isSelected ? "bg-gradient-to-l from-rose/15 to-[#b99ae6]/10 text-wine-deep dark:text-[#F8F4FF]" : "text-wine/80 hover:bg-rose/8 dark:text-[#E8DDF2] dark:hover:bg-white/[.05]"}`}
                       >
-                        <span className="flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-full bg-rose/10 text-base">{details.icon}</span>{details.label}</span>
+                        <span className="flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-full bg-rose/10 text-rose"><MessageTypeMark type={value as MessageType} className="h-[18px] w-[18px]" /></span>{details.label}</span>
                         {isSelected && <span aria-hidden="true" className="text-rose">✓</span>}
                       </button>
                     );

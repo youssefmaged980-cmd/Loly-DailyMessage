@@ -19,11 +19,11 @@ export const ENVELOPE_ICON_DETAILS: Record<EnvelopeIcon, { label: string }> = {
   lily: { label: "زهرة زنبق" },
 };
 
-export const MESSAGE_TYPE_DETAILS: Record<MessageType, { label: string; icon: string; caption: string }> = {
-  morning: { label: "رسالة صباحية", icon: "☀️", caption: "بداية حلوة ليومك" },
-  extra: { label: "رسالة جميلة", icon: "💌", caption: "كلمة حب زيادة" },
-  special: { label: "رسالة مميزة", icon: "✦", caption: "رسالة معمولة عشانك" },
-  apology: { label: "رسالة مصالحة", icon: "🥺", caption: "حقك عليا يا حبيبتي" },
+export const MESSAGE_TYPE_DETAILS: Record<MessageType, { label: string; caption: string }> = {
+  morning: { label: "رسالة صباحية", caption: "بداية حلوة ليومك" },
+  extra: { label: "رسالة جميلة", caption: "كلمة حب زيادة" },
+  special: { label: "رسالة مميزة", caption: "رسالة معمولة عشانك" },
+  apology: { label: "رسالة مصالحة", caption: "حقك عليا يا حبيبتي" },
 };
 
 export interface Message {
